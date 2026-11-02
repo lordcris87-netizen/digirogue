@@ -188,8 +188,8 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!document.hi
 // Prototype actors are drawn ONLY from standalone transparent sprite sheets.
 // Original flattened characters stay fixed: moving them requires real clean-background art.
 const titleActors=[
- {src:'/assets/bat.png',cell:96,frames:8,row:0,fps:8,x:300,y:115,w:72,h:72,phase:0,kind:'fly'},
- {src:'/assets/kunemon.png',cell:96,frames:4,row:0,fps:4,x:1125,y:850,w:72,h:72,phase:1.4,kind:'walk'}
+ {src:'/assets/bat.png',cell:96,frames:8,row:4,fps:8,x:300,y:115,w:72,h:72,phase:0,kind:'fly'},
+ {src:'/assets/kunemon.png',cell:96,frames:4,row:3,fps:4,x:1125,y:850,w:72,h:72,phase:1.4,kind:'walk'}
 ];
 const titleActorImages=new Map();
 for(const actor of titleActors){
@@ -211,7 +211,7 @@ function drawTitleActors(t){
   wc.imageSmoothingEnabled=false;
   wc.globalAlpha=.93;
   wc.translate(Math.round(x),Math.round(y));
-  if(flying&&Math.cos(t*.6)<0)wc.scale(-1,1);
+  // Sprite atlas already provides facing directions: do not mirror facial details.
   wc.drawImage(image,frame*actor.cell,actor.row*actor.cell,actor.cell,actor.cell,-actor.w/2,-actor.h/2,actor.w,actor.h);
   wc.restore();
  }
