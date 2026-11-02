@@ -47,7 +47,7 @@ async def inspect_page(browser,label,viewport,mobile=False):
         drawOriginalTitleCharacters(t);
         return boxes.map(([x,y,w,h])=>ctx.getImageData(x,y,w,h).data);
       };
-      const first=capture(0),second=capture(1.3);
+      const first=capture(0),second=capture(2.7);
       return first.map((data,i)=>{
         let changed=0;
         for(let k=0;k<data.length;k+=4)
