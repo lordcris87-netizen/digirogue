@@ -48,7 +48,7 @@ class DigiRogueStaticTests(unittest.TestCase):
             with self.subTest(name=name):
                 path = folder / (name + '.png')
                 data = path.read_bytes()[:26]
-                self.assertEqual(data[:8], b'\\x89PNG\\r\\n\\x1a\\n')
+                self.assertEqual(data[:8], bytes([137,80,78,71,13,10,26,10]))
                 self.assertEqual(struct.unpack('>II', data[16:24]), expected_size)
                 self.assertEqual(data[25], 6, 'Character PNG must have RGBA transparency')
         bg=(folder / 'background.webp').read_bytes()[:12]
