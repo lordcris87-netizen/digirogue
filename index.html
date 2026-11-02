@@ -569,6 +569,12 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 #view-inicio .brand-title{font-size:clamp(22px,6.8vw,27px)!important}
 #view-inicio .launch-card{min-height:60px}#view-inicio .quick-nav button{font-size:4px}}
 @media(prefers-reduced-motion:reduce){#view-inicio .quick-nav button{transition:none}}
+
+/* Remates de composición en el rótulo y la tarjeta de temporada. */
+#view-inicio .brand-title small{position:static!important;top:auto!important;right:auto!important;display:inline-block!important;flex:none;align-self:center;margin:0 0 0 10px!important;padding:3px 5px!important;font-size:6px!important;line-height:1.4!important;transform:translateY(-5px)!important}
+#view-inicio .season-art>b{max-width:210px!important;font-size:10px!important;letter-spacing:.7px!important;line-height:1.15!important}
+#view-inicio .season-art>small{font-size:7px!important}
+@media(max-width:700px){#view-inicio .brand-title small{display:none!important}}
 </style>
 </head>
 <body>
