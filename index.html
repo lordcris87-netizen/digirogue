@@ -197,8 +197,9 @@ if(screen==='home'&&!document.hidden&&!reducedMotion.matches){
 // Prototype actors are drawn ONLY from standalone transparent sprite sheets.
 // Original flattened characters stay fixed: moving them requires real clean-background art.
 // Verified atlas dimensions: bat 768x768, kunemon 384x768, both 96px cells.
+// Kunemon is an EXTRA creature in the grass. Do not draw a second flying
+// character on top of the already-present winged creature from the cover.
 const titleActors=[
- {src:'/assets/bat.png',cell:96,frames:8,row:4,fps:8,x:300,y:115,w:72,h:72,phase:0,kind:'fly'},
  {src:'/assets/kunemon.png',cell:96,frames:4,row:3,fps:4,x:1125,y:850,w:72,h:72,phase:1.4,kind:'walk'}
 ];
 const titleActorImages=new Map();
@@ -237,9 +238,10 @@ function drawTitleActors(t){
 // No server changes and no impact on gameplay or multiplayer.
 const originalCoverURL='/assets/portada.webp';
 const isolatedCoverURL='/assets/title_layers/background.webp';
+// Back-to-front order matters: Gabumon sits BEHIND Agumon in the art.
 const titleLayerPositions=[
- {name:'agumon',x:0,y:493,w:298,h:297,kind:'breathe',phase:0},
  {name:'gabumon',x:228,y:509,w:275,h:305,kind:'breathe',phase:1.6},
+ {name:'agumon',x:0,y:493,w:298,h:297,kind:'breathe',phase:0},
  {name:'bat',x:1213,y:84,w:205,h:131,kind:'fly',phase:0.8},
  {name:'bird',x:1425,y:509,w:176,h:208,kind:'hop',phase:2.2}
 ];
