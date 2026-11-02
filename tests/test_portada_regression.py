@@ -2,7 +2,6 @@
 No external packages required for static checks.
 """
 from pathlib import Path
-import re
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,6 +37,16 @@ class DigiRogueStaticTests(unittest.TestCase):
     def test_dev_preview_remains_separate(self):
         self.assertTrue((ROOT / 'preview-animations.html').is_file())
         self.assertIn('drawTitleActors', self.page)
+
+    def test_animated_title_renders_only_when_home_visible(self):
+        self.assertIn("screen==='home'", self.page)
+        self.assertIn('reducedMotion.matches', self.page)
+        self.assertIn('document.hidden', self.page)
+
+    def test_title_atlas_frame_boundaries(self):
+        self.assertIn('image.naturalWidth%actor.cell', self.page)
+        self.assertIn('image.naturalHeight%actor.cell', self.page)
+
 
 if __name__ == '__main__':
     unittest.main()
