@@ -128,6 +128,46 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 .ranking-panel .panel-heading h2{font-size:clamp(15px,1.35vw,18px)!important;white-space:nowrap!important}
 .ranking-panel .live-dot{font-size:7px!important;white-space:nowrap}
 
+
+/* DIGI PET: pixel device that matches the launcher palette. */
+.incubator-layout{display:grid;grid-template-columns:minmax(290px,390px) minmax(300px,1fr);gap:22px;max-width:980px;align-items:stretch}
+.vpet-device{--pet-case:#ebc45c;--pet-trim:#e4f4bd;position:relative;padding:14px 15px 11px;border:4px solid #071426;background:var(--pet-case);box-shadow:6px 6px 0 #020812,inset 4px 4px 0 #fff7c866,inset -4px -4px 0 #101a2c66;image-rendering:pixelated}
+.vpet-device[data-line="gabumon"]{--pet-case:#68c9dc;--pet-trim:#d9f5eb}.vpet-device[data-line="patamon"]{--pet-case:#e8a9c6;--pet-trim:#fff0c7}.vpet-device[data-line="koromon"]{--pet-case:#ec895b;--pet-trim:#ffe1a0}
+.vpet-device-top{display:flex;justify-content:space-between;margin:0 0 10px;color:#102238;font:8px "Press Start 2P",monospace;text-shadow:1px 1px #fff6}
+.vpet-screen{min-height:285px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:12px 14px 13px;border:5px solid #101e2d;background:linear-gradient(180deg,#b3d895,#8eb97b 55%,#719565);box-shadow:inset 4px 4px 0 #ffffff55,inset -4px -4px 0 #314d4f99;color:#132723;overflow:hidden}
+.vpet-screen:before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;background:repeating-linear-gradient(0deg,transparent 0 4px,#16291a 4px 5px)}
+.vpet-status{z-index:1;width:100%;display:flex;justify-content:space-between;font:7px "Press Start 2P",monospace;color:#1d3728}
+.vpet-creature{height:147px;width:100%;position:relative;display:grid;place-items:center;z-index:1}
+.pixel-egg{width:56px;height:68px;position:relative;background:#f5e6ae;clip-path:polygon(50% 0,69% 4%,83% 14%,95% 34%,100% 58%,92% 79%,76% 94%,54% 100%,31% 95%,13% 81%,2% 61%,5% 39%,17% 18%,31% 7%);filter:drop-shadow(3px 3px 0 #1d3428);animation:eggWiggle 1.5s steps(2,end) infinite}
+.pixel-egg:after{content:"";position:absolute;width:16px;height:9px;left:20px;top:25px;background:var(--pet-case);box-shadow:12px 12px 0 #f8f0ce,-7px 15px 0 #ffffffaa}
+@keyframes eggWiggle{0%,88%,100%{transform:rotate(0)}91%{transform:rotate(-6deg)}96%{transform:rotate(6deg)}}
+.vpet-digimon{z-index:1;display:block;width:108px;height:108px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(3px 3px 0 #17252a);animation:petBounce .72s steps(2,end) infinite}
+@keyframes petBounce{0%,100%{translate:0 1px}50%{translate:0 -5px}}
+.vpet-device.petting .vpet-creature{animation:petReact .42s steps(2,end) 2}
+@keyframes petReact{50%{translate:0 -9px;scale:1.08}}
+.pet-sparkle{position:absolute;top:22px;right:calc(50% - 54px);font-size:17px;color:#fff4a6;text-shadow:2px 2px #415d3a;animation:sparklePop .6s steps(2,end) infinite}
+.vpet-name{z-index:1;margin-top:-2px;font:10px "Press Start 2P",monospace;text-align:center;color:#172a26;text-shadow:1px 1px #d0e3a5}
+.vpet-stage{z-index:1;margin-top:9px;font:7px "Press Start 2P",monospace;text-align:center;color:#294833;line-height:1.8}
+.pet-meter{z-index:1;width:82%;height:10px;margin-top:13px;border:2px solid #132b2a;background:#394e3a}.pet-meter span{display:block;width:0;height:100%;background:#f8cf5e;transition:width .18s steps(4,end)}
+.vpet-controls{display:flex;gap:8px;margin-top:12px}
+.pixel-action{flex:1;min-height:42px;border:3px solid #101b2d;background:var(--pet-trim);color:#18253a;font:8px "Press Start 2P",monospace;box-shadow:3px 3px 0 #040a13;cursor:pointer}
+.pixel-action.secondary{background:#152a46;color:#e9dc9a}.pixel-action:disabled{opacity:.42;cursor:not-allowed}.pixel-action:not(:disabled):active{translate:2px 2px;box-shadow:1px 1px 0 #040a13}
+.pet-message{min-height:32px;margin:10px 0 0;color:#102033;font:8px "Silkscreen",monospace;line-height:1.5;text-align:center}
+.egg-storage{padding:19px;border:3px solid #526783;background:#101a2bea;box-shadow:5px 5px 0 #030812}
+.egg-storage-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-bottom:12px;border-bottom:2px solid #ffffff20}
+.egg-storage-heading small{color:#9fb1c7;font:7px "Press Start 2P",monospace;line-height:1.8}.egg-storage-heading h2{margin:8px 0 0;color:#ffe27a;font:15px "Press Start 2P",monospace}.egg-storage-heading strong{color:#d6e6f6;font:8px "Press Start 2P",monospace}
+.egg-inventory{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;padding-top:13px}
+.egg-entry{min-height:76px;display:flex;align-items:center;gap:9px;padding:8px;border:2px solid #536881;background:#18263c;color:#f5f1e4;text-align:left;cursor:pointer}
+.egg-entry.active{border-color:#ffdf79;box-shadow:inset 0 0 0 2px #ffdf7938}.egg-entry:hover{background:#223652}
+.egg-chip{width:38px;height:42px;flex:none;display:grid;place-items:center;border:2px solid #101b2c;background:#d4e3a3;color:#263b32;font-size:21px;clip-path:polygon(50% 0,78% 8%,97% 39%,92% 73%,68% 96%,36% 100%,10% 79%,3% 48%,16% 19%)}
+.egg-entry[data-line="gabumon"] .egg-chip{background:#79d0db}.egg-entry[data-line="patamon"] .egg-chip{background:#efb4cc}.egg-entry[data-line="koromon"] .egg-chip{background:#f29b68}
+.egg-copy b,.egg-copy small{display:block}.egg-copy b{font:8px "Press Start 2P",monospace;line-height:1.7}.egg-copy small{margin-top:3px;color:#b9c6d8;font:8px "Silkscreen",monospace}
+.egg-empty{grid-column:1/-1;min-height:90px;display:grid;place-items:center;padding:14px;border:2px dashed #526681;color:#bccbe0;text-align:center;font:9px "Silkscreen",monospace;line-height:1.7}
+.egg-hint{display:flex;gap:11px;align-items:center;margin-top:15px;padding:11px;border:1px solid #ffffff20;background:#0d1524;color:#d4dfeb}.egg-hint span{color:#ffe27a;font-size:19px}.egg-hint p{margin:0;font:9px "Silkscreen",monospace;line-height:1.6}
+@media(max-width:800px){.incubator-layout{grid-template-columns:1fr;max-width:540px}.vpet-screen{min-height:260px}.egg-inventory{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.subview#view-incubadora{padding:30px 0 115px}.vpet-device{padding:11px}.vpet-screen{min-height:230px}.vpet-controls{gap:6px}.pixel-action{font-size:7px;min-height:40px}.egg-storage{padding:13px}.egg-storage-heading small{font-size:6px}.egg-inventory{grid-template-columns:1fr}.egg-entry{min-height:66px}}
+@media(prefers-reduced-motion:reduce){.pixel-egg,.vpet-digimon,.pet-sparkle{animation:none!important}.pet-meter span{transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -135,7 +175,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   <div class="landscape" aria-hidden="true"></div><canvas id="ambience" aria-hidden="true"></canvas><div class="shade"></div>
   <header class="topbar">
     <a class="brand" href="#inicio" data-nav="inicio" aria-label="DigiRogue, inicio"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M14 2h20v4h7v6h4v22h-4v6h-7v4H14v-4H7v-6H3V12h4V6h7Z" fill="#f5bf45" stroke="#061426" stroke-width="2"/><path d="M13 9h22v3h4v14H9V12h4Z" fill="#0d2b42" stroke="#ffe28b" stroke-width="1.5"/><path d="M14 13h20v9H14Z" fill="#5bd4df"/><path d="M17 15h5v2h-3v2h-2Zm9 0h5v2h-3v2h-2Z" fill="#e9ffff"/><path d="M20 19h8v2h-8Z" fill="#e9ffff"/><path d="M15 29h18v3H15Zm3 5h12v3H18Z" fill="#173a52"/><path d="M17 30h4v2h-4Zm10 0h4v2h-4Z" fill="#fff0aa"/><rect x="21" y="35" width="6" height="4" fill="#e54d50" stroke="#702636" stroke-width="1"/><path d="M14 41h20" stroke="#ffecae" stroke-width="2"/></svg></span><span class="brandname">DIGI<span>ROGUE</span></span></a>
-    <nav class="main-nav" aria-label="Secciones principales"><button class="nav-item active" data-nav="inicio">Inicio</button><button class="nav-item" data-nav="temporada">Temporada</button><button class="nav-item" data-nav="digidex">Digidex</button><button class="nav-item" data-nav="equipo">Mi equipo</button></nav>
+    <nav class="main-nav" aria-label="Secciones principales"><button class="nav-item active" data-nav="inicio">Inicio</button><button class="nav-item" data-nav="temporada">Temporada</button><button class="nav-item" data-nav="digidex">Digidex</button><button class="nav-item" data-nav="incubadora">Incubadora</button><button class="nav-item" data-nav="equipo">Mi equipo</button></nav>
     <div class="profile-tools"><span class="season-chip"><i></i> TEMPORADA 01</span><button id="soundBtn" class="sound-btn" aria-label="Activar o silenciar música">♪</button><button id="settingsBtn" class="settings-btn" aria-label="Ajustes">⚙</button><div class="profile"><span class="avatar">T</span><span><b>Tamer</b><small>Nivel 01</small></span><span class="chev">⌄</span></div></div>
   </header>
   <section id="view-inicio" class="view home-view">
@@ -148,19 +188,35 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
         <button class="launch-card launch-season" data-nav="temporada"><span class="launch-icon">✦</span><span class="launch-copy"><small>NUEVO CAPÍTULO</small><b>Bosque del<br>Comienzo</b><i>Temporada 01</i></span><strong>↗</strong></button>
         <button class="launch-card launch-team" data-nav="equipo"><span class="launch-icon">♧</span><span class="launch-copy"><small>JUNTOS SOMOS MÁS</small><b>Mi equipo</b><i>Agumon y amigos</i></span><strong>→</strong></button>
       </div>
-      <div class="quick-nav"><button data-nav="digidex"><span>◉</span>DIGIDEX</button><button data-nav="equipo"><span>✦</span>COMPAÑEROS</button><button data-nav="temporada"><span>♜</span>TEMPORADA</button><button data-nav="ajustes"><span>⚙</span>AJUSTES</button></div>
+      <div class="quick-nav"><button data-nav="digidex"><span>◉</span>DIGIDEX</button><button data-nav="equipo"><span>✦</span>COMPAÑEROS</button><button data-nav="temporada"><span>♜</span>TEMPORADA</button><button data-nav="ajustes"><span>⚙</span>AJUSTES</button><button data-nav="incubadora"><span>🥚</span>HUEVOS</button></div>
       <div class="notice"><span>✧</span><span><b>Un nuevo mundo está despertando</b><small>Tu equipo tiene un lugar en esta historia.</small></span></div>
     </div>
     <aside class="ranking-panel"><div class="panel-heading"><div><small>AHORA EN EL MUNDO DIGITAL</small><h2>Temporada <span>01</span></h2></div><span class="live-dot">● ACTIVA</span></div><div class="season-art"><span>✧</span><b>BOSQUE<br>DEL COMIENZO</b><small>Una nueva historia despierta</small><div class="season-mons"><img src="assets/launcher/digimon/agumon.png" alt="Agumon"><img class="locked-mon" src="assets/launcher/digimon/patamon.png" alt="Digimon aún no descubierto"></div></div><div class="board-heading"><b>◆ DIGIMON DESTACADOS</b><button data-nav="digidex">VER DEX <span>→</span></button></div><div class="rank-row"><span class="place gold">01</span><span class="mini-mon orange"><img src="assets/launcher/digimon/agumon.png" alt=""></span><span class="rank-name"><b>Agumon</b><small>ROOKIE · FUEGO</small></span><strong>ROOKIE</strong></div><div class="rank-row"><span class="place silver">02</span><span class="mini-mon blue is-locked"><img src="assets/launcher/digimon/gabumon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="rank-row"><span class="place bronze">03</span><span class="mini-mon pink is-locked"><img src="assets/launcher/digimon/patamon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="panel-foot"><span>Compañeros del Mundo Digital</span><span>✦ &nbsp; 01 / 08</span></div></aside>
     <div id="roamingLayer" class="roaming-layer" aria-hidden="true"><div class="sway-branch sway-left"><svg viewBox="0 0 220 120"><path d="M-8 8C44 9 87 25 121 49S175 82 226 92" fill="none" stroke="#203a30" stroke-width="12"/><path d="M48 14Q43 -1 31 -9M83 29Q89 8 103 1M124 50Q119 30 126 19M160 70Q176 52 193 51" fill="none" stroke="#203a30" stroke-width="7"/><path d="M17 1h21v11H17zM38-8h19v12H38zM88 4h22v12H88zM104-3h19v12H104zM117 13h19v12H117zM113 22h22v12H113zM175 44h24v13h-24zM193 39h20v13h-20zM188 55h22v12h-22z" fill="#527a45" stroke="#203a30" stroke-width="3"/></svg></div><div class="sway-branch sway-right"><svg viewBox="0 0 220 120"><path d="M-8 8C44 9 87 25 121 49S175 82 226 92" fill="none" stroke="#203a30" stroke-width="12"/><path d="M48 14Q43 -1 31 -9M83 29Q89 8 103 1M124 50Q119 30 126 19M160 70Q176 52 193 51" fill="none" stroke="#203a30" stroke-width="7"/><path d="M17 1h21v11H17zM38-8h19v12H38zM88 4h22v12H88zM104-3h19v12H104zM117 13h19v12H117zM113 22h22v12H113zM175 44h24v13h-24zM193 39h20v13h-20zM188 55h22v12h-22z" fill="#527a45" stroke="#203a30" stroke-width="3"/></svg></div><div id="roamingAgumon" class="roaming-mon"><span class="roaming-shadow"></span><span id="spriteAgumon" class="walk-sprite agumon-sprite" role="img" aria-label="Agumon caminando"></span></div><div id="roamingGabumon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteGabumon" class="walk-sprite gabumon-sprite" role="img" aria-label="Gabumon caminando"></span></div><div id="roamingPatamon" class="roaming-mon buddy patamon-roamer"><span class="roaming-shadow"></span><span id="spritePatamon" class="walk-sprite patamon-sprite" role="img" aria-label="Patamon volando en ocho direcciones"></span></div><div id="roamingKoromon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteKoromon" class="walk-sprite koromon-sprite" role="img" aria-label="Koromon saltando"></span></div></div>
   </section>  <section id="view-temporada" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> MUNDO DIGITAL · TEMPORADA 01</div><h1>Bosque del <em>comienzo</em></h1><p>El portal ha despertado. Algo antiguo se mueve entre los árboles.</p></div><div class="season-layout"><div class="season-hero"><div class="season-symbol">✧</div><small>CAPÍTULO 01</small><h2>Una luz<br>entre los árboles</h2><p>Descubre qué se esconde al otro lado del portal.</p><button class="primary-btn" data-info="La historia del Bosque del Comienzo está preparándose. Vuelve pronto para descubrir el primer capítulo.">DESCUBRIR HISTORIA <b>→</b></button></div><div class="info-card"><span class="feature-icon gold">✦</span><h3>Un nuevo comienzo</h3><p>Este rincón del Mundo Digital aguarda a su próximo equipo.</p><div class="progress"><i></i></div><small>PREPARATIVOS DE TEMPORADA</small></div></div></section>
   <section id="view-digidex" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> ARCHIVO DEL MUNDO DIGITAL</div><h1>Tu <em>Digidex</em></h1><p>Descubre a tus compañeros y completa sus registros.</p></div><div class="digimon-grid"><article class="digi-card"><div class="digi-art orange"><img src="assets/launcher/digimon/agumon.png" alt="Agumon saludando"></div><div><small>ROOKIE · FUEGO · DESBLOQUEADO</small><h3>Agumon</h3><p>Tu primer compañero. Valiente y siempre dispuesto a proteger al equipo.</p></div><b class="digi-number">#001</b></article><article class="digi-card is-locked"><div class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked"><div class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked"><div class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article></div></section>  <section id="view-equipo" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> COMPAÑEROS DIGITALES</div><h1>Tu <em>equipo</em></h1><p>Cada aventura es mejor cuando la compartes.</p></div><div class="team-layout"><div class="team-lead"><img src="assets/launcher/sprites/agumon_4.png" alt="Agumon mirando al frente"><div><small>COMPAÑERO DESTACADO</small><h2>Agumon</h2><p>Rookie · Fuego</p></div><span class="bond">✦ VÍNCULO 01</span></div><div class="team-side"><div class="team-mini is-locked"><span class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div></div></div></section>
+  <section id="view-incubadora" class="view subview hidden">
+    <div class="subhead"><div class="kicker"><i></i> CUIDA A TU PRÓXIMO COMPAÑERO</div><h1>Incubadora <em>digital</em></h1><p>Los huevos que rescates en la partida te esperan aquí. Acarícialos y descubre quién viene dentro.</p></div>
+    <div class="incubator-layout">
+      <section class="vpet-device" id="vpetDevice" aria-label="Dispositivo virtual Digimon">
+        <div class="vpet-device-top"><span>◇ DIGI PET</span><span>01 / 01</span></div>
+        <div class="vpet-screen" id="vpetScreen">
+          <div class="vpet-status"><span id="petStatus">SIN HUEVO</span><span id="petClock">--:--</span></div>
+          <div class="vpet-creature"><div id="petEgg" class="pixel-egg" aria-label="Huevo Digimon"></div><img id="petImage" class="vpet-digimon hidden" alt=""><span class="pet-sparkle">✦</span></div>
+          <b id="petName" class="vpet-name">HUEVO VACÍO</b><small id="petStage" class="vpet-stage">ENCUENTRA UN HUEVO EN PARTIDA</small><div class="pet-meter"><span id="petProgress"></span></div>
+        </div>
+        <div class="vpet-controls"><button id="petButton" class="pixel-action" disabled>♥ ACARICIAR</button><button id="petFeedButton" class="pixel-action secondary" disabled>✦ ANIMAR</button></div>
+        <p id="petMessage" class="pet-message">Derrota a un guardián para rescatar un huevo.</p>
+      </section>
+      <section class="egg-storage"><div class="egg-storage-heading"><div><small>RESCATADOS EN TUS PARTIDAS</small><h2>Tus huevos</h2></div><strong id="eggCount">0 / 08</strong></div><div id="eggInventory" class="egg-inventory"></div><div class="egg-hint"><span>▣</span><p>Cada huevo pertenece a un Digimon distinto. Su dispositivo y su reacción cambiarán con cada compañero.</p></div></section>
+    </div>
+  </section>
   <section id="view-ajustes" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> PERSONALIZA TU EXPERIENCIA</div><h1>Ajustes</h1><p>Elige cómo quieres visitar el Mundo Digital.</p></div><div class="settings-card"><div><b>Música de fondo</b><small>Melodía retro para el menú</small></div><button id="musicSwitch" class="switch" aria-label="Activar o silenciar la música"></button></div><div class="settings-card volume-card"><div class="volume-head"><span><b>Volumen de la música</b><small>Volumen inicial moderado; ajústalo a tu gusto.</small></span><strong id="volumeValue">20 %</strong></div><input id="volumeRange" type="range" min="0" max="100" value="20" aria-label="Volumen de la música"></div><div class="settings-card"><div><b>Movimiento ambiental</b><small>Animación suave del mundo y los Digimon</small></div><button id="motionSwitch" class="switch on" aria-label="Activar o desactivar el movimiento"></button></div><div class="settings-card"><div><b>Idioma</b><small>Idioma de la página</small></div><span class="language">ESPAÑOL⌄</span></div></section>
-  <nav class="bottom-nav" aria-label="Navegación"><button class="bottom-link active" data-nav="inicio"><span>⌂</span> INICIO</button><button class="bottom-link" data-nav="temporada"><span>✧</span> TEMPORADA</button><button class="bottom-link" data-nav="digidex"><span>◈</span> DIGIDEX</button><button class="bottom-link" data-nav="equipo"><span>✦</span> EQUIPO</button><button class="bottom-link" data-nav="ajustes"><span>⚙</span> AJUSTES</button><span class="bottom-caption">UN NUEVO MUNDO · UN EQUIPO · UNA AVENTURA</span></nav>
+  <nav class="bottom-nav" aria-label="Navegación"><button class="bottom-link active" data-nav="inicio"><span>⌂</span> INICIO</button><button class="bottom-link" data-nav="temporada"><span>✧</span> TEMPORADA</button><button class="bottom-link" data-nav="digidex"><span>◈</span> DIGIDEX</button><button class="bottom-link" data-nav="equipo"><span>✦</span> EQUIPO</button><button class="bottom-link" data-nav="ajustes"><span>⚙</span> AJUSTES</button><button class="bottom-link" data-nav="incubadora"><span>🥚</span> INCUBA</button><span class="bottom-caption">UN NUEVO MUNDO · UN EQUIPO · UNA AVENTURA</span></nav>
   <audio id="menuMusic" src="assets/launcher/DigiRogue_MENU_8BIT.mp3" loop preload="none"></audio><div id="toast" class="toast" role="status"></div>
 </main><script>
 (() => {
-  const views = ["inicio", "temporada", "digidex", "equipo", "ajustes"];
+  const views = ["inicio", "temporada", "digidex", "equipo", "ajustes", "incubadora"];
   const audio = document.getElementById("menuMusic");
   const soundBtn = document.getElementById("soundBtn");
   const toast = document.getElementById("toast");
@@ -332,6 +388,72 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 
 
 
+
+
+(() => {
+  const inventoryKey="digirogue-egg-inventory", buddyKey="digirogue-buddies";
+  const lines={
+    agumon:{name:"Agumon",art:"assets/launcher/digimon/agumon.png"},
+    gabumon:{name:"Gabumon",art:"assets/launcher/digimon/gabumon.png"},
+    patamon:{name:"Patamon",art:"assets/launcher/digimon/patamon.png"},
+    koromon:{name:"Koromon",art:"assets/launcher/digimon/koromon.png"}
+  };
+  const device=document.getElementById("vpetDevice"); if(!device)return;
+  const getEggs=()=>{try{const a=JSON.parse(localStorage.getItem(inventoryKey)||"[]");return Array.isArray(a)?a:[]}catch(_){return[]}};
+  let eggs=getEggs(),selected=localStorage.getItem("digirogue-active-egg")||"";
+  const inventory=document.getElementById("eggInventory"), nameEl=document.getElementById("petName"),stageEl=document.getElementById("petStage");
+  const eggEl=document.getElementById("petEgg"),imgEl=document.getElementById("petImage"),statusEl=document.getElementById("petStatus"),clockEl=document.getElementById("petClock");
+  const meter=document.getElementById("petProgress"),message=document.getElementById("petMessage"),petButton=document.getElementById("petButton"),feedButton=document.getElementById("petFeedButton");
+  const save=()=>localStorage.setItem(inventoryKey,JSON.stringify(eggs));
+  const activeEgg=()=>eggs.find(e=>e.id===selected)||null;
+  function chooseDefault(){if(eggs.some(e=>e.id===selected))return;const e=eggs.find(x=>!x.hatched)||eggs[eggs.length-1];selected=e?.id||"";try{localStorage.setItem("digirogue-active-egg",selected)}catch(_){}}
+  function redrawList(){
+    document.getElementById("eggCount").textContent=eggs.length+" / 08";
+    if(!eggs.length){inventory.innerHTML='<div class="egg-empty">Aún no has rescatado huevos.<br>Derrota a un guardián en una partida.</div>';return}
+    inventory.innerHTML="";
+    [...eggs].reverse().forEach(e=>{
+      const line=lines[e.species]||lines.agumon,button=document.createElement("button");button.type="button";
+      button.className="egg-entry"+(e.id===selected?" active":"");button.dataset.line=e.species;
+      const state=e.hatched?"ECLOSIONADO":e.startedAt?"INCUBANDO":"LISTO PARA CUIDAR";
+      button.innerHTML='<span class="egg-chip">✦</span><span class="egg-copy"><b>Huevo · '+line.name+'</b><small>'+state+'</small></span>';
+      button.addEventListener("click",()=>{selected=e.id;localStorage.setItem("digirogue-active-egg",selected);renderScreen();redrawList()});
+      inventory.append(button);
+    });
+  }
+  function hatch(e,line){
+    e.hatched=true;e.hatchedAt=Date.now();
+    try{const saved=JSON.parse(localStorage.getItem(buddyKey)||"[]"),buddies=Array.isArray(saved)?saved:[];if(!buddies.includes(e.species))buddies.push(e.species);localStorage.setItem(buddyKey,JSON.stringify(buddies))}catch(_){}
+    save();message.textContent="¡"+line.name+" ha salido del huevo! Ya es parte de tu equipo.";
+    redrawList();renderScreen();
+  }
+  function renderScreen(){
+    chooseDefault();const e=activeEgg(),line=e?(lines[e.species]||lines.agumon):null;
+    device.dataset.line=e?.species||"";document.getElementById("eggCount").textContent=eggs.length+" / 08";
+    petButton.disabled=!e;feedButton.disabled=!e||!e.hatched;
+    if(!e){statusEl.textContent="SIN HUEVO";clockEl.textContent="--:--";nameEl.textContent="HUEVO VACÍO";stageEl.textContent="ENCUENTRA UNO EN PARTIDA";eggEl.classList.remove("hidden");imgEl.classList.add("hidden");meter.style.width="0%";meter.parentElement.style.visibility="hidden";message.textContent="Derrota a un guardián para rescatar un huevo.";return}
+    meter.parentElement.style.visibility="visible";
+    if(e.hatched){statusEl.textContent="NUEVO COMPAÑERO";clockEl.textContent="LISTO";nameEl.textContent=line.name.toUpperCase();stageEl.textContent="PRIMERA FORMA · TU EQUIPO";eggEl.classList.add("hidden");imgEl.src=line.art;imgEl.alt=line.name;imgEl.classList.remove("hidden");meter.style.width="100%";petButton.disabled=true;feedButton.disabled=false;if(!message.textContent.startsWith("¡"))message.textContent=line.name+" te está esperando.";return}
+    eggEl.classList.remove("hidden");imgEl.classList.add("hidden");nameEl.textContent="HUEVO · "+line.name.toUpperCase();stageEl.textContent=e.startedAt?"ACARÍCIALO PARA ANIMARLO":"TOCA ACARICIAR PARA EMPEZAR";statusEl.textContent=e.startedAt?"INCUBANDO":"HUEVO RESCATADO";updateTimer();
+  }
+  function updateTimer(){
+    const e=activeEgg();if(!e||e.hatched){if(e?.hatched)meter.style.width="100%";return}
+    const line=lines[e.species]||lines.agumon;if(!e.startedAt){clockEl.textContent="00:30";meter.style.width="0%";return}
+    const elapsed=(Date.now()-e.startedAt)/1000+Math.min(e.pets||0,5)*2,left=Math.max(0,30-elapsed);
+    clockEl.textContent="00:"+String(Math.ceil(left)).padStart(2,"0");meter.style.width=Math.min(100,elapsed/30*100)+"%";
+    if(left<=0)hatch(e,line);
+  }
+  function react(){device.classList.remove("petting");void device.offsetWidth;device.classList.add("petting");setTimeout(()=>device.classList.remove("petting"),900)}
+  function pet(){
+    const e=activeEgg();if(!e)return;if(e.hatched){message.textContent="¡"+(lines[e.species]||lines.agumon).name+" está feliz!";react();return}
+    if(!e.startedAt)e.startedAt=Date.now();e.pets=Math.min(5,(e.pets||0)+1);save();
+    message.textContent=e.pets>=5?"¡El huevo se siente muy querido!":"Le das una caricia a "+(lines[e.species]||lines.agumon).name+".";
+    statusEl.textContent="¡QUÉ COSQUILLAS!";react();updateTimer();
+  }
+  function animateBuddy(){const e=activeEgg();if(!e?.hatched)return;message.textContent="¡"+(lines[e.species]||lines.agumon).name+" te saluda desde su dispositivo!";react()}
+  petButton.addEventListener("click",pet);feedButton.addEventListener("click",animateBuddy);
+  window.addEventListener("storage",event=>{if(event.key===inventoryKey){eggs=getEggs();chooseDefault();redrawList();renderScreen()}});
+  redrawList();renderScreen();setInterval(updateTimer,350);
+})();
 
 </script>
 </body></html>
