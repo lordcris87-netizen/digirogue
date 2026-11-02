@@ -68,6 +68,18 @@ class DigiRogueStaticTests(unittest.TestCase):
         self.assertIn('reducedMotion.matches', self.page)
         self.assertIn('document.hidden', self.page)
 
+    def test_hd_title_assets_available_without_paid_services(self):
+        for path in (ROOT/'assets'/'portada_hd.webp',
+                     ROOT/'assets'/'title_layers'/'background_hd.webp'):
+            with self.subTest(path=path.name):
+                header=path.read_bytes()[:12]
+                self.assertEqual(header[:4], b'RIFF')
+                self.assertEqual(header[8:12], b'WEBP')
+        self.assertIn("originalCoverHDURL",self.page)
+        self.assertIn("isolatedCoverHDURL",self.page)
+        self.assertIn("titleHDReady",self.page)
+        self.assertIn("originalTitleArtURL",self.page)
+
     def test_cover_painter_order_and_no_duplicate_flying_actor(self):
         # The original cover draws Gabumon behind Agumon, so the independent
         # layers must respect that order and not add a duplicate flying sprite.
