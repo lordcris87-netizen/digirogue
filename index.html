@@ -336,6 +336,24 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
  .pet-message{font-size:7px!important}
 }
 .vpet-egg-art{z-index:1;width:58px;height:70px;object-fit:contain;image-rendering:pixelated;filter:drop-shadow(2px 3px 0 #14243d);animation:eggFloat 1.7s steps(2,end) infinite}.egg-chip:has(.egg-chip-art){clip-path:none;overflow:hidden;background:#101c32}.egg-chip-art{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}@keyframes eggFloat{50%{transform:translateY(-3px) rotate(-2deg)}}
+
+/* Resumen personal en la portada */
+.tamer-progress{position:relative;z-index:2;margin:16px 0 0;padding:12px 13px;border:2px solid #59708f;background:linear-gradient(145deg,#101b2ceF,#0b1324f2);box-shadow:4px 4px 0 #030812,inset 2px 2px 0 #ffffff12}
+.tamer-progress-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:9px;border-bottom:1px solid #ffffff25}
+.tamer-progress-head>span{display:grid;gap:5px}
+.tamer-progress-head small{color:#b6c5d8;font:7px "Press Start 2P",monospace}
+.tamer-progress-head b{color:#ffe079;font:11px "Press Start 2P",monospace}
+.tamer-progress-head button{border:1px solid #657d9e;background:#1a2c46;color:#fff0b4;padding:6px 8px;font:8px "Silkscreen",monospace;cursor:pointer}
+.tamer-progress-head button:hover,.tamer-stat:hover{border-color:#ffe079;filter:brightness(1.14)}
+.tamer-progress-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:9px}
+.tamer-stat{min-width:0;min-height:52px;display:grid;align-content:center;gap:6px;text-align:left;padding:7px;border:1px solid #4a607d;background:#17243a;color:#f6f2e7;cursor:pointer}
+.tamer-stat small{overflow:hidden;color:#b9c9dc;font:6px "Press Start 2P",monospace;white-space:nowrap;text-overflow:clip}
+.tamer-stat b{color:#fff;font:14px "Press Start 2P",monospace}
+.tamer-stat:nth-child(2) b{color:#ffc96d}.tamer-stat:nth-child(3) b{color:#9de7d2}.tamer-stat:nth-child(4) b{color:#d6a9ff}
+.tamer-progress>p{margin:8px 0 0;color:#d4dfed;font:9px "Silkscreen",monospace;line-height:1.45}
+@media(max-width:700px){.tamer-progress{margin-top:12px;padding:10px}.tamer-progress-stats{gap:5px}.tamer-stat{min-height:49px;padding:6px}.tamer-stat small{font-size:5px}.tamer-stat b{font-size:12px}.tamer-progress-head small{font-size:6px}}
+@media(max-width:390px){.tamer-progress-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.tamer-stat small{font-size:6px}.tamer-progress-head b{font-size:10px}}
+
 </style>
 </head>
 <body>
@@ -357,6 +375,16 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
         <button class="launch-card launch-team" data-nav="equipo"><span class="launch-icon">♧</span><span class="launch-copy"><small>JUNTOS SOMOS MÁS</small><b>Mi equipo</b><i>Agumon y amigos</i></span><strong>→</strong></button>
       </div>
       <div class="quick-nav"><button data-nav="digidex"><span>◉</span>DIGIDEX</button><button data-nav="equipo"><span>✦</span>COMPAÑEROS</button><button data-nav="temporada"><span>♜</span>TEMPORADA</button><button data-nav="ajustes"><span>⚙</span>AJUSTES</button><button data-nav="incubadora"><span>🥚</span>HUEVOS</button></div>
+      <section class="tamer-progress" aria-label="Progreso del jugador">
+        <div class="tamer-progress-head"><span><small>GUARDADO EN ESTE NAVEGADOR</small><b>PROGRESO TAMER</b></span><button type="button" data-nav="digidex">VER DEX ↗</button></div>
+        <div class="tamer-progress-stats">
+          <button type="button" class="tamer-stat" data-nav="equipo"><small>NIVEL MÁX.</small><b id="progressBestLevel">—</b></button>
+          <button type="button" class="tamer-stat" data-nav="temporada"><small>JEFES</small><b id="progressBossWins">0</b></button>
+          <button type="button" class="tamer-stat" data-nav="digidex"><small>DIGIDEX</small><b id="progressDexCount">1 / 4</b></button>
+          <button type="button" class="tamer-stat" data-nav="incubadora"><small>HUEVOS</small><b id="progressEggCount">0</b></button>
+        </div>
+        <p id="progressHint">Juega una partida para empezar a guardar tus logros.</p>
+      </section>
       <div class="notice"><span>✧</span><span><b>Un nuevo mundo está despertando</b><small>Tu equipo tiene un lugar en esta historia.</small></span></div>
     </div>
     <aside class="ranking-panel"><div class="panel-heading"><div><small>AHORA EN EL MUNDO DIGITAL</small><h2>Temporada <span>01</span></h2></div><span class="live-dot">● ACTIVA</span></div><div class="season-art"><span>✧</span><b>BOSQUE<br>DEL COMIENZO</b><small>Una nueva historia despierta</small><div class="season-mons"><img src="assets/launcher/digimon/agumon.png" alt="Agumon"><img class="locked-mon" src="assets/launcher/digimon/patamon.png" alt="Digimon aún no descubierto"></div></div><div class="board-heading"><b>◆ DIGIMON DESTACADOS</b><button data-nav="digidex">VER DEX <span>→</span></button></div><div class="rank-row"><span class="place gold">01</span><span class="mini-mon orange"><img src="assets/launcher/digimon/agumon.png" alt=""></span><span class="rank-name"><b>Agumon</b><small>ROOKIE · FUEGO</small></span><strong>ROOKIE</strong></div><div class="rank-row"><span class="place silver">02</span><span class="mini-mon blue is-locked"><img src="assets/launcher/digimon/gabumon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="rank-row"><span class="place bronze">03</span><span class="mini-mon pink is-locked"><img src="assets/launcher/digimon/patamon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="panel-foot"><span>Compañeros del Mundo Digital</span><span>✦ &nbsp; 01 / 08</span></div></aside>
@@ -654,6 +682,27 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   redrawList();renderScreen();setInterval(()=>{updateTimer();const e=activeEgg();if(e?.hatched)renderNeeds(e)},35000);
 })();
 
+
+(() => {
+  const statsKey="digirogue-run-progress", eggsKey="digirogue-egg-inventory", buddiesKey="digirogue-buddies";
+  const read=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||"null");return value??fallback}catch(_){return fallback}};
+  function updateHomeProgress(){
+    const stats=read(statsKey,{}),eggs=read(eggsKey,[]),buddies=read(buddiesKey,[]);
+    const found=new Set(["agumon",...(Array.isArray(buddies)?buddies:[])]);
+    const pending=Array.isArray(eggs)?eggs.filter(egg=>!egg.hatched).length:0;
+    const level=Number(stats.bestLevel)||0,wins=Number(stats.bossWins)||0,games=Number(stats.gamesPlayed)||0;
+    const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
+    put("progressBestLevel",level?String(level).padStart(2,"0"):"—");
+    put("progressBossWins",wins);
+    put("progressDexCount",Math.min(found.size,4)+" / 4");
+    put("progressEggCount",pending);
+    const hint=document.getElementById("progressHint");
+    if(hint)hint.textContent=games?("Partidas: "+games+" · Récord: "+(Number(stats.bestKills)||0)+" enemigos en una partida."): "Juega una partida para empezar a guardar tus logros.";
+  }
+  updateHomeProgress();
+  addEventListener("storage",event=>{if([statsKey,eggsKey,buddiesKey].includes(event.key))updateHomeProgress()});
+  addEventListener("digirogue-buddy-update",updateHomeProgress);
+})();
 </script>
 </body></html>
 
