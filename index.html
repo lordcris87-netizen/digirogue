@@ -61,7 +61,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 <div id="home">
  <div class="stage" aria-label="Portada pixel art DigiRogue">
   <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
-  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — laboratorio animado</span>
+  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — sprites en pruebas</span>
   <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
   <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
   <button class="hotspot guide" aria-label="Guía" id="goHelp"></button>
@@ -169,18 +169,7 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
  for(let i=0;i<13;i++){let a=t*.78+i*Math.PI*2/13;wc.fillStyle='#83ffffaa';wc.fillRect(835+Math.cos(a)*138,155+Math.sin(a)*115,5,5)}
  // Visible animated foliage and pixel particles; no image cutouts.
  for(let i=0;i<34;i++){const x=((i*131+53+t*(16+i%5*5))%1750)-30;const y=((i*89+60+t*(8+i%3*7))%1010)-30;wc.save();wc.translate(x+Math.sin(t*1.7+i)*16,y);wc.rotate(t*.6+i);wc.fillStyle=i%3===0?'#fff0aaaf':i%3===1?'#8aee8bb8':'#ffb9d4a6';wc.fillRect(-6,-2,12,5);wc.fillRect(-2,-6,4,13);wc.restore()}
- // Add subtle character expressions without displacing any flattened artwork.
- const blink=t0=>{const q=(t+t0)%6.2;return q<.11||(q>.18&&q<.24)};
- wc.save();wc.imageSmoothingEnabled=false;
- // Eyes close briefly using each creature's adjacent fur/skin tones.
- if(blink(.4)){wc.fillStyle='#f4bd21';wc.fillRect(168,526,26,30);wc.fillStyle='#183b2b';wc.fillRect(170,541,21,3);wc.fillStyle='#fee479';wc.fillRect(168,526,4,15)}
- if(blink(1.6)){wc.fillStyle='#f6f6ff';wc.fillRect(400,603,24,22);wc.fillStyle='#2e204c';wc.fillRect(400,615,22,3)}
- if(blink(3.2)){wc.fillStyle='#f69dc2';wc.fillRect(1468,589,18,20);wc.fillStyle='#43263f';wc.fillRect(1471,602,14,3)}
- // Wing/ear flicks: isolated accent pixels, not copies of the underlying creature.
- const wing=Math.sin(t*8);
- wc.fillStyle='#f6a0ca88';
- for(let j=0;j<4;j++)wc.fillRect(1541+j*7,618+Math.round(wing*3)+j%2*3,7,3);
- wc.restore();
+ // Leave flattened cover creatures untouched: pixel masks gave visibly incorrect eyes.
  drawTitleActors(t);
  // No extra bat over the painted flying character.
 
@@ -193,8 +182,11 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
  for(let i=0;i<22;i++){const x=65+random(i+450)*490,y=820+random(i+480)*105;wc.fillStyle=i%2?'#b8f77b65':'#f1dd83a0';wc.fillRect(Math.round(x+Math.sin(t*2+i)*2),Math.round(y),2,4)}
  }requestAnimationFrame(homeMotion)}requestAnimationFrame(homeMotion);
 // Independent, reusable animated-sprite layer. Its sprites never copy pixels from the cover.
+// Transparent sprite sheets drawn separately from the original cover image.
+// The original painted creatures remain untouched until clean-background art exists.
 const titleActors=[
- {src:'/assets/bat.png',frameW:96,frameH:96,columns:8,rows:8,fps:8,x:280,y:108,w:78,h:78,phase:0,alpha:.94}
+ {src:'/assets/bat.png',cols:8,rows:8,frameW:96,frameH:96,fps:9,row:0,x:275,y:112,w:70,h:70,alpha:.92,kind:'fly',phase:0},
+ {src:'/assets/kunemon.png',cols:4,rows:8,frameW:96,frameH:96,fps:4,row:0,x:1130,y:835,w:72,h:72,alpha:.94,kind:'crawl',phase:1.7}
 ];
 const titleActorImages=new Map();
 for(const actor of titleActors){const im=new Image();im.decoding='async';im.src=actor.src;titleActorImages.set(actor.src,im)}
@@ -202,17 +194,19 @@ function drawTitleActors(t){
  for(const actor of titleActors){
   const im=titleActorImages.get(actor.src);
   if(!im?.complete||!im.naturalWidth)continue;
-  const cols=Math.min(actor.columns,Math.floor(im.naturalWidth/actor.frameW));
-  const rows=Math.min(actor.rows,Math.floor(im.naturalHeight/actor.frameH));
-  if(!cols||!rows)continue;
-  // Use a consistent facing row (eight real animation frames), not mixed facing directions.
-  const frame=Math.floor(t*actor.fps+actor.phase)%cols;
-  const x=actor.x+Math.sin(t*.55+actor.phase)*48;
-  const y=actor.y+Math.sin(t*2.8+actor.phase)*12;
+  const colCount=Math.min(actor.cols,Math.floor(im.naturalWidth/actor.frameW));
+  if(!colCount)continue;
+  const col=Math.floor(t*actor.fps+actor.phase)%colCount;
+  const row=Math.min(actor.row,Math.floor(im.naturalHeight/actor.frameH)-1);
+  if(row<0)continue;
+  const flying=actor.kind==='fly';
+  const x=actor.x+(flying?Math.sin(t*.55)*49:Math.sin(t*.38)*17);
+  const y=actor.y+(flying?Math.sin(t*2.6)*12:Math.sin(t*5.1)*2);
   wc.save();wc.imageSmoothingEnabled=false;wc.globalAlpha=actor.alpha;
+  if(!flying){wc.fillStyle='#092e327a';wc.fillRect(Math.round(x-22),Math.round(y+28),44,5)}
   wc.translate(Math.round(x),Math.round(y));
-  wc.drawImage(im,frame*actor.frameW,0,actor.frameW,actor.frameH,
-               -actor.w/2,-actor.h/2,actor.w,actor.h);
+  if(flying)wc.scale(Math.cos(t*.55)>0?1:-1,1);
+  wc.drawImage(im,col*actor.frameW,row*actor.frameH,actor.frameW,actor.frameH,-actor.w/2,-actor.h/2,actor.w,actor.h);
   wc.restore();
  }
 }
