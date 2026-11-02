@@ -1010,6 +1010,9 @@ function recordRunProgress(){
   const endedAt=Date.now(),entry={level:player.level,kills:world.kill,seconds:Math.floor(world.elapsed),bossWon:!!world.bossDead,endedAt};
   const history=Array.isArray(previous.history)?previous.history:[];
   history.push(entry);stats.history=history.slice(-10);
+  const today=new Date(endedAt),dayKey=[today.getFullYear(),String(today.getMonth()+1).padStart(2,'0'),String(today.getDate()).padStart(2,'0')].join('-');
+  const daily=previous.dailyChallenge?.date===dayKey?previous.dailyChallenge:{date:dayKey,kills:0};
+  stats.dailyChallenge={date:dayKey,kills:(Number(daily.kills)||0)+world.kill};
   stats.gamesPlayed++;stats.bestLevel=Math.max(stats.bestLevel,player.level);stats.bestKills=Math.max(stats.bestKills,world.kill);
   if(world.bossDead)stats.bossWins++;
   Object.assign(stats,{lastLevel:player.level,lastKills:world.kill,lastSeconds:Math.floor(world.elapsed),updatedAt:endedAt});
