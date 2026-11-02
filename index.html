@@ -422,7 +422,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   }
   function hatch(e,line){
     e.hatched=true;e.hatchedAt=Date.now();
-    try{const saved=JSON.parse(localStorage.getItem(buddyKey)||"[]"),buddies=Array.isArray(saved)?saved:[];if(!buddies.includes(e.species))buddies.push(e.species);localStorage.setItem(buddyKey,JSON.stringify(buddies))}catch(_){}
+    try{const saved=JSON.parse(localStorage.getItem(buddyKey)||"[]"),buddies=Array.isArray(saved)?saved:[];if(!buddies.includes(e.species))buddies.push(e.species);localStorage.setItem(buddyKey,JSON.stringify(buddies));window.dispatchEvent(new CustomEvent("digirogue-buddy-update"))}catch(_){}
     save();message.textContent="¡"+line.name+" ha salido del huevo! Ya es parte de tu equipo.";
     redrawList();renderScreen();
   }
@@ -451,7 +451,27 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   }
   function animateBuddy(){const e=activeEgg();if(!e?.hatched)return;message.textContent="¡"+(lines[e.species]||lines.agumon).name+" te saluda desde su dispositivo!";react()}
   petButton.addEventListener("click",pet);feedButton.addEventListener("click",animateBuddy);
+  function syncDigidex(){
+    let buddies=[];try{buddies=JSON.parse(localStorage.getItem(buddyKey)||"[]")}catch(_){}
+    const reveal=(card,id,line)=>{
+      card.classList.remove("is-locked");const img=card.querySelector("img");if(img)img.alt=line.name;
+      const small=card.querySelector("small");if(small)small.textContent="COMPAÑERO · DESBLOQUEADO";
+      const heading=card.querySelector("h3")||card.querySelector(".team-mini b");if(heading)heading.textContent=line.name;
+      const p=card.querySelector("p");if(p)p.textContent="Tu compañero digital ya forma parte de tu equipo.";
+      const badge=card.querySelector(".lock-badge,.digi-art i");if(badge)badge.remove();
+      const number=card.querySelector(".digi-number");if(number)number.textContent="#"+String(["agumon","gabumon","patamon","koromon"].indexOf(id)+1).padStart(3,"0");
+    };
+    document.querySelectorAll("#view-digidex .digi-card,#view-equipo .team-mini").forEach(card=>{
+      const src=card.querySelector("img")?.getAttribute("src")||"",id=src.split("/").pop().replace(".png","");
+      if(buddies.includes(id)&&lines[id])reveal(card,id,lines[id]);
+    });
+    document.querySelectorAll(".ranking-panel .mini-mon.is-locked").forEach(icon=>{
+      const src=icon.querySelector("img")?.getAttribute("src")||"",id=src.split("/").pop().replace(".png",""),row=icon.closest(".rank-row");
+      if(buddies.includes(id)&&lines[id]&&row){icon.classList.remove("is-locked");const title=row.querySelector(".rank-name b"),sub=row.querySelector(".rank-name small"),rank=row.querySelector("strong");if(title)title.textContent=lines[id].name;if(sub)sub.textContent="COMPAÑERO · DESBLOQUEADO";if(rank)rank.textContent="LISTO"}
+    });
+  }
   window.addEventListener("storage",event=>{if(event.key===inventoryKey){eggs=getEggs();chooseDefault();redrawList();renderScreen()}});
+  syncDigidex();window.addEventListener("digirogue-buddy-update",syncDigidex);window.addEventListener("storage",event=>{if(event.key===buddyKey)syncDigidex()});
   redrawList();renderScreen();setInterval(updateTimer,350);
 })();
 
