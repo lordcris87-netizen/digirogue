@@ -408,6 +408,35 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 .achievement-tile.unlocked>strong{color:#ffe18b}
 @media(max-width:560px){.achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:370px){.achievement-grid{grid-template-columns:1fr}.achievement-tile{min-height:54px}}
+.journey-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:9px;margin-top:10px}
+.journey-panel{min-width:0;padding:11px;border:1px solid #ffffff36;border-radius:10px;background:linear-gradient(145deg,#111d2beF,#17192ade);box-shadow:inset 0 1px #ffffff10}
+.journey-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.journey-heading>span:first-child{display:grid;gap:5px}
+.journey-heading small{color:#c9cfda;font-size:6px;font-weight:800;letter-spacing:.7px}
+.journey-heading b{color:#ffe18b;font-size:8px}
+.journey-heading>strong,.journey-heading>span:last-child{color:#aee8df;font-size:8px}
+.run-history{list-style:none;display:grid;gap:4px;margin:0;padding:0}
+.run-history-item{display:grid;grid-template-columns:20px minmax(0,1fr);align-items:center;gap:7px;padding:5px 6px;border:1px solid #ffffff16;border-radius:6px;background:#ffffff06}
+.run-history-index{width:18px;height:18px;display:grid;place-items:center;border:1px solid #f3d47d55;border-radius:4px;color:#f5d982;font-family:"Press Start 2P",monospace;font-size:6px}
+.run-history-copy{min-width:0}
+.run-history-copy>b,.run-history-copy>small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.run-history-copy>b{color:#f2f0e8;font-size:6px}
+.run-history-copy>small{margin-top:3px;color:#c6ccd6;font-size:6px}
+.history-empty{padding:12px 7px;color:#ccd2dc;font-size:7px;line-height:1.6}
+.history-toggle{margin-top:7px;padding:6px 8px;border:1px solid #ffe18b55;border-radius:5px;background:#ffe18b0f;color:#ffe18b;font-size:6px;font-weight:900;cursor:pointer}
+.history-toggle:hover{background:#ffe18b22}
+.challenge-card{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 8px;padding:9px 8px;border:1px solid #ffffff20;border-radius:7px;background:#ffffff06}
+.challenge-card+ .challenge-card{margin-top:7px}
+.challenge-card>div:first-child{min-width:0}
+.challenge-card small,.challenge-card b{display:block}
+.challenge-card small{color:#c6cbd6;font-size:5px;line-height:1.5}
+.challenge-card b{margin-top:4px;color:#f4f0e4;font-size:7px}
+.challenge-card>strong{align-self:center;color:#f4d477;font-size:7px;white-space:nowrap}
+.challenge-meter{grid-column:1/-1;height:4px;overflow:hidden;border:1px solid #ffffff1c;border-radius:5px;background:#080e18}
+.challenge-meter i{display:block;width:0;height:100%;background:linear-gradient(90deg,#8be9df,#ffd978);transition:width .3s}
+.challenge-card.complete{border-color:#f5d27469;background:#4e3a192d}
+.challenge-card.complete>strong{color:#c8f2ba}
+@media(max-width:560px){.journey-grid{grid-template-columns:1fr}.run-history-item{padding:6px}.challenge-card small{font-size:6px}}
 </style>
 </head>
 <body>
@@ -462,6 +491,26 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
           <div class="launcher-egg-progress"><strong id="launcherEggTimer">--:--</strong><div class="launcher-egg-track"><i id="launcherEggFill"></i></div></div>
           <a id="launcherEggAction" class="launcher-egg-action" href="#incubadora" data-nav="incubadora">ABRIR DIGIVICE <span>↗</span></a>
         </div>
+        <section class="journey-grid" aria-label="Historial y retos">
+          <article class="journey-panel history-panel">
+            <div class="journey-heading"><span><small>BITÁCORA TAMER</small><b>ÚLTIMAS AVENTURAS</b></span><strong id="historyCount">0 / 10</strong></div>
+            <ol class="run-history" id="runHistory"><li class="history-empty">Tu historial aparecerá al terminar una partida.</li></ol>
+            <button type="button" class="history-toggle hidden" id="runHistoryToggle" aria-expanded="false">VER 10 PARTIDAS</button>
+          </article>
+          <article class="journey-panel challenge-panel">
+            <div class="journey-heading"><span><small>RETO LOCAL · PROGRESO GUARDADO</small><b>RETOS TEMPORALES</b></span><span aria-hidden="true">✦</span></div>
+            <div class="challenge-card" id="dailyChallengeCard">
+              <div><small>DIARIO · SE RENUEVA A MEDIANOCHE</small><b>Derrota 20 enemigos hoy</b></div>
+              <strong id="dailyChallengeProgress">0 / 20</strong>
+              <div class="challenge-meter"><i id="dailyChallengeFill"></i></div>
+            </div>
+            <div class="challenge-card weekly-challenge" id="weeklyChallengeCard">
+              <div><small>SEMANAL · NUEVO RETO CADA LUNES</small><b>Completa 3 partidas</b></div>
+              <strong id="weeklyChallengeProgress">0 / 3</strong>
+              <div class="challenge-meter"><i id="weeklyChallengeFill"></i></div>
+            </div>
+          </article>
+        </section>
         <section class="achievements-panel" aria-label="Insignias Tamer">
           <div class="achievements-heading"><span><small>RETOS COMPLETADOS · RECUERDOS GANADOS</small><b>INSIGNIAS TAMER</b></span><strong id="achievementCount">0 / 6</strong></div>
           <div class="achievement-grid" id="achievementGrid" aria-live="polite"></div>
@@ -799,11 +848,44 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       action.textContent=hatched?"CUIDAR EQUIPO ↗":"ABRIR DIGIVICE ↗";action.href="#incubadora";
     }
   }
+  let historyData=[],showAllRuns=false;
+  function drawRunHistory(){
+    const list=document.getElementById("runHistory"),toggle=document.getElementById("runHistoryToggle");
+    if(!list)return;
+    const visible=historyData.slice(0,showAllRuns?10:5);
+    list.innerHTML=visible.length?visible.map((run,index)=>{
+      const level=Math.max(0,Number(run.level)||0),kills=Math.max(0,Number(run.kills)||0),seconds=Math.max(0,Number(run.seconds)||0);
+      const duration=String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");
+      const date=Number(run.endedAt)?new Intl.DateTimeFormat("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(Number(run.endedAt))):"";
+      return '<li class="run-history-item"><span class="run-history-index">'+String(index+1).padStart(2,"0")+'</span><span class="run-history-copy"><b>NIVEL '+String(level).padStart(2,"0")+' · '+kills+' ENEMIGOS</b><small>'+duration+(date?' · '+date:'')+(run.bossWon?' · JEFE':'')+'</small></span></li>';
+    }).join(""):'<li class="history-empty">Termina una partida y aparecerá aquí.</li>';
+    if(toggle){toggle.classList.toggle("hidden",historyData.length<=5);toggle.textContent=showAllRuns?"MOSTRAR 5":"VER "+Math.min(historyData.length,10)+" PARTIDAS";toggle.setAttribute("aria-expanded",String(showAllRuns))}
+  }
+  const historyToggle=document.getElementById("runHistoryToggle");
+  historyToggle?.addEventListener("click",()=>{showAllRuns=!showAllRuns;drawRunHistory()});
+  function updateJourney(stats){
+    historyData=(Array.isArray(stats.history)?stats.history:[]).filter(run=>run&&Number(run.endedAt)>0).slice(-10).reverse();
+    const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
+    put("historyCount",historyData.length+" / 10");drawRunHistory();
+    const now=new Date(),todayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+    const day=stats.dailyChallenge,todayKey=[now.getFullYear(),String(now.getMonth()+1).padStart(2,"0"),String(now.getDate()).padStart(2,"0")].join("-");
+    const dailyKills=day?.date===todayKey?Math.max(0,Number(day.kills)||0):0;
+    const weekStart=new Date(now.getFullYear(),now.getMonth(),now.getDate()-((now.getDay()+6)%7)).getTime();
+    const weeklyRuns=historyData.filter(run=>Number(run.endedAt)>=weekStart).length;
+    const paint=(name,value,target)=>{
+      const card=document.getElementById(name+"ChallengeCard"),label=document.getElementById(name+"ChallengeProgress"),bar=document.getElementById(name+"ChallengeFill");
+      const done=value>=target;
+      if(card)card.classList.toggle("complete",done);
+      if(label)label.textContent=done?"¡HECHO!":Math.min(value,target)+" / "+target;
+      if(bar)bar.style.width=Math.min(100,Math.round(value/target*100))+"%";
+    };
+    paint("daily",dailyKills,20);paint("weekly",weeklyRuns,3);
+  }
   function updateHomeProgress(){
     const stats=read(statsKey,{}),eggs=read(eggsKey,[]),buddies=read(buddiesKey,[]);
     const found=new Set(["agumon",...(Array.isArray(buddies)?buddies:[])]);
     const pending=Array.isArray(eggs)?eggs.filter(egg=>!egg.hatched).length:0;
-    updateLauncherEgg();
+    updateLauncherEgg();updateJourney(stats);
     const level=Number(stats.bestLevel)||0,wins=Number(stats.bossWins)||0,games=Number(stats.gamesPlayed)||0;
     const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
     put("progressBestLevel",level?String(level).padStart(2,"0"):"—");
@@ -868,6 +950,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   addEventListener("digirogue-buddy-update",updateHomeProgress);
   addEventListener("digirogue-egg-update",updateHomeProgress);
   setInterval(updateLauncherEgg,1000);
+  setInterval(()=>updateJourney(read(statsKey,{})),60000);
 })();
 </script>
 </body></html>
