@@ -61,7 +61,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 <div id="home">
  <div class="stage" aria-label="Portada pixel art DigiRogue">
   <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
-  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada animada v2.2</span>
+  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada animada v2.3</span>
   <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
   <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
   <button class="hotspot guide" aria-label="Guía" id="goHelp"></button>
@@ -169,6 +169,7 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
  for(let i=0;i<13;i++){let a=t*.78+i*Math.PI*2/13;wc.fillStyle='#83ffffaa';wc.fillRect(835+Math.cos(a)*138,155+Math.sin(a)*115,5,5)}
  // Visible animated foliage and pixel particles; no image cutouts.
  for(let i=0;i<34;i++){const x=((i*131+53+t*(16+i%5*5))%1750)-30;const y=((i*89+60+t*(8+i%3*7))%1010)-30;wc.save();wc.translate(x+Math.sin(t*1.7+i)*16,y);wc.rotate(t*.6+i);wc.fillStyle=i%3===0?'#fff0aaaf':i%3===1?'#8aee8bb8':'#ffb9d4a6';wc.fillRect(-6,-2,12,5);wc.fillRect(-2,-6,4,13);wc.restore()}
+ drawTitleBat(t);
  // Additive ambient effects: no cutouts of characters or moving background patches.
  wc.save();wc.globalAlpha=.11;
  for(let i=0;i<5;i++){const x=((190+i*315+t*(4+i%3*2))%1920)-120,y=65+i%2*32;wc.fillStyle='#f4ffff';wc.fillRect(Math.round(x/6)*6,y,66,6);wc.fillRect(Math.round(x/6)*6+15,y-6,40,6);wc.fillRect(Math.round(x/6)*6+18,y+6,48,5)}
@@ -177,6 +178,24 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
  for(let i=0;i<25;i++){const x=650+(random(i+4)*490+t*(12+i%5*3))%510,y=712+random(i+88)*92+Math.sin(t*1.8+i)*3;wc.fillStyle='#e8ffff80';wc.fillRect(Math.round(x),Math.round(y),12+i%3*6,2)}
  for(let i=0;i<22;i++){const x=65+random(i+450)*490,y=820+random(i+480)*105;wc.fillStyle=i%2?'#b8f77b65':'#f1dd83a0';wc.fillRect(Math.round(x+Math.sin(t*2+i)*2),Math.round(y),2,4)}
  }requestAnimationFrame(homeMotion)}requestAnimationFrame(homeMotion);
+// A standalone flying creature sprite; intentionally placed away from painted characters.
+// The original cover includes flattened creatures, so those cannot be individually moved without a clean background.
+const titleBat=new Image();titleBat.src='/assets/bat.png';
+function drawTitleBat(t){
+ if(!titleBat.complete||!titleBat.naturalWidth)return;
+ const frameSize=96;
+ const columns=Math.max(1,Math.floor(titleBat.naturalWidth/frameSize));
+ const frame=Math.floor(t*7)%Math.min(columns,6);
+ const sx=columns>1?frame*frameSize:0;
+ const sw=columns>1?frameSize:titleBat.naturalWidth;
+ const sh=Math.min(frameSize,titleBat.naturalHeight);
+ const x=320+Math.sin(t*.52)*100,y=115+Math.sin(t*2.3)*18;
+ wc.save();wc.imageSmoothingEnabled=false;wc.globalAlpha=.86;
+ wc.translate(Math.round(x),Math.round(y));
+ wc.scale(Math.sin(t*.52)>0?1:-1,1);
+ wc.drawImage(titleBat,sx,0,sw,sh,-30,-28,60,56);
+ wc.restore();
+}
 // ONLINE ARENA rendering + networking.
 const canvas=$('gameCanvas'),ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
 const sprites={};for(const name of ['agumon_idle','agumonWalk','agumon_attack','kunemon','goblimon']){let im=new Image();im.src='/assets/'+name+'.png';sprites[name]=im}
