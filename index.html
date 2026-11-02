@@ -213,6 +213,14 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 @media(max-width:700px){.vpet-device{max-width:390px;min-height:350px}.vpet-screen{width:50%;max-width:190px}.vpet-device-top{top:19px}.digivice-markings-top{top:51px;font-size:7px}.digivice-markings-bottom{bottom:42px}.tama-control{width:60px!important}.tama-control i{width:44px;height:36px}.tama-control-a{left:0}.tama-control-b,.tama-control-c{right:0}.pet-message{left:13%;right:13%;font-size:6px}}
 @media(max-width:380px){.vpet-device{min-height:320px}.vpet-screen{width:52%;max-width:176px;padding:10px}.vpet-device-top{font-size:6px}.digivice-markings-top{font-size:6px;letter-spacing:1px}.tama-control{width:53px!important}.tama-control i{width:39px;height:32px}.tama-control small{font-size:4px}}
 
+
+/* Stronger raised rim and less vertical casing, matching the molded Digivice silhouette. */
+.vpet-device{min-height:335px;filter:drop-shadow(0 5px 0 #354f88) drop-shadow(0 11px 0 #122043) drop-shadow(0 17px 11px #0009)}
+.vpet-device:before{inset:-5px;background:linear-gradient(145deg,#ffffff 0%,#b6d0f7 18%,#49669f 57%,#15264e 100%);box-shadow:inset 0 8px 0 #fff,inset 0 -12px 0 #101d40}
+.vpet-device:after{inset:0;background:linear-gradient(145deg,#f5fbff 0%,#d8e9ff 15%,#a8c8f3 45%,#83a4df 72%,#5f78b2 100%);box-shadow:inset 0 10px 0 #ffffffd9,inset 6px 0 0 #ffffff70,inset -6px 0 0 #51699c,inset 0 -14px 0 #435b91}
+@media(max-width:700px){.vpet-device{min-height:325px}}
+@media(max-width:380px){.vpet-device{min-height:310px}}
+
 </style>
 </head>
 <body>
