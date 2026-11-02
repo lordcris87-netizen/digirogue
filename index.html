@@ -61,7 +61,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 <div id="home">
  <div class="stage" aria-label="Portada pixel art DigiRogue">
   <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
-  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — sprites en pruebas</span>
+  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — prototipo de sprites v3</span>
   <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
   <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
   <button class="hotspot guide" aria-label="Guía" id="goHelp"></button>
@@ -160,7 +160,8 @@ $('goPlay').onclick=$('openOnline').onclick=lobby;$('goClassic').onclick=$('open
 const weather=$('weather'),wc=weather.getContext('2d');let startAt=performance.now(),leaves=[];
 function random(i){return (Math.sin(i*91.37)*104927.47)%1<0?1+(Math.sin(i*91.37)*104927.47)%1:(Math.sin(i*91.37)*104927.47)%1}
 for(let i=0;i<58;i++)leaves.push({x:random(i+2)*1672,y:random(i+13)*941,rate:23+random(i+17)*62,color:i%4===0?'#bafa74':'#ffa3d6'});
-function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
+const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
+function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!document.hidden&&!reducedMotion.matches){
  wc.clearRect(0,0,1672,941);
  for(let i=0;i<leaves.length;i++){let p=leaves[i],x=(p.x+t*p.rate+Math.sin(t*2+i)*26)%1720-20,y=(p.y+t*(p.rate*.72+9))%990-20;wc.save();wc.translate(x,y);wc.rotate(t*2+i);wc.globalAlpha=.75;wc.fillStyle=p.color;wc.fillRect(-4,-2,9,5);wc.restore()}
  for(let i=0;i<26;i++){let x=36+random(i+250)*555+Math.sin(t*1.8+i*.8)*16,y=10+random(i+130)*230;wc.fillStyle=i%2?'#affb6642':'#225c3a54';wc.fillRect(x,y,9,5)}
@@ -184,29 +185,34 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
 // Independent, reusable animated-sprite layer. Its sprites never copy pixels from the cover.
 // Transparent sprite sheets drawn separately from the original cover image.
 // The original painted creatures remain untouched until clean-background art exists.
+// Prototype actors are drawn ONLY from standalone transparent sprite sheets.
+// Original flattened characters stay fixed: moving them requires real clean-background art.
 const titleActors=[
- {src:'/assets/bat.png',cols:8,rows:8,frameW:96,frameH:96,fps:9,row:0,x:275,y:112,w:70,h:70,alpha:.92,kind:'fly',phase:0},
- {src:'/assets/kunemon.png',cols:4,rows:8,frameW:96,frameH:96,fps:4,row:0,x:1130,y:835,w:72,h:72,alpha:.94,kind:'crawl',phase:1.7}
+ {src:'/assets/bat.png',cell:96,frames:8,row:0,fps:8,x:300,y:115,w:72,h:72,phase:0,kind:'fly'},
+ {src:'/assets/kunemon.png',cell:96,frames:4,row:0,fps:4,x:1125,y:850,w:72,h:72,phase:1.4,kind:'walk'}
 ];
 const titleActorImages=new Map();
-for(const actor of titleActors){const im=new Image();im.decoding='async';im.src=actor.src;titleActorImages.set(actor.src,im)}
+for(const actor of titleActors){
+ const image=new Image();image.decoding='async';image.src=actor.src;
+ titleActorImages.set(actor.src,image);
+}
 function drawTitleActors(t){
  for(const actor of titleActors){
-  const im=titleActorImages.get(actor.src);
-  if(!im?.complete||!im.naturalWidth)continue;
-  const colCount=Math.min(actor.cols,Math.floor(im.naturalWidth/actor.frameW));
-  if(!colCount)continue;
-  const col=Math.floor(t*actor.fps+actor.phase)%colCount;
-  const row=Math.min(actor.row,Math.floor(im.naturalHeight/actor.frameH)-1);
-  if(row<0)continue;
+  const image=titleActorImages.get(actor.src);
+  if(!image?.complete||!image.naturalWidth||!image.naturalHeight)continue;
+  const cols=Math.min(actor.frames,Math.floor(image.naturalWidth/actor.cell));
+  const rows=Math.floor(image.naturalHeight/actor.cell);
+  if(cols<1||rows<=actor.row)continue;
+  const frame=Math.floor((t+actor.phase)*actor.fps)%cols;
   const flying=actor.kind==='fly';
-  const x=actor.x+(flying?Math.sin(t*.55)*49:Math.sin(t*.38)*17);
-  const y=actor.y+(flying?Math.sin(t*2.6)*12:Math.sin(t*5.1)*2);
-  wc.save();wc.imageSmoothingEnabled=false;wc.globalAlpha=actor.alpha;
-  if(!flying){wc.fillStyle='#092e327a';wc.fillRect(Math.round(x-22),Math.round(y+28),44,5)}
+  const x=actor.x+(flying?Math.sin(t*.6)*52:Math.sin(t*.4)*18);
+  const y=actor.y+(flying?Math.sin(t*2.9)*14:Math.abs(Math.sin(t*5)) * 3);
+  wc.save();
+  wc.imageSmoothingEnabled=false;
+  wc.globalAlpha=.93;
   wc.translate(Math.round(x),Math.round(y));
-  if(flying)wc.scale(Math.cos(t*.55)>0?1:-1,1);
-  wc.drawImage(im,col*actor.frameW,row*actor.frameH,actor.frameW,actor.frameH,-actor.w/2,-actor.h/2,actor.w,actor.h);
+  if(flying&&Math.cos(t*.6)<0)wc.scale(-1,1);
+  wc.drawImage(image,frame*actor.cell,actor.row*actor.cell,actor.cell,actor.cell,-actor.w/2,-actor.h/2,actor.w,actor.h);
   wc.restore();
  }
 }
