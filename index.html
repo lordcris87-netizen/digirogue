@@ -368,6 +368,24 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 .progress-followup>a:hover{color:#fff}
 .progress-followup>a span{font-size:11px}
 @media(max-width:430px){.progress-followups{grid-template-columns:1fr}.progress-followup>p{min-height:0}}
+.launcher-egg-summary{display:grid;grid-template-columns:48px minmax(0,1fr) 58px auto;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border:1px solid #ffe18b55;border-radius:10px;background:linear-gradient(100deg,#24213adf,#111d2beF);box-shadow:inset 0 1px #ffffff14}
+.launcher-egg-visual{width:46px;height:46px;display:grid;place-items:center;border:1px solid #fff2;border-radius:9px;background:#ffffff0c;overflow:hidden}
+.launcher-egg-visual img{width:100%;height:100%;object-fit:contain;image-rendering:pixelated}
+.launcher-egg-visual span{font-size:24px;filter:drop-shadow(0 2px 4px #0008)}
+.launcher-egg-copy{min-width:0}
+.launcher-egg-copy .followup-label{gap:5px}
+.launcher-egg-copy .followup-label small{font-size:6px}
+.launcher-egg-copy>b{display:block;margin-top:5px;color:#fff;font-size:9px;line-height:1.4}
+.launcher-egg-copy>p{margin:3px 0 0;color:#d2d7e2;font-size:8px;line-height:1.45}
+.launcher-egg-progress{text-align:center}
+.launcher-egg-progress strong{display:block;color:#ffe18b;font-size:11px}
+.launcher-egg-track{height:5px;margin-top:6px;overflow:hidden;border:1px solid #ffffff26;border-radius:6px;background:#0a1221}
+.launcher-egg-track i{display:block;width:0;height:100%;background:linear-gradient(90deg,#8be9df,#ffd978);transition:width .35s}
+.launcher-egg-action{display:inline-flex;align-items:center;gap:4px;padding:8px 9px;border:1px solid #ffe18b5c;border-radius:6px;background:#ffe18b12;color:#ffe18b;font-size:6px;font-weight:900;letter-spacing:.3px;text-decoration:none;white-space:nowrap}
+.launcher-egg-action:hover{background:#ffe18b28;color:#fff}
+.launcher-egg-action span{font-size:10px}
+@media(max-width:520px){.launcher-egg-summary{grid-template-columns:42px minmax(0,1fr) 52px;gap:8px}.launcher-egg-visual{width:40px;height:40px}.launcher-egg-action{grid-column:2/4;justify-self:start;padding:7px 9px}}
+@media(max-width:390px){.launcher-egg-summary{grid-template-columns:38px minmax(0,1fr) 48px;padding:9px;gap:7px}.launcher-egg-visual{width:36px;height:36px}.launcher-egg-copy>b{font-size:8px}.launcher-egg-copy>p{font-size:7px}}
 </style>
 </head>
 <body>
@@ -411,6 +429,16 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
             <p id="objectiveDetail">Explora el bosque para empezar tu aventura.</p>
             <a id="objectiveAction" href="DigiRogue-3D.html">IR AL BOSQUE <span>↗</span></a>
           </article>
+        </div>
+        <div class="launcher-egg-summary" id="launcherEggSummary" aria-live="polite">
+          <div class="launcher-egg-visual"><img id="launcherEggArt" alt="" class="hidden"><span id="launcherEggFallback" aria-hidden="true">🥚</span></div>
+          <div class="launcher-egg-copy">
+            <div class="followup-label"><span aria-hidden="true">◉</span><small id="launcherEggStatus">INCUBADORA VACÍA</small></div>
+            <b id="launcherEggName">Sin huevos pendientes</b>
+            <p id="launcherEggDetail">Derrota a un guardián para encontrar un huevo.</p>
+          </div>
+          <div class="launcher-egg-progress"><strong id="launcherEggTimer">--:--</strong><div class="launcher-egg-track"><i id="launcherEggFill"></i></div></div>
+          <a id="launcherEggAction" href="#incubadora" data-nav="incubadora">ABRIR DIGIVICE <span>↗</span></a>
         </div>
       </section>
       <div class="notice"><span>✧</span><span><b>Un nuevo mundo está despertando</b><small>Tu equipo tiene un lugar en esta historia.</small></span></div>
@@ -630,7 +658,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   const inventory=document.getElementById("eggInventory"), nameEl=document.getElementById("petName"),stageEl=document.getElementById("petStage");
   const eggEl=document.getElementById("petEgg"),eggArtEl=document.getElementById("petEggArt"),imgEl=document.getElementById("petImage"),statusEl=document.getElementById("petStatus"),clockEl=document.getElementById("petClock");
   const meter=document.getElementById("petProgress"),message=document.getElementById("petMessage"),petButton=document.getElementById("petButton"),feedButton=document.getElementById("petFeedButton"),statusButton=document.getElementById("petStatusButton");
-  const save=()=>localStorage.setItem(inventoryKey,JSON.stringify(eggs));
+  const save=()=>{localStorage.setItem(inventoryKey,JSON.stringify(eggs));window.dispatchEvent(new CustomEvent("digirogue-egg-update"))};
   const activeEgg=()=>eggs.find(e=>e.id===selected)||null;
   function chooseDefault(){if(eggs.some(e=>e.id===selected))return;const e=eggs.find(x=>!x.hatched)||eggs[eggs.length-1];selected=e?.id||"";try{localStorage.setItem("digirogue-active-egg",selected)}catch(_){}}
   function redrawList(){
@@ -642,7 +670,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       button.className="egg-entry"+(e.id===selected?" active":"");button.dataset.line=e.species;
       const state=e.hatched?"ECLOSIONADO":e.startedAt?"INCUBANDO":"LISTO PARA CUIDAR";
       button.innerHTML='<span class="egg-chip"><img class="egg-chip-art" src="'+(eggArts[e.species]||eggArts.agumon)+'" alt=""></span><span class="egg-copy"><b>Huevo · '+line.name+'</b><small>'+state+'</small></span>';
-      button.addEventListener("click",()=>{selected=e.id;localStorage.setItem("digirogue-active-egg",selected);renderScreen();redrawList()});
+      button.addEventListener("click",()=>{selected=e.id;localStorage.setItem("digirogue-active-egg",selected);renderScreen();redrawList();window.dispatchEvent(new CustomEvent("digirogue-egg-update"))});
       inventory.append(button);
     });
   }
@@ -714,10 +742,42 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 (() => {
   const statsKey="digirogue-run-progress", eggsKey="digirogue-egg-inventory", buddiesKey="digirogue-buddies";
   const read=(key,fallback)=>{try{const value=JSON.parse(localStorage.getItem(key)||"null");return value??fallback}catch(_){return fallback}};
+  function updateLauncherEgg(){
+    const eggs=read(eggsKey,[]),list=Array.isArray(eggs)?eggs:[];
+    const selected=localStorage.getItem("digirogue-active-egg")||"";
+    const egg=list.find(item=>item.id===selected&&!item.hatched)||list.find(item=>!item.hatched);
+    const title=document.getElementById("launcherEggName"),status=document.getElementById("launcherEggStatus"),detail=document.getElementById("launcherEggDetail"),timer=document.getElementById("launcherEggTimer"),fill=document.getElementById("launcherEggFill"),art=document.getElementById("launcherEggArt"),fallback=document.getElementById("launcherEggFallback");
+    const action=document.getElementById("launcherEggAction");
+    if(!title||!status||!detail||!timer||!fill||!art||!fallback)return;
+    const names={agumon:"Agumon",gabumon:"Gabumon",patamon:"Patamon",koromon:"Koromon"};
+    const petArt=document.getElementById("petEggArt");
+    if(egg){
+      const elapsed=egg.startedAt?Math.max(0,(Date.now()-Number(egg.startedAt))/1000)+Math.min(Number(egg.pets)||0,5)*2:0;
+      const remaining=egg.startedAt?Math.max(0,30-elapsed):30;
+      const seconds=Math.ceil(remaining),name=names[egg.species]||"Digimon";
+      title.textContent="Huevo · "+name;
+      status.textContent=egg.startedAt?(remaining<=0?"LISTO PARA ECLOSIONAR":"EN INCUBACIÓN"):"ESPERANDO MIMOS";
+      detail.textContent=egg.startedAt?(remaining<=0?"¡Ya casi! Ábrelo en el Digivice.":"Dale un mimo para acelerar la eclosión."):"Acarícialo para iniciar los 30 segundos.";
+      timer.textContent="00:"+String(seconds).padStart(2,"0");
+      fill.style.width=Math.min(100,elapsed/30*100)+"%";
+      const imageSource=petArt?.getAttribute("src")||"";
+      if(imageSource){art.src=imageSource;art.classList.remove("hidden");fallback.classList.add("hidden")}else{art.classList.add("hidden");fallback.classList.remove("hidden")}
+      action.textContent="ABRIR DIGIVICE ↗";action.href="#incubadora";
+    }else{
+      const hatched=list.some(item=>item.hatched);
+      title.textContent=hatched?"Todos los huevos eclosionaron":"Sin huevos pendientes";
+      status.textContent=hatched?"INCUBADORA AL DÍA":"INCUBADORA VACÍA";
+      detail.textContent=hatched?"Pasa por el Digivice para cuidar a tu equipo.":"Derrota a un guardián para encontrar un huevo.";
+      timer.textContent=hatched?"✓":"--:--";fill.style.width=hatched?"100%":"0%";
+      art.classList.add("hidden");fallback.classList.toggle("hidden",!list.length);
+      action.textContent=hatched?"CUIDAR EQUIPO ↗":"ABRIR DIGIVICE ↗";action.href="#incubadora";
+    }
+  }
   function updateHomeProgress(){
     const stats=read(statsKey,{}),eggs=read(eggsKey,[]),buddies=read(buddiesKey,[]);
     const found=new Set(["agumon",...(Array.isArray(buddies)?buddies:[])]);
     const pending=Array.isArray(eggs)?eggs.filter(egg=>!egg.hatched).length:0;
+    updateLauncherEgg();
     const level=Number(stats.bestLevel)||0,wins=Number(stats.bossWins)||0,games=Number(stats.gamesPlayed)||0;
     const put=(id,value)=>{const el=document.getElementById(id);if(el)el.textContent=String(value)};
     put("progressBestLevel",level?String(level).padStart(2,"0"):"—");
@@ -762,8 +822,10 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     }
   }
   updateHomeProgress();
-  addEventListener("storage",event=>{if([statsKey,eggsKey,buddiesKey].includes(event.key))updateHomeProgress()});
+  addEventListener("storage",event=>{if([statsKey,eggsKey,buddiesKey,"digirogue-active-egg"].includes(event.key))updateHomeProgress()});
   addEventListener("digirogue-buddy-update",updateHomeProgress);
+  addEventListener("digirogue-egg-update",updateHomeProgress);
+  setInterval(updateLauncherEgg,1000);
 })();
 </script>
 </body></html>
