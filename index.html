@@ -149,6 +149,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 .vpet-name{z-index:1;margin-top:-2px;font:10px "Press Start 2P",monospace;text-align:center;color:#172a26;text-shadow:1px 1px #d0e3a5}
 .vpet-stage{z-index:1;margin-top:9px;font:7px "Press Start 2P",monospace;text-align:center;color:#294833;line-height:1.8}
 .pet-meter{z-index:1;width:82%;height:10px;margin-top:13px;border:2px solid #132b2a;background:#394e3a}.pet-meter span{display:block;width:0;height:100%;background:#f8cf5e;transition:width .18s steps(4,end)}
+.pet-needs{z-index:1;width:94%;display:grid;gap:4px;margin-top:8px;font:6px "Press Start 2P",monospace;color:#1b3328}.pet-needs>div{display:grid;grid-template-columns:54px 1fr 22px;align-items:center;gap:4px}.pet-needs>div>span{height:6px;border:1px solid #1a3024;background:#415741}.pet-needs i{display:block;width:100%;height:100%;background:#f6d267;transition:width .2s steps(5,end)}.pet-needs>div:nth-child(2) i{background:#71c7bd}.pet-needs>div:nth-child(3) i{background:#e88c65}.pet-needs small{text-align:right;font:6px "Press Start 2P",monospace}.vpet-screen:has(.pet-needs:not(.hidden)) .vpet-creature{height:118px}.vpet-device.eating .vpet-digimon{animation:petEat .24s steps(2,end) 5}.vpet-device.bathing .vpet-screen:after{content:"✦ · ✦ · ✦";position:absolute;z-index:2;top:46%;color:#f4fff0;font:12px "Press Start 2P",monospace;animation:bubbleUp .75s steps(3,end) 2}.vpet-device.training .vpet-digimon{animation:petTrain .34s steps(2,end) 4}@keyframes petEat{50%{scale:1.12 .88;translate:0 2px}}@keyframes petTrain{50%{translate:0 -12px;rotate:8deg;scale:1.08}}@keyframes bubbleUp{to{translate:0 -25px;opacity:0}}
 .vpet-controls{display:flex;gap:8px;margin-top:12px}
 .pixel-action{flex:1;min-height:42px;border:3px solid #101b2d;background:var(--pet-trim);color:#18253a;font:8px "Press Start 2P",monospace;box-shadow:3px 3px 0 #040a13;cursor:pointer}
 .pixel-action.secondary{background:#152a46;color:#e9dc9a}.pixel-action:disabled{opacity:.42;cursor:not-allowed}.pixel-action:not(:disabled):active{translate:2px 2px;box-shadow:1px 1px 0 #040a13}
@@ -223,9 +224,9 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
         <div class="vpet-screen" id="vpetScreen">
           <div class="vpet-status"><span id="petStatus">SIN HUEVO</span><span id="petClock">--:--</span></div>
           <div class="vpet-creature"><div id="petEgg" class="pixel-egg" aria-label="Huevo Digimon"></div><img id="petImage" class="vpet-digimon hidden" alt=""><span class="pet-sparkle">✦</span></div>
-          <b id="petName" class="vpet-name">HUEVO VACÍO</b><small id="petStage" class="vpet-stage">ENCUENTRA UN HUEVO EN PARTIDA</small><div class="pet-meter"><span id="petProgress"></span></div>
+          <b id="petName" class="vpet-name">HUEVO VACÍO</b><small id="petStage" class="vpet-stage">ENCUENTRA UN HUEVO EN PARTIDA</small><div class="pet-meter" id="incubationMeter"><span id="petProgress"></span></div><div class="pet-needs hidden" id="petNeeds" aria-label="Cuidados del Digimon"><div><b>COMIDA</b><span><i id="needFood"></i></span><small id="needFoodValue">100</small></div><div><b>BAÑO</b><span><i id="needClean"></i></span><small id="needCleanValue">100</small></div><div><b>FUERZA</b><span><i id="needStrength"></i></span><small id="needStrengthValue">0</small></div></div>
         </div>
-        <div class="vpet-controls"><button id="petButton" class="tama-control" disabled><i>A</i><small>ACARICIAR</small></button><button id="petFeedButton" class="tama-control" disabled><i>B</i><small>ANIMAR</small></button><button id="petStatusButton" class="tama-control" disabled><i>C</i><small>ESTADO</small></button></div>
+        <div class="vpet-controls"><button id="petButton" class="tama-control" disabled><i>A</i><small id="controlALabel">ACARICIAR</small></button><button id="petFeedButton" class="tama-control" disabled><i>B</i><small id="controlBLabel">BAÑO</small></button><button id="petStatusButton" class="tama-control" disabled><i>C</i><small id="controlCLabel">ENTRENAR</small></button></div>
         <p id="petMessage" class="pet-message">Derrota a un guardián para rescatar un huevo.</p>
       </section>
       <section class="egg-storage"><div class="egg-storage-heading"><div><small>RESCATADOS EN TUS PARTIDAS</small><h2>Tus huevos</h2></div><strong id="eggCount">0 / 08</strong></div><div id="eggInventory" class="egg-inventory"></div><div class="egg-hint"><span>▣</span><p>Cada huevo pertenece a un Digimon distinto. Su dispositivo y su reacción cambiarán con cada compañero.</p></div></section>
@@ -441,19 +442,21 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     });
   }
   function hatch(e,line){
-    e.hatched=true;e.hatchedAt=Date.now();
+    e.hatched=true;e.hatchedAt=Date.now();e.needs={food:82,clean:88,strength:0,updatedAt:Date.now()};
     try{const saved=JSON.parse(localStorage.getItem(buddyKey)||"[]"),buddies=Array.isArray(saved)?saved:[];if(!buddies.includes(e.species))buddies.push(e.species);localStorage.setItem(buddyKey,JSON.stringify(buddies));window.dispatchEvent(new CustomEvent("digirogue-buddy-update"))}catch(_){}
     save();message.textContent="¡"+line.name+" ha salido del huevo! Ya es parte de tu equipo.";
     redrawList();renderScreen();
   }
   function renderScreen(){
-    chooseDefault();const e=activeEgg(),line=e?(lines[e.species]||lines.agumon):null;
+    chooseDefault();const e=activeEgg(),line=e?(lines[e.species]||lines.agumon):null,needs=document.getElementById("petNeeds"),incubation=document.getElementById("incubationMeter");
     device.dataset.line=e?.species||"";document.getElementById("eggCount").textContent=eggs.length+" / 08";
-    petButton.disabled=!e||e.hatched;feedButton.disabled=!e||!e.hatched;statusButton.disabled=!e;
-    if(!e){statusEl.textContent="SIN HUEVO";clockEl.textContent="--:--";nameEl.textContent="HUEVO VACÍO";stageEl.textContent="ENCUENTRA UNO EN PARTIDA";eggEl.classList.remove("hidden");imgEl.classList.add("hidden");meter.style.width="0%";meter.parentElement.style.visibility="hidden";message.textContent="Derrota a un guardián para rescatar un huevo.";return}
-    meter.parentElement.style.visibility="visible";
-    if(e.hatched){statusEl.textContent="NUEVO COMPAÑERO";clockEl.textContent="LISTO";nameEl.textContent=line.name.toUpperCase();stageEl.textContent="PRIMERA FORMA · TU EQUIPO";eggEl.classList.add("hidden");imgEl.src=line.art;imgEl.alt=line.name;imgEl.classList.remove("hidden");meter.style.width="100%";petButton.disabled=true;feedButton.disabled=false;if(!message.textContent.startsWith("¡"))message.textContent=line.name+" te está esperando.";return}
-    eggEl.classList.remove("hidden");imgEl.classList.add("hidden");nameEl.textContent="HUEVO · "+line.name.toUpperCase();stageEl.textContent=e.startedAt?"ACARÍCIALO PARA ANIMARLO":"TOCA ACARICIAR PARA EMPEZAR";statusEl.textContent=e.startedAt?"INCUBANDO":"HUEVO RESCATADO";updateTimer();
+    petButton.disabled=!e;feedButton.disabled=!e||!e.hatched;statusButton.disabled=!e||!e.hatched;
+    document.getElementById("controlALabel").textContent=e?.hatched?"COMIDA":"ACARICIAR";
+    document.getElementById("controlBLabel").textContent="BAÑO";document.getElementById("controlCLabel").textContent="ENTRENAR";
+    if(!e){statusEl.textContent="SIN HUEVO";clockEl.textContent="--:--";nameEl.textContent="HUEVO VACÍO";stageEl.textContent="ENCUENTRA UNO EN PARTIDA";eggEl.classList.remove("hidden");imgEl.classList.add("hidden");meter.style.width="0%";incubation.classList.remove("hidden");needs.classList.add("hidden");incubation.style.visibility="hidden";message.textContent="Derrota a un guardián para rescatar un huevo.";return}
+    incubation.style.visibility="visible";
+    if(e.hatched){statusEl.textContent="CUIDA A TU DIGIMON";clockEl.textContent="V-PET";nameEl.textContent=line.name.toUpperCase();stageEl.textContent="PRIMERA FORMA · TU EQUIPO";eggEl.classList.add("hidden");imgEl.src=line.art;imgEl.alt=line.name;imgEl.classList.remove("hidden");incubation.classList.add("hidden");needs.classList.remove("hidden");if(!message.textContent.startsWith("¡"))message.textContent=line.name+" te está esperando. Dale comida, baño y entrenamiento.";renderNeeds(e);return}
+    needs.classList.add("hidden");incubation.classList.remove("hidden");eggEl.classList.remove("hidden");imgEl.classList.add("hidden");nameEl.textContent="HUEVO · "+line.name.toUpperCase();stageEl.textContent=e.startedAt?"ACARÍCIALO PARA ANIMARLO":"TOCA ACARICIAR PARA EMPEZAR";statusEl.textContent=e.startedAt?"INCUBANDO":"HUEVO RESCATADO";updateTimer();
   }
   function updateTimer(){
     const e=activeEgg();if(!e||e.hatched){if(e?.hatched)meter.style.width="100%";return}
@@ -462,16 +465,22 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     clockEl.textContent="00:"+String(Math.ceil(left)).padStart(2,"0");meter.style.width=Math.min(100,elapsed/30*100)+"%";
     if(left<=0)hatch(e,line);
   }
-  function react(){device.classList.remove("petting");void device.offsetWidth;device.classList.add("petting");setTimeout(()=>device.classList.remove("petting"),900)}
+  function react(kind="petting"){device.classList.remove("petting","eating","bathing","training");void device.offsetWidth;device.classList.add(kind);setTimeout(()=>device.classList.remove(kind),1100)}
+  function currentNeeds(e){if(!e.needs)e.needs={food:82,clean:88,strength:0,updatedAt:e.hatchedAt||Date.now()};const minutes=Math.max(0,(Date.now()-(e.needs.updatedAt||Date.now()))/60000);return{food:Math.max(0,e.needs.food-minutes*.1),clean:Math.max(0,e.needs.clean-minutes*(100/900)),strength:e.needs.strength}}
+  function renderNeeds(e){const n=currentNeeds(e);for(const [key,id] of [["food","Food"],["clean","Clean"],["strength","Strength"]]){const v=Math.round(n[key]);document.getElementById("need"+id).style.width=v+"%";document.getElementById("need"+id+"Value").textContent=String(v)} }
+  function care(kind){const e=activeEgg();if(!e?.hatched)return;const n=currentNeeds(e),name=(lines[e.species]||lines.agumon).name;
+    if(kind==="food"){n.food=Math.min(100,n.food+35);n.clean=Math.max(0,n.clean-2);message.textContent="¡"+name+" disfruta su comida!";react("eating")}
+    if(kind==="bath"){n.clean=Math.min(100,n.clean+42);message.textContent="¡Baño terminado! "+name+" vuelve a brillar.";react("bathing")}
+    if(kind==="train"){n.strength=Math.min(100,n.strength+14);n.food=Math.max(0,n.food-7);n.clean=Math.max(0,n.clean-5);message.textContent="¡Buen entrenamiento! "+name+" gana fuerza.";react("training")}
+    e.needs={...n,updatedAt:Date.now()};save();renderNeeds(e);
+  }
   function pet(){
-    const e=activeEgg();if(!e)return;if(e.hatched){message.textContent="¡"+(lines[e.species]||lines.agumon).name+" está feliz!";react();return}
+    const e=activeEgg();if(!e)return;if(e.hatched){care("food");return}
     if(!e.startedAt)e.startedAt=Date.now();e.pets=Math.min(5,(e.pets||0)+1);save();
     message.textContent=e.pets>=5?"¡El huevo se siente muy querido!":"Le das una caricia a "+(lines[e.species]||lines.agumon).name+".";
     statusEl.textContent="¡QUÉ COSQUILLAS!";react();updateTimer();
   }
-  function animateBuddy(){const e=activeEgg();if(!e?.hatched)return;message.textContent="¡"+(lines[e.species]||lines.agumon).name+" te saluda desde su dispositivo!";react()}
-  function reportStatus(){const e=activeEgg();if(!e)return;message.textContent=e.hatched?(lineName(e.species)+" está contento y te acompaña."):(e.startedAt?"El huevo sigue calentito. Quedan "+clockEl.textContent+".":"El huevo espera su primera caricia.");react()}
-  petButton.addEventListener("click",pet);feedButton.addEventListener("click",animateBuddy);statusButton.addEventListener("click",reportStatus);
+  petButton.addEventListener("click",pet);feedButton.addEventListener("click",()=>care("bath"));statusButton.addEventListener("click",()=>care("train"));
   function syncDigidex(){
     let buddies=[];try{buddies=JSON.parse(localStorage.getItem(buddyKey)||"[]")}catch(_){}
     const reveal=(card,id,line)=>{
@@ -493,7 +502,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   }
   window.addEventListener("storage",event=>{if(event.key===inventoryKey){eggs=getEggs();chooseDefault();redrawList();renderScreen()}});
   syncDigidex();window.addEventListener("digirogue-buddy-update",syncDigidex);window.addEventListener("storage",event=>{if(event.key===buddyKey)syncDigidex()});
-  redrawList();renderScreen();setInterval(updateTimer,350);
+  redrawList();renderScreen();setInterval(()=>{updateTimer();const e=activeEgg();if(e?.hatched)renderNeeds(e)},35000);
 })();
 
 </script>
