@@ -61,7 +61,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 <div id="home">
  <div class="stage" aria-label="Portada pixel art DigiRogue">
   <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
-  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — prototipo de animación</span>
+  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — laboratorio animado</span>
   <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
   <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
   <button class="hotspot guide" aria-label="Guía" id="goHelp"></button>
@@ -169,12 +169,17 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
  for(let i=0;i<13;i++){let a=t*.78+i*Math.PI*2/13;wc.fillStyle='#83ffffaa';wc.fillRect(835+Math.cos(a)*138,155+Math.sin(a)*115,5,5)}
  // Visible animated foliage and pixel particles; no image cutouts.
  for(let i=0;i<34;i++){const x=((i*131+53+t*(16+i%5*5))%1750)-30;const y=((i*89+60+t*(8+i%3*7))%1010)-30;wc.save();wc.translate(x+Math.sin(t*1.7+i)*16,y);wc.rotate(t*.6+i);wc.fillStyle=i%3===0?'#fff0aaaf':i%3===1?'#8aee8bb8':'#ffb9d4a6';wc.fillRect(-6,-2,12,5);wc.fillRect(-2,-6,4,13);wc.restore()}
- // Blink the creatures already painted on the original cover; no duplicated cutouts.
- const blink=(offset)=>{const p=(t+offset)%5.7;return p>.12&&p<.25};
+ // Add subtle character expressions without displacing any flattened artwork.
+ const blink=t0=>{const q=(t+t0)%6.2;return q<.11||(q>.18&&q<.24)};
  wc.save();wc.imageSmoothingEnabled=false;
- if(blink(0)){wc.fillStyle='#f7c82e';wc.fillRect(174,548,29,19);wc.fillStyle='#1d3926';wc.fillRect(176,562,24,3)}
- if(blink(1.3)){wc.fillStyle='#eff4ff';wc.fillRect(410,627,20,14);wc.fillStyle='#37233d';wc.fillRect(412,636,16,3)}
- if(blink(2.8)){wc.fillStyle='#fb91bd';wc.fillRect(1496,603,17,12);wc.fillStyle='#5a264c';wc.fillRect(1498,611,12,3)}
+ // Eyes close briefly using each creature's adjacent fur/skin tones.
+ if(blink(.4)){wc.fillStyle='#f4bd21';wc.fillRect(168,526,26,30);wc.fillStyle='#183b2b';wc.fillRect(170,541,21,3);wc.fillStyle='#fee479';wc.fillRect(168,526,4,15)}
+ if(blink(1.6)){wc.fillStyle='#f6f6ff';wc.fillRect(400,603,24,22);wc.fillStyle='#2e204c';wc.fillRect(400,615,22,3)}
+ if(blink(3.2)){wc.fillStyle='#f69dc2';wc.fillRect(1468,589,18,20);wc.fillStyle='#43263f';wc.fillRect(1471,602,14,3)}
+ // Wing/ear flicks: isolated accent pixels, not copies of the underlying creature.
+ const wing=Math.sin(t*8);
+ wc.fillStyle='#f6a0ca88';
+ for(let j=0;j<4;j++)wc.fillRect(1541+j*7,618+Math.round(wing*3)+j%2*3,7,3);
  wc.restore();
  drawTitleActors(t);
  // No extra bat over the painted flying character.
