@@ -92,11 +92,37 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 @media(max-width:700px){.brand-title{font-size:clamp(27px,7.4vw,42px)!important;line-height:1.55!important}.brand-title span,.brand-title em{letter-spacing:.015em!important}.roaming-layer{opacity:.9}}
 @media(prefers-reduced-motion:reduce){.launch-card,.roaming-mon.greeting .walk-sprite{animation:none!important;transition:none!important}}
 
+
+/* Clear character lane and gentle branch-only motion; the landscape stays fixed. */
+.roaming-layer{z-index:1!important;overflow:visible!important}
+.sway-branch{position:absolute;top:88px;width:clamp(120px,18vw,220px);height:118px;opacity:.64;pointer-events:none;filter:drop-shadow(2px 3px 0 #07120c88);transform-origin:0 8px;animation:branchSway 4.6s steps(6,end) infinite;will-change:transform}
+.sway-branch svg{display:block;width:100%;height:100%;overflow:visible;image-rendering:pixelated}
+.sway-left{left:-42px}.sway-right{right:-42px;transform:scaleX(-1);animation-delay:-2.3s}
+@keyframes branchSway{0%,100%{rotate:-1.2deg}50%{rotate:1.2deg}}
+.ranking-panel .panel-heading small,.ranking-panel .rank-name small,.ranking-panel .board-heading b,.ranking-panel .board-heading button,.ranking-panel .panel-foot{font-size:9px!important;line-height:1.7!important}
+.ranking-panel .panel-heading h2{font-size:clamp(20px,2vw,24px)!important;line-height:1.35!important}
+.ranking-panel .rank-name b{font-size:13px!important}.ranking-panel .rank-row strong{font-size:9px!important}.ranking-panel .rank-row{min-height:54px}
+.ranking-panel .season-art>b{font-size:16px!important;line-height:1.4!important}.ranking-panel .season-art>small{font-size:10px!important;line-height:1.6!important}
+@media(max-width:900px){.ranking-panel{padding:16px!important}.ranking-panel .panel-foot{font-size:8px!important}}
+@media(max-width:700px){
+  .home-view{width:min(92vw,540px)!important;padding:30px 0 102px!important;gap:18px!important}
+  .home-launch-grid{grid-template-columns:1fr!important;gap:8px!important;margin-top:18px!important}
+  .launch-card{min-height:78px!important;aspect-ratio:auto!important;flex-direction:row!important;align-items:center!important;padding:10px 12px!important}
+  .launch-copy b{font-size:13px!important;line-height:1.35!important}.launch-copy small{font-size:7px!important}.launch-copy i{font-size:8px!important}
+  .ranking-panel{max-width:none!important;padding:16px 14px!important}.ranking-panel .rank-row{min-height:51px;padding:7px 0!important}
+  .ranking-panel .panel-heading small,.ranking-panel .rank-name small,.ranking-panel .board-heading button,.ranking-panel .panel-foot{font-size:8px!important}
+  .home-copy .notice{max-width:100%!important}
+  #view-inicio #roamingLayer{position:absolute!important;inset:auto 0 12px!important;height:76px!important;overflow:hidden!important;z-index:1!important}
+  #view-inicio .roaming-mon{transform:translate(-50%,-76%)!important}
+  .sway-branch{display:none!important}
+}
+@media(prefers-reduced-motion:reduce){.sway-branch{animation:none!important}}
+
 </style>
 </head>
 <body>
 <main id="launcher">
-  <div class="landscape" aria-hidden="true"></div><canvas id="ambience" aria-hidden="true"></canvas><div class="shade"></div><div id="roamingLayer" class="roaming-layer" aria-hidden="true"><div id="roamingAgumon" class="roaming-mon"><span class="roaming-shadow"></span><span id="spriteAgumon" class="walk-sprite agumon-sprite" role="img" aria-label="Agumon caminando"></span></div><div id="roamingGabumon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteGabumon" class="walk-sprite gabumon-sprite" role="img" aria-label="Gabumon caminando"></span></div><div id="roamingPatamon" class="roaming-mon buddy patamon-roamer"><span class="roaming-shadow"></span><span id="spritePatamon" class="walk-sprite patamon-sprite" role="img" aria-label="Patamon volando en ocho direcciones"></span></div><div id="roamingKoromon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteKoromon" class="walk-sprite koromon-sprite" role="img" aria-label="Koromon saltando"></span></div></div>
+  <div class="landscape" aria-hidden="true"></div><canvas id="ambience" aria-hidden="true"></canvas><div class="shade"></div>
   <header class="topbar">
     <a class="brand" href="#inicio" data-nav="inicio" aria-label="DigiRogue, inicio"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M14 2h20v4h7v6h4v22h-4v6h-7v4H14v-4H7v-6H3V12h4V6h7Z" fill="#f5bf45" stroke="#061426" stroke-width="2"/><path d="M13 9h22v3h4v14H9V12h4Z" fill="#0d2b42" stroke="#ffe28b" stroke-width="1.5"/><path d="M14 13h20v9H14Z" fill="#5bd4df"/><path d="M17 15h5v2h-3v2h-2Zm9 0h5v2h-3v2h-2Z" fill="#e9ffff"/><path d="M20 19h8v2h-8Z" fill="#e9ffff"/><path d="M15 29h18v3H15Zm3 5h12v3H18Z" fill="#173a52"/><path d="M17 30h4v2h-4Zm10 0h4v2h-4Z" fill="#fff0aa"/><rect x="21" y="35" width="6" height="4" fill="#e54d50" stroke="#702636" stroke-width="1"/><path d="M14 41h20" stroke="#ffecae" stroke-width="2"/></svg></span><span class="brandname">DIGI<span>ROGUE</span></span></a>
     <nav class="main-nav" aria-label="Secciones principales"><button class="nav-item active" data-nav="inicio">Inicio</button><button class="nav-item" data-nav="temporada">Temporada</button><button class="nav-item" data-nav="digidex">Digidex</button><button class="nav-item" data-nav="equipo">Mi equipo</button></nav>
@@ -116,6 +142,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       <div class="notice"><span>✧</span><span><b>Un nuevo mundo está despertando</b><small>Tu equipo tiene un lugar en esta historia.</small></span></div>
     </div>
     <aside class="ranking-panel"><div class="panel-heading"><div><small>AHORA EN EL MUNDO DIGITAL</small><h2>Temporada <span>01</span></h2></div><span class="live-dot">● ACTIVA</span></div><div class="season-art"><span>✧</span><b>BOSQUE<br>DEL COMIENZO</b><small>Una nueva historia despierta</small><div class="season-mons"><img src="assets/launcher/digimon/agumon.png" alt="Agumon"><img class="locked-mon" src="assets/launcher/digimon/patamon.png" alt="Digimon aún no descubierto"></div></div><div class="board-heading"><b>◆ DIGIMON DESTACADOS</b><button data-nav="digidex">VER DEX <span>→</span></button></div><div class="rank-row"><span class="place gold">01</span><span class="mini-mon orange"><img src="assets/launcher/digimon/agumon.png" alt=""></span><span class="rank-name"><b>Agumon</b><small>ROOKIE · FUEGO</small></span><strong>ROOKIE</strong></div><div class="rank-row"><span class="place silver">02</span><span class="mini-mon blue is-locked"><img src="assets/launcher/digimon/gabumon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="rank-row"><span class="place bronze">03</span><span class="mini-mon pink is-locked"><img src="assets/launcher/digimon/patamon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="panel-foot"><span>Compañeros del Mundo Digital</span><span>✦ &nbsp; 01 / 08</span></div></aside>
+    <div id="roamingLayer" class="roaming-layer" aria-hidden="true"><div class="sway-branch sway-left"><svg viewBox="0 0 220 120"><path d="M-8 8C44 9 87 25 121 49S175 82 226 92" fill="none" stroke="#203a30" stroke-width="12"/><path d="M48 14Q43 -1 31 -9M83 29Q89 8 103 1M124 50Q119 30 126 19M160 70Q176 52 193 51" fill="none" stroke="#203a30" stroke-width="7"/><path d="M17 1h21v11H17zM38-8h19v12H38zM88 4h22v12H88zM104-3h19v12H104zM117 13h19v12H117zM113 22h22v12H113zM175 44h24v13h-24zM193 39h20v13h-20zM188 55h22v12h-22z" fill="#527a45" stroke="#203a30" stroke-width="3"/></svg></div><div class="sway-branch sway-right"><svg viewBox="0 0 220 120"><path d="M-8 8C44 9 87 25 121 49S175 82 226 92" fill="none" stroke="#203a30" stroke-width="12"/><path d="M48 14Q43 -1 31 -9M83 29Q89 8 103 1M124 50Q119 30 126 19M160 70Q176 52 193 51" fill="none" stroke="#203a30" stroke-width="7"/><path d="M17 1h21v11H17zM38-8h19v12H38zM88 4h22v12H88zM104-3h19v12H104zM117 13h19v12H117zM113 22h22v12H113zM175 44h24v13h-24zM193 39h20v13h-20zM188 55h22v12h-22z" fill="#527a45" stroke="#203a30" stroke-width="3"/></svg></div><div id="roamingAgumon" class="roaming-mon"><span class="roaming-shadow"></span><span id="spriteAgumon" class="walk-sprite agumon-sprite" role="img" aria-label="Agumon caminando"></span></div><div id="roamingGabumon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteGabumon" class="walk-sprite gabumon-sprite" role="img" aria-label="Gabumon caminando"></span></div><div id="roamingPatamon" class="roaming-mon buddy patamon-roamer"><span class="roaming-shadow"></span><span id="spritePatamon" class="walk-sprite patamon-sprite" role="img" aria-label="Patamon volando en ocho direcciones"></span></div><div id="roamingKoromon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteKoromon" class="walk-sprite koromon-sprite" role="img" aria-label="Koromon saltando"></span></div></div>
   </section>  <section id="view-temporada" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> MUNDO DIGITAL · TEMPORADA 01</div><h1>Bosque del <em>comienzo</em></h1><p>El portal ha despertado. Algo antiguo se mueve entre los árboles.</p></div><div class="season-layout"><div class="season-hero"><div class="season-symbol">✧</div><small>CAPÍTULO 01</small><h2>Una luz<br>entre los árboles</h2><p>Descubre qué se esconde al otro lado del portal.</p><button class="primary-btn" data-info="La historia del Bosque del Comienzo está preparándose. Vuelve pronto para descubrir el primer capítulo.">DESCUBRIR HISTORIA <b>→</b></button></div><div class="info-card"><span class="feature-icon gold">✦</span><h3>Un nuevo comienzo</h3><p>Este rincón del Mundo Digital aguarda a su próximo equipo.</p><div class="progress"><i></i></div><small>PREPARATIVOS DE TEMPORADA</small></div></div></section>
   <section id="view-digidex" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> ARCHIVO DEL MUNDO DIGITAL</div><h1>Tu <em>Digidex</em></h1><p>Descubre a tus compañeros y completa sus registros.</p></div><div class="digimon-grid"><article class="digi-card"><div class="digi-art orange"><img src="assets/launcher/digimon/agumon.png" alt="Agumon saludando"></div><div><small>ROOKIE · FUEGO · DESBLOQUEADO</small><h3>Agumon</h3><p>Tu primer compañero. Valiente y siempre dispuesto a proteger al equipo.</p></div><b class="digi-number">#001</b></article><article class="digi-card is-locked"><div class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked"><div class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked"><div class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article></div></section>  <section id="view-equipo" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> COMPAÑEROS DIGITALES</div><h1>Tu <em>equipo</em></h1><p>Cada aventura es mejor cuando la compartes.</p></div><div class="team-layout"><div class="team-lead"><img src="assets/launcher/sprites/agumon_4.png" alt="Agumon mirando al frente"><div><small>COMPAÑERO DESTACADO</small><h2>Agumon</h2><p>Rookie · Fuego</p></div><span class="bond">✦ VÍNCULO 01</span></div><div class="team-side"><div class="team-mini is-locked"><span class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div></div></div></section>
   <section id="view-ajustes" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> PERSONALIZA TU EXPERIENCIA</div><h1>Ajustes</h1><p>Elige cómo quieres visitar el Mundo Digital.</p></div><div class="settings-card"><div><b>Música de fondo</b><small>Melodía retro para el menú</small></div><button id="musicSwitch" class="switch" aria-label="Activar o silenciar la música"></button></div><div class="settings-card volume-card"><div class="volume-head"><span><b>Volumen de la música</b><small>Volumen inicial moderado; ajústalo a tu gusto.</small></span><strong id="volumeValue">20 %</strong></div><input id="volumeRange" type="range" min="0" max="100" value="20" aria-label="Volumen de la música"></div><div class="settings-card"><div><b>Movimiento ambiental</b><small>Animación suave del mundo y los Digimon</small></div><button id="motionSwitch" class="switch on" aria-label="Activar o desactivar el movimiento"></button></div><div class="settings-card"><div><b>Idioma</b><small>Idioma de la página</small></div><span class="language">ESPAÑOL⌄</span></div></section>
@@ -219,18 +246,18 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 
   // Four Digimon follow independent loops over the fixed 2D clearing. Atlas characters have
   // eight directions x two walk frames; Patamon uses a flying pose with 8 perspective turns.
-  const routeShape = [[0, 0], [0, -2], [3, -3], [7, -3], [10, -1], [10, 1], [7, 3], [3, 3], [0, 1]];
+  const routeShape = [[0, 0], [0, -1], [1, -2], [2, -2], [3, -1], [3, 1], [2, 2], [1, 2], [0, 1]];
   const walkers = [
-    { id: "roamingAgumon", sprite: "spriteAgumon", atlas: "assets/launcher/digimon/walk/agumon_atlas.png", ratio: 1, center: 9, mobileCenter: 12, baseY: 85, size: 60, mobileSize: 36, speed: 23, phase: 0 },
-    { id: "roamingGabumon", sprite: "spriteGabumon", atlas: "assets/launcher/digimon/walk/gabumon_atlas.png", ratio: 1, center: 24, mobileCenter: 37, baseY: 85, size: 62, mobileSize: 38, speed: 24, phase: 1 },
-    { id: "roamingPatamon", sprite: "spritePatamon", atlas: "assets/launcher/digimon/walk/patamon_atlas.png", ratio: 1, center: 39, mobileCenter: 62, baseY: 85, size: 58, mobileSize: 35, speed: 29, phase: 2 },
-    { id: "roamingKoromon", sprite: "spriteKoromon", atlas: "assets/launcher/digimon/walk/koromon_atlas.png", ratio: 1, center: 54, mobileCenter: 86, baseY: 85, size: 48, mobileSize: 30, speed: 22, phase: 1 }
+    { id: "roamingAgumon", sprite: "spriteAgumon", atlas: "assets/launcher/digimon/walk/agumon_atlas.png", ratio: 1, center: 40, mobileCenter: 12, baseY: 86, size: 48, mobileSize: 30, speed: 20, phase: 0 },
+    { id: "roamingGabumon", sprite: "spriteGabumon", atlas: "assets/launcher/digimon/walk/gabumon_atlas.png", ratio: 1, center: 47, mobileCenter: 37, baseY: 86, size: 50, mobileSize: 31, speed: 21, phase: 1 },
+    { id: "roamingPatamon", sprite: "spritePatamon", atlas: "assets/launcher/digimon/walk/patamon_atlas.png", ratio: 1, center: 54, mobileCenter: 63, baseY: 86, size: 48, mobileSize: 30, speed: 25, phase: 2 },
+    { id: "roamingKoromon", sprite: "spriteKoromon", atlas: "assets/launcher/digimon/walk/koromon_atlas.png", ratio: 1, center: 61, mobileCenter: 88, baseY: 86, size: 42, mobileSize: 28, speed: 19, phase: 1 }
   ].map((actor) => {
     actor.root = document.getElementById(actor.id);
     actor.spriteEl = document.getElementById(actor.sprite);
     actor.route = [];
-    actor.desktopRoute = routeShape.map(([dx, dy]) => ({ x: actor.center + dx * (actor.size / 70), y: actor.baseY + dy }));
-    actor.mobileRoute = routeShape.map(([dx, dy]) => ({ x: actor.mobileCenter + dx * (actor.mobileSize / 70), y: 85 + dy * .7 }));
+    actor.desktopRoute = routeShape.map(([dx, dy]) => ({ x: actor.center + dx * (actor.size / 70), y: actor.baseY + dy * 2.2 }));
+    actor.mobileRoute = routeShape.map(([dx, dy]) => ({ x: actor.mobileCenter + dx * (actor.mobileSize / 70), y: 55 + dy * 5 }));
     actor.route = actor.desktopRoute;
     actor.waypoint = 0; actor.progress = 0; actor.facing = 4;
     actor.root.style.aspectRatio = String(actor.ratio);
@@ -261,7 +288,8 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       } else {
         const from = actor.route[actor.waypoint], to = actor.route[(actor.waypoint + 1) % actor.route.length];
         const dx = (to.x - from.x) * innerWidth / 100;
-        const dy = (to.y - from.y) * innerHeight / 100;
+        const movementHeight = compact ? actor.root.parentElement.clientHeight : innerHeight;
+        const dy = (to.y - from.y) * movementHeight / 100;
         const distance = Math.hypot(dx, dy) || 1;
         actor.progress += actor.speed * dt / distance;
         if (actor.progress >= 1) { actor.waypoint = (actor.waypoint + 1) % actor.route.length; actor.progress = 0; }
@@ -277,7 +305,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
         ? (Math.floor(time / 300) + actor.phase) % 2
         : (Math.floor(time / 220) + actor.phase) % 2;
       actor.root.style.left = `${x}vw`;
-      actor.root.style.top = `${y}vh`;
+      actor.root.style.top = compact ? `${y}%` : `${y}vh`;
       actor.root.style.width = `${Math.round(actorSize * (.82 + y / 100 * .25))}px`;
       actor.root.classList.toggle("step-a", frame === 0);
       if (actor.atlas) {
