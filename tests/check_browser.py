@@ -24,7 +24,7 @@ async def inspect_page(browser,label,viewport,mobile=False):
     response=await page.goto(ORIGIN,wait_until="domcontentloaded")
     assert response.status==200, (label,response.status)
     await page.wait_for_function(
-        "() => document.querySelector('#homeCoverArt')?.getAttribute('src') === '/assets/title_layers/background.webp'",
+        "() => document.querySelector('#homeCoverArt')?.getAttribute('src') === '/assets/title_layers/background_hd.webp'",
         timeout=20000
     )
     loaded=await page.evaluate("""() => ({
@@ -34,7 +34,7 @@ async def inspect_page(browser,label,viewport,mobile=False):
       visible: getComputedStyle(document.getElementById('home')).display !== 'none'
     })""")
     assert loaded["ok"] and loaded["actors"]==4, (label,loaded)
-    assert loaded["background"]==1672, (label,loaded)
+    assert loaded["background"]==3344, (label,loaded)
     assert loaded["visible"],label
     # Compare deterministic instants with environmental particles removed.
     # This proves character layers move, rather than merely foliage drifting.
@@ -69,12 +69,12 @@ async def inspect_page(browser,label,viewport,mobile=False):
     await page.wait_for_timeout(550)
     await page.emulate_media(reduced_motion="reduce")
     await page.wait_for_function(
-        "() => document.querySelector('#homeCoverArt')?.getAttribute('src') === '/assets/portada.webp'",
+        "() => document.querySelector('#homeCoverArt')?.getAttribute('src') === '/assets/portada_hd.webp'",
         timeout=5000
     )
     await page.emulate_media(reduced_motion="no-preference")
     await page.wait_for_function(
-        "() => document.querySelector('#homeCoverArt')?.getAttribute('src') === '/assets/title_layers/background.webp'",
+        "() => document.querySelector('#homeCoverArt')?.getAttribute('src') === '/assets/title_layers/background_hd.webp'",
         timeout=5000
     )
     assert not errors,(label,errors)
