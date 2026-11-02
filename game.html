@@ -1007,9 +1007,12 @@ function recordRunProgress(){
  try{
   const key='digirogue-run-progress',saved=JSON.parse(localStorage.getItem(key)||'{}'),previous=saved&&typeof saved==='object'?saved:{};
   const stats={gamesPlayed:Number(previous.gamesPlayed)||0,bestLevel:Number(previous.bestLevel)||0,bossWins:Number(previous.bossWins)||0,bestKills:Number(previous.bestKills)||0};
+  const endedAt=Date.now(),entry={level:player.level,kills:world.kill,seconds:Math.floor(world.elapsed),bossWon:!!world.bossDead,endedAt};
+  const history=Array.isArray(previous.history)?previous.history:[];
+  history.push(entry);stats.history=history.slice(-10);
   stats.gamesPlayed++;stats.bestLevel=Math.max(stats.bestLevel,player.level);stats.bestKills=Math.max(stats.bestKills,world.kill);
   if(world.bossDead)stats.bossWins++;
-  Object.assign(stats,{lastLevel:player.level,lastKills:world.kill,lastSeconds:Math.floor(world.elapsed),updatedAt:Date.now()});
+  Object.assign(stats,{lastLevel:player.level,lastKills:world.kill,lastSeconds:Math.floor(world.elapsed),updatedAt:endedAt});
   localStorage.setItem(key,JSON.stringify(stats));
  }catch(_){}
 }
