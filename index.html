@@ -161,7 +161,15 @@ const weather=$('weather'),wc=weather.getContext('2d');let startAt=performance.n
 function random(i){return (Math.sin(i*91.37)*104927.47)%1<0?1+(Math.sin(i*91.37)*104927.47)%1:(Math.sin(i*91.37)*104927.47)%1}
 for(let i=0;i<58;i++)leaves.push({x:random(i+2)*1672,y:random(i+13)*941,rate:23+random(i+17)*62,color:i%4===0?'#bafa74':'#ffa3d6'});
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
-function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!document.hidden&&!reducedMotion.matches){
+function homeMotion(ts){let t=(ts-startAt)/1000;
+// Sync reduced-motion mode even in browsers that do not dispatch a media-query
+// change event reliably. Clearing the overlay avoids frozen duplicate sprites.
+if(screen==='home'&&originalTitleLayers){
+ const expected=reducedMotion.matches?originalCoverURL:isolatedCoverURL;
+ if(homeCoverArt.getAttribute('src')!==expected)setOriginalTitleMotionMode();
+}
+if(screen==='home'&&reducedMotion.matches)wc.clearRect(0,0,1672,941);
+if(screen==='home'&&!document.hidden&&!reducedMotion.matches){
  wc.clearRect(0,0,1672,941);
  drawOriginalTitleCharacters(t);
  for(let i=0;i<leaves.length;i++){let p=leaves[i],x=(p.x+t*p.rate+Math.sin(t*2+i)*26)%1720-20,y=(p.y+t*(p.rate*.72+9))%990-20;wc.save();wc.translate(x,y);wc.rotate(t*2+i);wc.globalAlpha=.75;wc.fillStyle=p.color;wc.fillRect(-4,-2,9,5);wc.restore()}
