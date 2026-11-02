@@ -77,7 +77,21 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 .launch-copy b,.bottom-link{letter-spacing:0!important;text-shadow:2px 2px 0 #020611!important}.launch-copy b{font-size:12px!important;line-height:1.65!important}.bottom-nav{border-top:2px solid #93e3f04f!important;box-shadow:0 -4px 0 #030812!important}
 @media(max-width:700px){.brandname{font-size:11px!important;letter-spacing:.6px!important}.brand-title{font-size:clamp(28px,8vw,42px)!important}.brand-title span,.brand-title em{letter-spacing:.015em!important}.nav-item{font-size:7px!important;padding:10px 8px!important}.subhead h1{font-size:16px!important}}
 
-</style>
+
+/* Launcher polish: legible pixel wordmark, independent tile motion, visible welcoming Digimon. */
+.brand-title{color:#ffe27a!important;-webkit-text-fill-color:#ffe27a!important;background:none!important;filter:drop-shadow(3px 3px 0 #050a14) drop-shadow(5px 5px 0 #050a14)!important;text-shadow:none!important}
+.brand-title span,.brand-title em{color:#ffe27a!important;-webkit-text-fill-color:#ffe27a!important;-webkit-text-stroke:1.6px #07101e!important;paint-order:stroke fill!important;text-shadow:2px 2px 0 #111827,4px 4px 0 #111827!important}
+.brand-title small{z-index:1}
+.home-launch-grid{position:relative;z-index:2}
+.launch-card{animation:pixelPulse 3.6s steps(2,end) infinite!important;transition:filter .18s ease,translate .18s ease!important}
+.launch-card:nth-child(2){animation-delay:.6s!important}.launch-card:nth-child(3){animation-delay:1.2s!important}
+@keyframes pixelPulse{0%,100%{filter:brightness(1);box-shadow:4px 4px 0 #030812,inset 2px 2px 0 #ffffff27}50%{filter:brightness(1.12);box-shadow:4px 4px 0 #030812,0 0 14px #77d9e566,inset 2px 2px 0 #ffffff45}}
+.roaming-layer{z-index:2}
+.roaming-mon.greeting .walk-sprite{animation:welcomeNod .38s steps(2,end) infinite!important;transform-origin:50% 85%;will-change:transform}
+@keyframes welcomeNod{0%,100%{transform:translateY(0) rotate(0deg) scale(1)}25%{transform:translateY(-3px) rotate(-5deg) scale(1.04)}50%{transform:translateY(1px) rotate(4deg) scale(.98)}75%{transform:translateY(-2px) rotate(-3deg) scale(1.02)}}
+@media(max-width:700px){.brand-title{font-size:clamp(27px,7.4vw,42px)!important;line-height:1.55!important}.brand-title span,.brand-title em{letter-spacing:.015em!important}.roaming-layer{opacity:.9}}
+@media(prefers-reduced-motion:reduce){.launch-card,.roaming-mon.greeting .walk-sprite{animation:none!important;transition:none!important}}
+\n</style>
 </head>
 <body>
 <main id="launcher">
@@ -124,7 +138,10 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     volumeValue.textContent = `${volumeRange.value} %`;
     try { localStorage.setItem("digirogue-volume", String(audio.volume)); } catch (_) {}
   });
-  let motion = true;
+  const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let motion = !motionPreference.matches;
+  document.body.classList.toggle("motion-off", !motion);
+  document.getElementById("motionSwitch").classList.toggle("on", motion);
   let toastTimer;
   function notify(message) {
     toast.textContent = message;
@@ -201,16 +218,19 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 
   // Four Digimon follow independent loops over the fixed 2D clearing. Atlas characters have
   // eight directions x two walk frames; Patamon uses a flying pose with 8 perspective turns.
-  const routeShape = [[0, 0], [0, -4], [6, -7], [12, -7], [18, -3], [18, 2], [12, 6], [6, 6], [0, 2]];
+  const routeShape = [[0, 0], [0, -2], [3, -3], [7, -3], [10, -1], [10, 1], [7, 3], [3, 3], [0, 1]];
   const walkers = [
-    { id: "roamingAgumon", sprite: "spriteAgumon", atlas: "assets/launcher/digimon/walk/agumon_atlas.png", ratio: 1, center: 52, baseY: 78, size: 70, speed: 25, phase: 0 },
-    { id: "roamingGabumon", sprite: "spriteGabumon", atlas: "assets/launcher/digimon/walk/gabumon_atlas.png", ratio: 1, center: 24, baseY: 80, size: 73, speed: 27, phase: 1 },
-    { id: "roamingPatamon", sprite: "spritePatamon", atlas: "assets/launcher/digimon/walk/patamon_atlas.png", ratio: 1, center: 77, baseY: 79, size: 66, speed: 35, phase: 2 },
-    { id: "roamingKoromon", sprite: "spriteKoromon", atlas: "assets/launcher/digimon/walk/koromon_atlas.png", ratio: 1, center: 33, baseY: 82, size: 52, speed: 23, phase: 1 }
+    { id: "roamingAgumon", sprite: "spriteAgumon", atlas: "assets/launcher/digimon/walk/agumon_atlas.png", ratio: 1, center: 9, mobileCenter: 12, baseY: 85, size: 60, mobileSize: 36, speed: 23, phase: 0 },
+    { id: "roamingGabumon", sprite: "spriteGabumon", atlas: "assets/launcher/digimon/walk/gabumon_atlas.png", ratio: 1, center: 24, mobileCenter: 37, baseY: 85, size: 62, mobileSize: 38, speed: 24, phase: 1 },
+    { id: "roamingPatamon", sprite: "spritePatamon", atlas: "assets/launcher/digimon/walk/patamon_atlas.png", ratio: 1, center: 39, mobileCenter: 62, baseY: 85, size: 58, mobileSize: 35, speed: 29, phase: 2 },
+    { id: "roamingKoromon", sprite: "spriteKoromon", atlas: "assets/launcher/digimon/walk/koromon_atlas.png", ratio: 1, center: 54, mobileCenter: 86, baseY: 85, size: 48, mobileSize: 30, speed: 22, phase: 1 }
   ].map((actor) => {
     actor.root = document.getElementById(actor.id);
     actor.spriteEl = document.getElementById(actor.sprite);
-    actor.route = routeShape.map(([dx, dy]) => ({ x: actor.center + dx * (actor.size / 70), y: actor.baseY + dy }));
+    actor.route = [];
+    actor.desktopRoute = routeShape.map(([dx, dy]) => ({ x: actor.center + dx * (actor.size / 70), y: actor.baseY + dy }));
+    actor.mobileRoute = routeShape.map(([dx, dy]) => ({ x: actor.mobileCenter + dx * (actor.mobileSize / 70), y: 85 + dy * .7 }));
+    actor.route = actor.desktopRoute;
     actor.waypoint = 0; actor.progress = 0; actor.facing = 4;
     actor.root.style.aspectRatio = String(actor.ratio);
     if (actor.atlas) {
@@ -229,6 +249,10 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       const greeting = motion && time < greetingEndsAt;
       actor.root.classList.toggle("greeting", greeting);
       if (!motion || innerWidth <= 320) return;
+      const compact = innerWidth <= 700;
+      const targetRoute = compact ? actor.mobileRoute : actor.desktopRoute;
+      if (actor.route !== targetRoute) { actor.route = targetRoute; actor.waypoint = 0; actor.progress = 0; }
+      const actorSize = compact ? actor.mobileSize : actor.size;
       let x, y, direction;
       if (greeting) {
         // Hold each Digimon in its forward-facing poses for a short, shared welcome.
@@ -253,7 +277,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
         : (Math.floor(time / 220) + actor.phase) % 2;
       actor.root.style.left = `${x}vw`;
       actor.root.style.top = `${y}vh`;
-      actor.root.style.width = `${Math.round(actor.size * (.82 + y / 100 * .25))}px`;
+      actor.root.style.width = `${Math.round(actorSize * (.82 + y / 100 * .25))}px`;
       actor.root.classList.toggle("step-a", frame === 0);
       if (actor.atlas) {
         const row = Math.floor(direction / 2);
