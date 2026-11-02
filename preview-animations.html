@@ -61,9 +61,11 @@ function draw(now=0){
   const frame=motion.checked?Math.floor(clock*d.fps)%Math.min(cols,d.frames):step%Math.min(cols,d.frames);
   const x=835,y=525+(motion.checked?Math.sin(clock*3)*7:0);
   const scale=Number(zoom.value);
-  const pixels=d.cell*scale;
+  const pixels=Math.min(d.cell*scale,440);
+  ctx.save();ctx.beginPath();ctx.rect(615,305,440,440);ctx.clip();
   ctx.drawImage(im,frame*d.cell,d.row*d.cell,d.cell,d.cell,
                 Math.round(x-pixels/2),Math.round(y-pixels/2),pixels,pixels);
+  ctx.restore();
   status.textContent=who.value+' · '+im.naturalWidth+'×'+im.naturalHeight+' · fila '+d.row+' · cuadro '+frame+' · zoom '+scale+'×';
  }else status.textContent='Esperando al sprite...';
 }
