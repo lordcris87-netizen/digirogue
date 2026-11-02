@@ -438,7 +438,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
             <p id="launcherEggDetail">Derrota a un guardián para encontrar un huevo.</p>
           </div>
           <div class="launcher-egg-progress"><strong id="launcherEggTimer">--:--</strong><div class="launcher-egg-track"><i id="launcherEggFill"></i></div></div>
-          <a id="launcherEggAction" href="#incubadora" data-nav="incubadora">ABRIR DIGIVICE <span>↗</span></a>
+          <a id="launcherEggAction" class="launcher-egg-action" href="#incubadora" data-nav="incubadora">ABRIR DIGIVICE <span>↗</span></a>
         </div>
       </section>
       <div class="notice"><span>✧</span><span><b>Un nuevo mundo está despertando</b><small>Tu equipo tiene un lugar en esta historia.</small></span></div>
@@ -769,7 +769,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       status.textContent=hatched?"INCUBADORA AL DÍA":"INCUBADORA VACÍA";
       detail.textContent=hatched?"Pasa por el Digivice para cuidar a tu equipo.":"Derrota a un guardián para encontrar un huevo.";
       timer.textContent=hatched?"✓":"--:--";fill.style.width=hatched?"100%":"0%";
-      art.classList.add("hidden");fallback.classList.toggle("hidden",!list.length);
+      art.classList.add("hidden");fallback.classList.remove("hidden");
       action.textContent=hatched?"CUIDAR EQUIPO ↗":"ABRIR DIGIVICE ↗";action.href="#incubadora";
     }
   }
