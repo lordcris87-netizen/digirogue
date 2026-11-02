@@ -355,6 +355,20 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 @media(max-width:390px){.tamer-progress-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.tamer-stat small{font-size:6px}.tamer-progress-head b{font-size:10px}}
 
 </style>
+<style>
+.progress-followups{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.progress-followup{min-width:0;padding:11px 12px;border:1px solid #ffffff29;border-radius:10px;background:linear-gradient(145deg,#192536ed,#111b2be8);box-shadow:inset 0 1px #ffffff0b}
+.objective-followup{background:linear-gradient(145deg,#282344ed,#171b32e8)}
+.followup-label{display:flex;align-items:center;gap:7px;color:#ffe18b}
+.followup-label span{font-size:13px}
+.followup-label small{font-size:7px;font-weight:900;letter-spacing:1px}
+.progress-followup>b{display:block;margin-top:9px;color:#fff;font-size:10px;line-height:1.5}
+.progress-followup>p{min-height:28px;margin:4px 0 8px;color:#d2d7e2;font-size:9px;line-height:1.5}
+.progress-followup>a{display:inline-flex;align-items:center;gap:4px;color:#ffe18b;font-size:7px;font-weight:900;letter-spacing:.5px;text-decoration:none}
+.progress-followup>a:hover{color:#fff}
+.progress-followup>a span{font-size:11px}
+@media(max-width:430px){.progress-followups{grid-template-columns:1fr}.progress-followup>p{min-height:0}}
+</style>
 </head>
 <body>
 <main id="launcher">
@@ -384,6 +398,20 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
           <button type="button" class="tamer-stat" data-nav="incubadora"><small>HUEVOS</small><b id="progressEggCount">0</b></button>
         </div>
         <p id="progressHint">Juega una partida para empezar a guardar tus logros.</p>
+        <div class="progress-followups" aria-label="Actividad y siguiente objetivo">
+          <article class="progress-followup">
+            <div class="followup-label"><span aria-hidden="true">◷</span><small>ACTIVIDAD RECIENTE</small></div>
+            <b id="recentActivityTitle">Tu primera aventura te espera</b>
+            <p id="recentActivityDetail">Al terminar una partida, aquí verás cómo te fue.</p>
+            <a id="recentActivityAction" href="DigiRogue-3D.html">EMPEZAR PARTIDA <span>↗</span></a>
+          </article>
+          <article class="progress-followup objective-followup">
+            <div class="followup-label"><span aria-hidden="true">✦</span><small>SIGUIENTE OBJETIVO</small></div>
+            <b id="objectiveTitle">Juega tu primera partida</b>
+            <p id="objectiveDetail">Explora el bosque para empezar tu aventura.</p>
+            <a id="objectiveAction" href="DigiRogue-3D.html">IR AL BOSQUE <span>↗</span></a>
+          </article>
+        </div>
       </section>
       <div class="notice"><span>✧</span><span><b>Un nuevo mundo está despertando</b><small>Tu equipo tiene un lugar en esta historia.</small></span></div>
     </div>
@@ -696,8 +724,42 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     put("progressBossWins",wins);
     put("progressDexCount",Math.min(found.size,4)+" / 4");
     put("progressEggCount",pending);
+    const bestKills=Number(stats.bestKills)||0,lastKills=Number(stats.lastKills)||0,lastLevel=Number(stats.lastLevel)||0;
     const hint=document.getElementById("progressHint");
-    if(hint)hint.textContent=games?("Partidas: "+games+" · Récord: "+(Number(stats.bestKills)||0)+" enemigos en una partida."): "Juega una partida para empezar a guardar tus logros.";
+    if(hint)hint.textContent=games?("Partidas: "+games+" · Récord: "+bestKills+" enemigos en una partida."): "Juega una partida para empezar a guardar tus logros.";
+
+    const recentTitle=document.getElementById("recentActivityTitle"),recentDetail=document.getElementById("recentActivityDetail");
+    const recentAction=document.getElementById("recentActivityAction"),objectiveTitle=document.getElementById("objectiveTitle");
+    const objectiveDetail=document.getElementById("objectiveDetail"),objectiveAction=document.getElementById("objectiveAction");
+    if(games){
+      if(recentTitle)recentTitle.textContent="Última partida · Nivel "+String(lastLevel).padStart(2,"0");
+      const total=Math.max(0,Number(stats.lastSeconds)||0),duration=String(Math.floor(total/60)).padStart(2,"0")+":"+String(total%60).padStart(2,"0");
+      const stamp=Number(stats.updatedAt)||0,when=stamp?new Intl.DateTimeFormat("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(stamp)):"";
+      if(recentDetail)recentDetail.textContent=lastKills+" enemigos · "+duration+(when?" · "+when:"");
+      if(recentAction){recentAction.textContent="VOLVER AL BOSQUE ↗";recentAction.href="DigiRogue-3D.html"}
+    }else{
+      if(recentTitle)recentTitle.textContent="Tu primera aventura te espera";
+      if(recentDetail)recentDetail.textContent="Al terminar una partida, aquí verás cómo te fue.";
+      if(recentAction){recentAction.textContent="EMPEZAR PARTIDA ↗";recentAction.href="DigiRogue-3D.html"}
+    }
+
+    if(pending>0){
+      if(objectiveTitle)objectiveTitle.textContent=pending===1?"Tu huevo te está esperando":"Tus huevos te están esperando";
+      if(objectiveDetail)objectiveDetail.textContent=pending===1?"Dale unos mimos en la incubadora para que eclosione.":"Incuba uno de tus "+pending+" huevos pendientes.";
+      if(objectiveAction){objectiveAction.textContent="ABRIR INCUBADORA ↗";objectiveAction.href="#incubadora"}
+    }else if(games===0){
+      if(objectiveTitle)objectiveTitle.textContent="Juega tu primera partida";
+      if(objectiveDetail)objectiveDetail.textContent="Explora el bosque para empezar tu aventura.";
+      if(objectiveAction){objectiveAction.textContent="IR AL BOSQUE ↗";objectiveAction.href="DigiRogue-3D.html"}
+    }else if(found.size<4){
+      if(objectiveTitle)objectiveTitle.textContent="Busca otro huevo en el bosque";
+      if(objectiveDetail)objectiveDetail.textContent="Rescata huevos para descubrir nuevos compañeros.";
+      if(objectiveAction){objectiveAction.textContent="SEGUIR EXPLORANDO ↗";objectiveAction.href="DigiRogue-3D.html"}
+    }else{
+      if(objectiveTitle)objectiveTitle.textContent="Supera tu récord";
+      if(objectiveDetail)objectiveDetail.textContent="Tu mejor partida: "+bestKills+" enemigos derrotados.";
+      if(objectiveAction){objectiveAction.textContent="JUGAR OTRA VEZ ↗";objectiveAction.href="DigiRogue-3D.html"}
+    }
   }
   updateHomeProgress();
   addEventListener("storage",event=>{if([statsKey,eggsKey,buddiesKey].includes(event.key))updateHomeProgress()});
