@@ -1,0 +1,46 @@
+name: Visual smoke test for animated title (development only)
+on:
+  push:
+    branches:
+      - develop/portada-animada
+    paths:
+      - tests/check_browser.py
+      - .github/workflows/browser-visual-checks.yml
+      - index.html
+      - assets/title_layers/**
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  chromium:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install local app and browser test dependencies
+        run: |
+          pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
+      - name: Start DigiRogue locally
+        run: |
+          HOST=127.0.0.1 PORT=8765 python server.py >/tmp/digirogue-test.log 2>&1 &
+          echo $! >/tmp/digirogue-test.pid
+          for i in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:8765/api/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/digirogue-test.log
+          exit 1
+      - name: Check desktop, mobile, animations and reduced motion
+        run: python tests/check_browser.py
+      - name: Store screenshot and motion video for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: title-visual-proof
+          path: artifacts/browser/
+          if-no-files-found: ignore
+          retention-days: 3
