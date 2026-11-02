@@ -36,6 +36,30 @@ async def inspect_page(browser,label,viewport,mobile=False):
     assert loaded["ok"] and loaded["actors"]==4, (label,loaded)
     assert loaded["background"]==1672, (label,loaded)
     assert loaded["visible"],label
+    # Compare deterministic instants with environmental particles removed.
+    # This proves character layers move, rather than merely foliage drifting.
+    moved=await page.evaluate("""() => {
+      const ctx=document.getElementById('weather').getContext('2d');
+      const boxes=[[0,493,298,297],[228,509,275,305],
+                   [1213,84,205,131],[1425,509,176,208]];
+      const capture=(t)=>{
+        ctx.clearRect(0,0,1672,941);
+        drawOriginalTitleCharacters(t);
+        return boxes.map(([x,y,w,h])=>ctx.getImageData(x,y,w,h).data);
+      };
+      const first=capture(0),second=capture(1.3);
+      return first.map((data,i)=>{
+        let changed=0;
+        for(let k=0;k<data.length;k+=4)
+          if(Math.abs(data[k]-second[i][k])+
+             Math.abs(data[k+1]-second[i][k+1])+
+             Math.abs(data[k+2]-second[i][k+2])+
+             Math.abs(data[k+3]-second[i][k+3])>32)changed++;
+        return changed;
+      });
+    }""")
+    assert all(count>100 for count in moved),(label,"missing character movement",moved)
+    print("TITLE MOTION VERIFIED",label,moved)
     await page.wait_for_timeout(350)
     previous=await page.locator("#weather").evaluate(
         "(canvas) => Array.from(canvas.getContext('2d').getImageData(160,550,100,100).data).filter((v,i)=>i%4===3&&v>0).length"
