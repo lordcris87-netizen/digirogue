@@ -255,6 +255,11 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 @media(max-width:700px){.incubator-layout{max-width:540px!important}.vpet-device{width:min(100%,460px)!important;max-width:460px!important;min-height:380px!important;height:380px!important}.vpet-screen{width:46%!important;max-width:215px!important}.tama-control{width:70px!important;height:68px!important}.tama-control i{width:51px!important;height:42px!important}.tama-control-a{left:0!important}.tama-control-b,.tama-control-c{right:0!important}}
 @media(max-width:380px){.vpet-device{width:100%!important;min-height:340px!important;height:340px!important}.vpet-screen{width:47%!important;max-width:185px!important}.tama-control{width:60px!important}.tama-control i{width:43px!important;height:36px!important}.tama-control small{font-size:5px!important}}
 
+
+/* Match all three tactile keys to the deep blue reference and show keyboard focus. */
+.vpet-device .tama-control:nth-child(2) i,.vpet-device .tama-control:nth-child(3) i{background:linear-gradient(145deg,#536bdd 0%,#263fba 48%,#182a84 100%)!important;color:#d9e4ff!important}
+.tama-control:focus-visible i{outline:3px solid #fff3a6;outline-offset:3px}
+
 </style>
 </head>
 <body>
