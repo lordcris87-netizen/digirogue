@@ -7,7 +7,8 @@
 #home{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden;background:#04172c}
 #home:before{content:"";position:absolute;inset:-8%;background:url('/assets/portada.webp') center/cover;filter:blur(28px) brightness(.24)}
 .stage{position:relative;width:min(100vw,177.68dvh);aspect-ratio:1672/941;max-height:100dvh;overflow:hidden;box-shadow:0 0 50px #0009}
-.stage>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill}
+.stage>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill;image-rendering:auto}
+.stage>canvas{image-rendering:pixelated}
 .stage>canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .hotspot{position:absolute;border:none;background:transparent;left:39.4%;width:21%;z-index:2;border-radius:6px}.hotspot:hover{background:#fff2}.hotspot:focus-visible{outline:3px solid #fff800}
 .play{top:50%;height:7.5%}.continue{top:57.6%;height:7.1%}.guide{top:65%;height:7.1%}.options{top:72.4%;height:7.2%}.exit{top:79.9%;height:7.2%}
@@ -165,7 +166,7 @@ function homeMotion(ts){let t=(ts-startAt)/1000;
 // Sync reduced-motion mode even in browsers that do not dispatch a media-query
 // change event reliably. Clearing the overlay avoids frozen duplicate sprites.
 if(screen==='home'&&originalTitleLayers){
- const expected=reducedMotion.matches?originalCoverURL:isolatedCoverURL;
+ const expected=reducedMotion.matches?originalTitleArtURL():isolatedTitleArtURL();
  if(homeCoverArt.getAttribute('src')!==expected)setOriginalTitleMotionMode();
 }
 if(screen==='home'&&reducedMotion.matches)wc.clearRect(0,0,1672,941);
@@ -238,6 +239,12 @@ function drawTitleActors(t){
 // No server changes and no impact on gameplay or multiplayer.
 const originalCoverURL='/assets/portada.webp';
 const isolatedCoverURL='/assets/title_layers/background.webp';
+// 2x HD backgrounds preserve the original layout and character alignment.
+const originalCoverHDURL='/assets/portada_hd.webp';
+const isolatedCoverHDURL='/assets/title_layers/background_hd.webp';
+let titleHDReady=false;
+const originalTitleArtURL=()=>titleHDReady?originalCoverHDURL:originalCoverURL;
+const isolatedTitleArtURL=()=>titleHDReady?isolatedCoverHDURL:isolatedCoverURL;
 // Back-to-front order matters: Gabumon sits BEHIND Agumon in the art.
 const titleLayerPositions=[
  {name:'gabumon',x:228,y:509,w:275,h:305,kind:'breathe',phase:1.6},
@@ -258,9 +265,21 @@ function loadTitleLayer(url){
 }
 function setOriginalTitleMotionMode(){
  const showLayers=!!originalTitleLayers&&!reducedMotion.matches;
- homeCoverArt.src=showLayers?isolatedCoverURL:originalCoverURL;
- $('visualVersion').textContent=showLayers?'Portada · personajes animados (desarrollo)':'Portada original · movimiento ambiental';
+ const desired=showLayers?isolatedTitleArtURL():originalTitleArtURL();
+ if(homeCoverArt.getAttribute('src')!==desired)homeCoverArt.src=desired;
+ $('visualVersion').textContent=(titleHDReady?'HD · ':'')+(showLayers?'Personajes animados (desarrollo)':'Portada original');
 }
+// Optional high-definition assets: the game still loads the original art if
+// the enhanced images are missing, corrupt, or unavailable to a browser.
+Promise.all([loadTitleLayer(originalCoverHDURL),loadTitleLayer(isolatedCoverHDURL)])
+ .then(([normalHD,backgroundHD])=>{
+  if(normalHD.naturalWidth!==3344||normalHD.naturalHeight!==1882||
+     backgroundHD.naturalWidth!==3344||backgroundHD.naturalHeight!==1882)
+    throw new Error('Incorrect HD image size');
+  titleHDReady=true;
+  setOriginalTitleMotionMode();
+ })
+ .catch(error=>console.warn('DigiRogue: using standard artwork:',error));
 Promise.all([loadTitleLayer(isolatedCoverURL),...titleLayerPositions.map(a=>loadTitleLayer('/assets/title_layers/'+a.name+'.png'))])
  .then(([background,...actors])=>{
   // Reject incompatible or incomplete assets rather than misaligning layers.
@@ -273,7 +292,7 @@ Promise.all([loadTitleLayer(isolatedCoverURL),...titleLayerPositions.map(a=>load
  .catch(error=>{
   console.warn('DigiRogue: original cover retained; title layers unavailable:',error);
   originalTitleLayers=null;
-  homeCoverArt.src=originalCoverURL;
+  homeCoverArt.src=originalTitleArtURL();
   $('visualVersion').textContent='Portada original · modo seguro';
  });
 if(reducedMotion.addEventListener)reducedMotion.addEventListener('change',setOriginalTitleMotionMode);
