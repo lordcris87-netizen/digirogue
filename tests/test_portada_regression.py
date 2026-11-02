@@ -34,6 +34,31 @@ class DigiRogueStaticTests(unittest.TestCase):
             with self.subTest(name=name):
                 self.assertTrue((ROOT / 'assets' / name).is_file())
 
+    def test_separated_cover_assets_and_dimensions(self):
+        import struct
+        import json
+        folder = ROOT / 'assets' / 'title_layers'
+        expected = {
+            'agumon': (298,297),
+            'gabumon': (275,305),
+            'bat': (205,131),
+            'bird': (176,208)
+        }
+        for name, expected_size in expected.items():
+            with self.subTest(name=name):
+                path = folder / (name + '.png')
+                data = path.read_bytes()[:26]
+                self.assertEqual(data[:8], b'\\x89PNG\\r\\n\\x1a\\n')
+                self.assertEqual(struct.unpack('>II', data[16:24]), expected_size)
+                self.assertEqual(data[25], 6, 'Character PNG must have RGBA transparency')
+        bg=(folder / 'background.webp').read_bytes()[:12]
+        self.assertEqual(bg[:4], b'RIFF')
+        self.assertEqual(bg[8:], b'WEBP')
+        meta = json.loads((folder/'manifest.json').read_text(encoding='utf-8'))
+        self.assertEqual(set(meta),set(expected))
+        self.assertIn('setOriginalTitleMotionMode',self.page)
+        self.assertIn('originalTitleLayers=null',self.page)
+
     def test_dev_preview_remains_separate(self):
         self.assertTrue((ROOT / 'preview-animations.html').is_file())
         self.assertIn('drawTitleActors', self.page)
