@@ -386,6 +386,28 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 .launcher-egg-action span{font-size:10px}
 @media(max-width:520px){.launcher-egg-summary{grid-template-columns:42px minmax(0,1fr) 52px;gap:8px}.launcher-egg-visual{width:40px;height:40px}.launcher-egg-action{grid-column:2/4;justify-self:start;padding:7px 9px}}
 @media(max-width:390px){.launcher-egg-summary{grid-template-columns:38px minmax(0,1fr) 48px;padding:9px;gap:7px}.launcher-egg-visual{width:36px;height:36px}.launcher-egg-copy>b{font-size:8px}.launcher-egg-copy>p{font-size:7px}}
+.achievements-panel{margin-top:10px;padding:12px;border:1px solid #ffffff36;border-radius:11px;background:linear-gradient(145deg,#111d2beF,#16192ade);box-shadow:inset 0 1px #ffffff10}
+.achievements-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.achievements-heading span{display:grid;gap:5px}
+.achievements-heading small{color:#c9cfda;font-size:6px;font-weight:800;letter-spacing:.7px}
+.achievements-heading b{color:#ffe18b;font-size:9px;letter-spacing:.3px}
+.achievements-heading>strong{color:#aee8df;font-size:8px;white-space:nowrap}
+.achievement-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.achievement-tile{display:grid;grid-template-columns:31px minmax(0,1fr) auto;align-items:center;gap:7px;min-height:59px;padding:7px;border:1px solid #ffffff22;border-radius:8px;background:#ffffff07;opacity:.72}
+.achievement-tile.unlocked{opacity:1;border-color:#f6d47b70;background:linear-gradient(120deg,#4e3a1950,#ffffff08)}
+.achievement-medal{width:29px;height:32px;display:grid;place-items:center;clip-path:polygon(50% 0,92% 16%,82% 72%,50% 100%,18% 72%,8% 16%);background:#283047;color:#9299a9;font-family:"Press Start 2P",monospace;font-size:9px;image-rendering:pixelated;text-shadow:1px 1px #111}
+.achievement-tile.unlocked .achievement-medal{background:linear-gradient(145deg,#fff0a0,#e9a738 60%,#ad622e);color:#39270d;filter:drop-shadow(0 2px 3px #ffc85466)}
+.achievement-copy{min-width:0}
+.achievement-copy>b,.achievement-copy>small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.achievement-copy>b{color:#f1eee5;font-size:6px;line-height:1.6}
+.achievement-copy>small{margin-top:3px;color:#c4cbd4;font-size:6px}
+.achievement-meter{height:3px;margin-top:5px;overflow:hidden;border:1px solid #ffffff1d;border-radius:4px;background:#080e18}
+.achievement-meter i{display:block;height:100%;background:#9b9faf;transition:width .3s}
+.achievement-tile.unlocked .achievement-meter i{background:#f5d274}
+.achievement-tile>strong{color:#d3d8e2;font-size:6px;white-space:nowrap}
+.achievement-tile.unlocked>strong{color:#ffe18b}
+@media(max-width:560px){.achievement-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:370px){.achievement-grid{grid-template-columns:1fr}.achievement-tile{min-height:54px}}
 </style>
 </head>
 <body>
@@ -440,6 +462,10 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
           <div class="launcher-egg-progress"><strong id="launcherEggTimer">--:--</strong><div class="launcher-egg-track"><i id="launcherEggFill"></i></div></div>
           <a id="launcherEggAction" class="launcher-egg-action" href="#incubadora" data-nav="incubadora">ABRIR DIGIVICE <span>↗</span></a>
         </div>
+        <section class="achievements-panel" aria-label="Insignias Tamer">
+          <div class="achievements-heading"><span><small>RETOS COMPLETADOS · RECUERDOS GANADOS</small><b>INSIGNIAS TAMER</b></span><strong id="achievementCount">0 / 6</strong></div>
+          <div class="achievement-grid" id="achievementGrid" aria-live="polite"></div>
+        </section>
       </section>
       <div class="notice"><span>✧</span><span><b>Un nuevo mundo está despertando</b><small>Tu equipo tiene un lugar en esta historia.</small></span></div>
     </div>
@@ -784,6 +810,22 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     put("progressBossWins",wins);
     put("progressDexCount",Math.min(found.size,4)+" / 4");
     put("progressEggCount",pending);
+    const eggList=Array.isArray(eggs)?eggs:[];
+    const achievements=[
+      {mark:"I",title:"PRIMERA AVENTURA",goal:"Termina una partida",value:Number(stats.gamesPlayed)||0,target:1},
+      {mark:"V",title:"NIVEL 5",goal:"Alcanza nivel 5",value:Number(stats.bestLevel)||0,target:5},
+      {mark:"G",title:"GUARDIÁN VENCIDO",goal:"Derrota a un jefe",value:Number(stats.bossWins)||0,target:1},
+      {mark:"H",title:"HUEVO RESCATADO",goal:"Encuentra un huevo",value:eggList.length,target:1},
+      {mark:"N",title:"NUEVO COMPAÑERO",goal:"Haz eclosionar un huevo",value:eggList.filter(egg=>egg.hatched).length,target:1},
+      {mark:"D",title:"DIGIDEX COMPLETA",goal:"Descubre los 4 Digimon",value:found.size,target:4}
+    ];
+    const badgeGrid=document.getElementById("achievementGrid");
+    const unlocked=achievements.filter(item=>item.value>=item.target).length;
+    put("achievementCount",unlocked+" / "+achievements.length);
+    if(badgeGrid)badgeGrid.innerHTML=achievements.map(item=>{
+      const done=item.value>=item.target,progress=Math.min(100,Math.round(item.value/item.target*100));
+      return '<article class="achievement-tile'+(done?' unlocked':'')+'" aria-label="'+item.title+': '+(done?'conseguida':item.goal)+'"><span class="achievement-medal" aria-hidden="true">'+item.mark+'</span><span class="achievement-copy"><b>'+item.title+'</b><small>'+(done?'¡Conseguida!':item.goal)+'</small><span class="achievement-meter"><i style="width:'+progress+'%"></i></span></span><strong>'+(done?'✓':Math.min(item.value,item.target)+'/'+item.target)+'</strong></article>';
+    }).join("");
     const bestKills=Number(stats.bestKills)||0,lastKills=Number(stats.lastKills)||0,lastLevel=Number(stats.lastLevel)||0;
     const hint=document.getElementById("progressHint");
     if(hint)hint.textContent=games?("Partidas: "+games+" · Récord: "+bestKills+" enemigos en una partida."): "Juega una partida para empezar a guardar tus logros.";
