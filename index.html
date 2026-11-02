@@ -221,6 +221,18 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 @media(max-width:700px){.vpet-device{min-height:325px}}
 @media(max-width:380px){.vpet-device{min-height:310px}}
 
+
+/* Override the former egg shell sizing so the complete Digivice and its molded rim show. */
+.vpet-device{width:min(100%,410px)!important;min-height:335px!important;height:335px!important;padding:0!important;border:0!important;clip-path:none!important;background:transparent!important;box-shadow:none!important;filter:drop-shadow(0 5px 0 #354f88) drop-shadow(0 11px 0 #122043) drop-shadow(0 17px 11px #0009)!important}
+.vpet-device:before{content:"";position:absolute;inset:-5px;width:auto;height:auto;z-index:-2;clip-path:polygon(8% 17%,20% 17%,23% 10%,38% 10%,44% 5%,56% 5%,62% 10%,77% 10%,80% 17%,92% 17%,100% 27%,100% 73%,92% 83%,80% 83%,77% 91%,62% 91%,56% 97%,44% 97%,38% 91%,23% 91%,20% 83%,8% 83%,0 73%,0 27%);background:linear-gradient(145deg,#fff 0%,#b6d0f7 18%,#49669f 57%,#15264e 100%);box-shadow:inset 0 8px 0 #fff,inset 0 -12px 0 #101d40}
+.vpet-device:after{content:"";position:absolute;inset:0;width:auto;height:auto;z-index:-1;clip-path:polygon(8% 17%,20% 17%,23% 10%,38% 10%,44% 5%,56% 5%,62% 10%,77% 10%,80% 17%,92% 17%,100% 27%,100% 73%,92% 83%,80% 83%,77% 91%,62% 91%,56% 97%,44% 97%,38% 91%,23% 91%,20% 83%,8% 83%,0 73%,0 27%);background:linear-gradient(145deg,#f5fbff 0%,#d8e9ff 15%,#a8c8f3 45%,#83a4df 72%,#5f78b2 100%);box-shadow:inset 0 10px 0 #ffffffd9,inset 6px 0 0 #ffffff70,inset -6px 0 0 #51699c,inset 0 -14px 0 #435b91}
+.vpet-screen{width:49%!important;max-width:204px!important;min-height:0!important;height:auto!important;aspect-ratio:1/1!important;margin:0!important;padding:12px 13px 11px!important;border:5px solid #192a50!important;border-radius:50%!important}
+.vpet-screen:before{inset:3px!important;border-radius:50%!important}
+.vpet-controls{display:block!important}
+.vpet-device-top{position:absolute!important}
+@media(max-width:700px){.vpet-device{width:min(100%,390px)!important;min-height:325px!important;height:325px!important}.vpet-screen{width:50%!important;max-width:190px!important}}
+@media(max-width:380px){.vpet-device{min-height:310px!important;height:310px!important}.vpet-screen{width:52%!important;max-width:176px!important}}
+
 </style>
 </head>
 <body>
