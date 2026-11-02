@@ -187,6 +187,7 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!document.hi
 // The original painted creatures remain untouched until clean-background art exists.
 // Prototype actors are drawn ONLY from standalone transparent sprite sheets.
 // Original flattened characters stay fixed: moving them requires real clean-background art.
+// Verified atlas dimensions: bat 768x768, kunemon 384x768, both 96px cells.
 const titleActors=[
  {src:'/assets/bat.png',cell:96,frames:8,row:4,fps:8,x:300,y:115,w:72,h:72,phase:0,kind:'fly'},
  {src:'/assets/kunemon.png',cell:96,frames:4,row:3,fps:4,x:1125,y:850,w:72,h:72,phase:1.4,kind:'walk'}
@@ -200,9 +201,11 @@ function drawTitleActors(t){
  for(const actor of titleActors){
   const image=titleActorImages.get(actor.src);
   if(!image?.complete||!image.naturalWidth||!image.naturalHeight)continue;
-  const cols=Math.min(actor.frames,Math.floor(image.naturalWidth/actor.cell));
-  const rows=Math.floor(image.naturalHeight/actor.cell);
-  if(cols<1||rows<=actor.row)continue;
+  // Validate the actual atlas grid before selecting a frame: no partial sprites.
+  if(image.naturalWidth%actor.cell||image.naturalHeight%actor.cell)continue;
+  const cols=Math.min(actor.frames,image.naturalWidth/actor.cell);
+  const rows=image.naturalHeight/actor.cell;
+  if(cols<1||actor.row<0||actor.row>=rows)continue;
   const frame=Math.floor((t+actor.phase)*actor.fps)%cols;
   const flying=actor.kind==='fly';
   const x=actor.x+(flying?Math.sin(t*.6)*52:Math.sin(t*.4)*18);
