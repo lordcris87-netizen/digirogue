@@ -50,6 +50,39 @@ SHAPES = {
         1457,650 1446,643 1439,630
     """),
 }
+# Close silhouettes traced in *local crop* pixels. Limit GrabCut to the actual
+# character, excluding leftover tree trunks, landscape and blue sky.
+SILHOUETTES = {
+    "agumon": """145,16 178,15 183,18 210,17 247,16 268,22 283,38 291,57
+      293,76 271,84 266,95 283,106 284,124 271,139 229,145 196,153
+      212,171 229,190 260,214 275,241 285,262 290,280 277,292
+      256,297 238,289 220,285 200,297 183,285 166,293 135,294
+      113,284 86,281 60,272 42,261 24,244 19,215 20,198 30,198
+      42,218 64,227 81,222 92,207 102,181 114,169 125,157
+      137,148 125,140 115,129 111,115 105,107 103,88 107,70
+      115,51 129,32""",
+    "gabumon": """193,20 199,28 199,41 206,40 208,46 208,64 220,68
+      230,76 245,85 261,91 264,108 263,139 249,155 233,158
+      215,173 207,177 201,196 215,222 234,231 258,241 275,265
+      275,285 262,293 242,298 229,294 204,286 191,302 172,305
+      144,301 124,293 94,295 75,293 61,279 45,272 25,271
+      22,256 45,249 35,229 29,206 20,201 7,199 10,188 27,184
+      31,168 45,158 29,147 48,139 49,124 25,121 44,111
+      24,94 10,89 13,81 41,79 67,80 78,77 78,71 63,69
+      67,64 90,70 114,72 143,76 166,78 174,68 174,39 192,54""",
+    "bat": """7,19 27,12 74,5 94,8 116,13 126,26 139,43
+      158,59 167,58 165,36 169,24 185,38 192,49 192,64 184,78
+      193,95 193,112 178,121 153,120 126,116 111,121 95,123
+      79,120 61,121 53,112 31,106 10,110 20,104 52,95 68,78
+      89,71 93,57 88,47 69,45 59,50 59,29 45,24 30,21""",
+    "bird": """100,20 112,24 122,17 130,25 132,40 124,50 122,60
+      139,61 153,63 165,56 172,60 164,75 155,86 161,94 152,107
+      165,111 159,120 168,139 160,145 149,153 152,166 171,177
+      174,191 166,195 144,190 128,198 111,199 98,196 83,194
+      73,201 64,203 54,195 48,183 43,172 46,155 51,144
+      38,136 21,130 16,115 29,99 52,92 60,76 67,63 79,51 93,40"""
+}
+
 all_masks = []
 metadata = {}
 for name, (box, raw_points) in SHAPES.items():
@@ -89,6 +122,40 @@ for name, (box, raw_points) in SHAPES.items():
         is_green=(hsv[:,:,0]>=34)&(hsv[:,:,0]<90)&(hsv[:,:,1]>65)
         alpha[is_green]=0
     alpha=cv2.morphologyEx(alpha,cv2.MORPH_CLOSE,np.ones((3,3),np.uint8))
+    # Remove surrounding scenery that is still selected when the colors of
+    # tree and sky overlap with the characters. Keep eyes, antenna and whites.
+    contour = np.array([tuple(map(int,p.split(",")))
+                       for p in SILHOUETTES[name].split()],np.int32)
+    tight = np.zeros(alpha.shape,np.uint8)
+    cv2.fillPoly(tight,[contour],255)
+    tight = cv2.dilate(tight,cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5)))
+    alpha = cv2.bitwise_and(alpha,tight)
+    H,S,V=cv2.split(hsv)
+    yy,xx=np.indices(alpha.shape)
+    if name=="agumon":
+        unwanted=(H>=35)&(H<142)&(S>70)&(V>55)&~(
+            (xx>=159)&(xx<219)&(yy>=39)&(yy<106))
+        # Exclude the exposed tree trunk on the upper-left behind the head.
+        min_x=np.select([yy<25,yy<45,yy<65,yy<90,yy<125,yy<145],
+                        [153,136,121,112,112,128],default=0)
+        unwanted |= (yy<145)&(xx<min_x)
+    elif name=="gabumon":
+        unwanted=(((H>=32)&(H<99)&(S>75)&(V>55))
+                  |((H>=100)&(H<107)&(S>100)&(V>130)))
+    elif name=="bat":
+        unwanted=(H>=40)&(H<150)&(S>60)&(V>50)
+    else:
+        unwanted=(H>=32)&(H<145)&(S>65)&(V>45)&~(
+            (xx>=95)&(xx<139)&(yy<84))
+    alpha[unwanted]=0
+    n,components,stats,_=cv2.connectedComponentsWithStats((alpha>0).astype(np.uint8))
+    if n>1:
+        largest=1+np.argmax(stats[1:,cv2.CC_STAT_AREA])
+        # Keep limbs and disconnected pixels large enough to be real features.
+        for component in range(1,n):
+            if component!=largest and stats[component,cv2.CC_STAT_AREA]<20:
+                alpha[components==component]=0
+    # The output stays pixel-art sharp: no blurred/feathered matte.
     rgba=np.dstack((crop,alpha))
     Image.fromarray(rgba,"RGBA").save(OUT/(name+".png"),optimize=True)
     full=np.zeros((height,width),np.uint8)
