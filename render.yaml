@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: digirogue-online
+    runtime: docker
+    plan: starter
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeployTrigger: commit
+    numInstances: 1
+    disk:
+      name: digirogue-ranking
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: DIGIROGUE_DB
+        value: /data/ranking.sqlite3
+      - key: PYTHONUNBUFFERED
+        value: '1'

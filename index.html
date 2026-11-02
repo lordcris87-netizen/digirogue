@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"><meta name="theme-color" content="#061a34">
+<title>DigiRogue — Online + Escudo Azul Retro + Ranking</title>
+<style>
+:root{font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f4faff;background:#061a34;--cyan:#6ceaff;--gold:#ffd449;--blue:#103763}
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;overflow:hidden}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.6;cursor:default}
+#home{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden;background:#04172c}
+#home:before{content:"";position:absolute;inset:-8%;background:url('/assets/portada.webp') center/cover;filter:blur(28px) brightness(.24)}
+.stage{position:relative;width:min(100vw,177.68dvh);aspect-ratio:1672/941;max-height:100dvh;overflow:hidden;box-shadow:0 0 50px #0009}
+.stage>img{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:fill}
+.stage>canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hotspot{position:absolute;border:none;background:transparent;left:39.4%;width:21%;z-index:2;border-radius:6px}.hotspot:hover{background:#fff2}.hotspot:focus-visible{outline:3px solid #fff800}
+.play{top:50%;height:7.5%}.continue{top:57.6%;height:7.1%}.guide{top:65%;height:7.1%}.options{top:72.4%;height:7.2%}.exit{top:79.9%;height:7.2%}
+#dock{position:fixed;bottom:max(14px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:4;display:flex;justify-content:center;gap:9px;width:min(96vw,700px);pointer-events:none}
+.dockbtn{pointer-events:auto;background:#073361ed;border:2px solid #6de6ff;color:#e8fcff;box-shadow:0 4px 0 #021529,0 0 14px #46bfff44;border-radius:7px;padding:10px 15px;font-weight:900;font-size:clamp(11px,1.5vw,14px);white-space:nowrap;letter-spacing:.5px}.dockbtn.gold{background:#ffc93c;border-color:#fff5ad;color:#182c41}.dockbtn:hover{filter:brightness(1.15)}
+#offline{display:none;position:fixed;z-index:9;top:9px;left:50%;transform:translateX(-50%);width:max-content;max-width:94vw;padding:8px 12px;background:#681c24e8;border:1px solid #ff8181;border-radius:6px;font-size:12px;text-align:center}
+#view{display:none;position:fixed;inset:0;z-index:10;background:linear-gradient(140deg,#06192df4,#0a2548ee),url('/assets/portada.webp') center/cover;overflow:auto;padding:max(18px,env(safe-area-inset-top)) 14px max(22px,env(safe-area-inset-bottom))}
+#view.open{display:flex;align-items:center;justify-content:center}
+.panel{position:relative;width:min(100%,670px);max-height:calc(100dvh - 26px);overflow:auto;background:#092c50f0;border:3px solid #60dfff;box-shadow:8px 8px 0 #001329,0 0 34px #1a97d963;border-radius:6px;padding:clamp(17px,3vw,30px)}
+.panel .close{position:absolute;right:14px;top:10px;background:transparent;border:0;color:white;font-size:30px;line-height:1}
+.panel h1{font-size:clamp(22px,4vw,33px);color:var(--gold);margin:4px 30px 8px 0;letter-spacing:1px;text-shadow:3px 3px #573815}
+.panel .sub{font-size:13px;color:#b3ecfa;line-height:1.45;margin:0 0 17px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mode{padding:12px 8px;border:2px solid #35688e;border-radius:6px;background:#0a2443;color:#dbedfb;font-weight:900}.mode.selected{background:#12568d;border-color:#65eafa;color:white}
+label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6px}input{display:block;width:100%;background:#03182f;color:#fff;border:2px solid #4e94be;border-radius:5px;padding:13px 12px;outline:none}input:focus{border-color:#79edff}input::placeholder{color:#8dabc5}
+.primary{background:linear-gradient(#ffe671,#ffc220);border:2px solid #fff5a9;box-shadow:0 4px #a15c07;border-radius:6px;color:#1f293b;font-size:16px;font-weight:950;padding:13px;width:100%;margin:18px 0 4px}.primary:active{transform:translateY(3px);box-shadow:0 1px #a15c07}
+.error{color:#ffb5b5;min-height:22px;font-size:13px;margin-top:10px}.hint{font-size:12px;line-height:1.5;color:#a8c7e3}.connection{color:#cdeefc;font-size:12px;margin:8px 0;display:flex;gap:8px;align-items:center}.dot{background:#ed8066;width:9px;height:9px;border-radius:50%}.dot.ok{background:#6affc0;box-shadow:0 0 9px #31f3ac}
+.ranktable{width:100%;border-collapse:collapse;margin-top:18px;font-size:14px}.ranktable th{text-align:left;color:#89eafb;font-size:12px;padding:9px 7px;border-bottom:1px solid #527d99}.ranktable td{padding:10px 7px;border-bottom:1px solid #2a5278}.ranktable td:nth-child(3){font-weight:950;color:#ffe25c}.ranktable tr:nth-child(1) td:first-child{color:#ffd547}.muted{color:#abc4d9;font-size:12px}
+.pill{border:1px solid #66daee;border-radius:5px;background:#0a254a;color:white;font-weight:800;padding:10px 12px}.lobbyinfo{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}.roomcode{font-size:30px;letter-spacing:5px;color:#ffe15b;font-weight:1000}.players{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid #72d8ee;border-radius:5px;padding:8px 10px;font-size:13px;background:#123e68}
+#arenaView{display:none;position:fixed;inset:0;z-index:20;background:#051b28;overflow:hidden;touch-action:none}#arenaView.open{display:block}
+#gameCanvas{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;touch-action:none}
+#hud{position:absolute;top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));z-index:3;display:flex;align-items:flex-start;justify-content:space-between;gap:10px;pointer-events:none}
+.hudbox{background:#05253bd9;border:2px solid #66bce3;border-radius:5px;padding:9px 11px;box-shadow:3px 3px #021521;line-height:1.45;font-weight:850;font-size:13px;text-shadow:1px 1px #001}
+.hudbox .big{font-size:20px;color:#ffdf57}.hudbox span{color:#a9deec}#rightHUD{text-align:right}.hudbutton{pointer-events:auto;background:#103e62;color:white;border:1px solid #78ecff;font-weight:900;border-radius:4px;padding:7px;font-size:12px}
+#mobileControls{position:absolute;inset:0;z-index:2;pointer-events:none;display:none}
+#joystick{position:absolute;bottom:max(32px,env(safe-area-inset-bottom));left:22px;border:2px solid #b6e8ee88;border-radius:100%;width:126px;height:126px;background:#06324766;pointer-events:auto;touch-action:none;display:grid;place-items:center}
+#nub{width:48px;height:48px;border-radius:50%;background:#6bedf6aa;border:2px solid #d3fcff}
+#hitButton{position:absolute;bottom:max(50px,env(safe-area-inset-bottom));right:26px;width:94px;height:94px;background:#e6a039bb;border:3px solid #ffe5a3;border-radius:50%;font-size:34px;color:white;pointer-events:auto;touch-action:none;text-shadow:2px 2px #603500}
+#exitArena{position:absolute;z-index:5;bottom:max(10px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);background:#052235c9;border:1px solid #97e5ec;border-radius:5px;padding:8px;color:#e3ffff;font-size:12px;cursor:pointer}
+#toast{position:absolute;top:22%;left:50%;transform:translateX(-50%);background:#072c4fdc;border:2px solid #ffd85a;color:#ffeb90;border-radius:5px;padding:10px;font-weight:900;pointer-events:none;opacity:0;transition:opacity .2s;z-index:6;text-align:center}
+#toast.on{opacity:1}
+/* Only the player who takes an object sees the reward selection. The arena stays running. */
+#rewardOverlay{position:absolute;inset:0;z-index:9;display:none;align-items:center;justify-content:center;padding:12px;background:#020c22b8;pointer-events:auto}
+#rewardOverlay.open{display:flex}
+.rewardPanel{width:min(640px,96vw);max-height:min(90dvh,680px);overflow:auto;background:#082951;border:4px solid #72f0ff;box-shadow:0 0 0 5px #073150,9px 9px 0 #021125,0 0 35px #25bffb80;padding:clamp(12px,3vw,25px);text-align:center}
+.rewardPanel h2{font:1000 clamp(20px,4vw,30px) system-ui;margin:3px 0 5px;color:#ffdf6b;text-shadow:3px 3px #061d37;letter-spacing:1.5px}
+.rewardPanel p{margin:7px 0 13px;color:#c8f7ff;font-size:clamp(11px,2.5vw,14px)}
+#rewardTimer{font-size:16px;font-weight:950;color:#80eeff;letter-spacing:1px}
+.rewardChoices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:15px}
+.rewardChoice{min-height:132px;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;background:#0b3f69;border:3px solid #4bc8ed;color:#fff;box-shadow:4px 4px #021c34;padding:10px;cursor:pointer;font:inherit}
+.rewardChoice:hover,.rewardChoice:focus-visible{background:#125f97;border-color:#fff3a4;transform:translateY(-2px)}
+.rewardChoice .rewardIcon{font-size:30px}.rewardChoice strong{font-size:clamp(12px,2vw,15px);color:#ffe36c}.rewardChoice span:last-child{font-size:12px;color:#c6f2ff}
+.rewardHint{color:#a9dbeb!important;font-size:11px!important}
+@media(max-width:520px){.rewardChoices{grid-template-columns:1fr}.rewardChoice{min-height:65px;flex-direction:row;gap:12px;justify-content:flex-start;text-align:left}.rewardChoice .rewardIcon{font-size:25px}.rewardPanel{max-height:90dvh}.rewardChoice span:last-child{margin-left:auto;max-width:40%}}
+@media(max-width:710px),(pointer:coarse){#mobileControls{display:block}}
+@media(orientation:portrait){.stage{width:100vw;max-height:100dvh}#dock{bottom:max(20px,env(safe-area-inset-bottom));display:grid;grid-template-columns:1fr 1fr;gap:8px}.dockbtn{font-size:11px;padding:10px}.dockbtn.gold{grid-column:1/3}.panel{max-height:calc(100dvh - 20px);padding:17px}.hudbox{font-size:11px}.hudbox .big{font-size:15px}#rightHUD{max-width:44%}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style></head>
+<body>
+<div id="home">
+ <div class="stage" aria-label="Portada pixel art DigiRogue">
+  <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
+  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas>
+  <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
+  <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
+  <button class="hotspot guide" aria-label="Guía" id="goHelp"></button>
+  <button class="hotspot options" aria-label="Opciones" id="goSettings"></button>
+  <button class="hotspot exit" aria-label="Salir" id="goExit"></button>
+ </div>
+ <nav id="dock" aria-label="Menú online">
+  <button class="dockbtn gold" id="openOnline">🌐 MULTIJUGADOR ONLINE</button>
+  <button class="dockbtn" id="openRanking">🏆 RANKING DE KILLS</button>
+  <button class="dockbtn" id="openSolo">🎮 JUEGO ORIGINAL</button>
+ </nav>
+</div>
+<div id="offline" role="status">🔌 Sin conexión al servidor online. Abre la web desde el servidor, no desde un archivo local.</div>
+<section id="view" aria-live="polite"><div class="panel" id="panel"></div></section>
+<div id="arenaView">
+ <canvas id="gameCanvas" width="1300" height="780" aria-label="Arena cooperativa online"></canvas>
+ <div id="hud"><div class="hudbox"><div>🌐 SALA <b id="hudRoom">------</b></div><div>🌊 OLA <b class="big" id="hudWave">1</b> &nbsp; ⏱ <span id="hudTime">0:00</span></div><div>⚔️ TUS KILLS <b class="big" id="hudKills">0</b> &nbsp; ⭐ NV <b id="hudLevel">1</b></div><div>❤️ <span id="hudHP">100</span>/100</div></div><div class="hudbox" id="rightHUD"><button class="hudbutton" id="copyRoom">📋 COPIAR CÓDIGO</button><div id="hudPlayers">Conectando…</div><div class="muted">WASD / Flechas · Espacio para atacar</div></div></div>
+ <div id="mobileControls"><div id="joystick"><div id="nub"></div></div><button id="hitButton" aria-label="Atacar">⚔️</button></div>
+ <button id="exitArena">← SALIR DE LA SALA</button>
+ <div id="toast" role="status"></div>
+ <div id="rewardOverlay" role="dialog" aria-modal="true" aria-label="Elegir objeto de mejora">
+  <section class="rewardPanel"><div style="font-size:24px">🛡️</div><h2>ESCUDO AZUL ACTIVADO</h2>
+   <p>¡Has recogido un objeto! Estás protegido mientras eliges.<br><strong>Los demás jugadores siguen luchando online.</strong></p>
+   <div id="rewardTimer">12 s</div><div class="rewardChoices" id="rewardChoices"></div>
+   <p class="rewardHint">Elige una mejora (teclas 1, 2 o 3). Si se agota el tiempo, se aplica la primera automáticamente.</p>
+  </section>
+ </div>
+</div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), WORLD={w:1300,h:780}, field=$('view'),panel=$('panel');
+let ws=null, connected=false,myID=null,roomID='',name='',mode='create',screen='home',state=null,lastState=0,playerPos=null,joystick={x:0,y:0},isAttacking=false,keys=new Set(),joyPointer=null,toastTimer=null,offer=null,offerBusy=false;
+const roomKey='digirogue_player_name';
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function statusHTML(){return `<div class="connection"><span class="dot ${connected?'ok':''}"></span>${connected?'Servidor conectado · partidas online reales':'Conectando al servidor…'}</div>`}
+function showPanel(content){$('home').style.display='none';$('arenaView').classList.remove('open');screen='panel';field.classList.add('open');panel.innerHTML=content;panel.querySelector('.close')?.addEventListener('click',home)}
+function home(){screen='home';field.classList.remove('open');$('arenaView').classList.remove('open');$('home').style.display='grid'}
+function error(msg){const el=$('formError');if(el)el.textContent=msg;else toast(msg)}
+function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('on'),3000)}
+function connect(){if(ws&&(ws.readyState===WebSocket.OPEN||ws.readyState===WebSocket.CONNECTING))return;
+ let protocol=location.protocol==='https:'?'wss':'ws';
+ try{ws=new WebSocket(`${protocol}://${location.host}/ws`)}catch(e){$('offline').style.display='block';return}
+ ws.onopen=()=>{connected=true;$('offline').style.display='none';if(screen==='panel'&&$('connection'))$('connection').innerHTML=statusHTML()};
+ ws.onclose=()=>{connected=false;ws=null;hideReward();$('offline').style.display='block';if(screen==='arena'){showPanel(`<button class="close" aria-label="Volver">×</button><h1>🔌 Conexión perdida</h1><p class="sub">Se ha perdido la conexión con el servidor. No hay un modo local oculto: necesitas volver a conectarte.</p><button class="primary" id="retry">VOLVER A CONECTAR</button>`);$('retry').onclick=()=>{connect();lobby()}}};
+ ws.onerror=()=>{$('offline').style.display='block'};
+ ws.onmessage=ev=>{let msg;try{msg=JSON.parse(ev.data)}catch{return}
+ if(msg.type==='hello'){myID=msg.id}
+ if(msg.type==='joined'){roomID=msg.code;name=msg.name;state=null;lastState=0;playerPos=null;hideReward();enterArena()}
+ if(msg.type==='state'){state=msg;lastState=performance.now();if(screen==='arena')updateHUD()}
+  if(msg.type==='reward_offer')showReward(msg);
+  if(msg.type==='reward_applied'){hideReward();toast('✨ Mejora activada: '+msg.reward)}
+ if(msg.type==='error')error(msg.message);
+ if(msg.type==='left'){roomID='';state=null;home()}
+ if(msg.type==='leaderboard')renderRanking(msg.rows)
+ }
+}
+function send(type,data={}){if(ws?.readyState!==WebSocket.OPEN){error('No hay conexión con el servidor online.');return false}ws.send(JSON.stringify({type,...data}));return true}
+function lobby(){mode='create';paintLobby()}
+function paintLobby(){let saved=localStorage.getItem(roomKey)||'';showPanel(`<button class="close" aria-label="Cerrar">×</button><h1>🌐 MULTIJUGADOR ONLINE</h1><p class="sub">Arena cooperativa en tiempo real · Hasta 4 jugadores por sala · Las kills las contabiliza el servidor. Comparte un código para jugar con amigos.</p><div id="connection">${statusHTML()}</div><div class="grid2"><button class="mode ${mode==='create'?'selected':''}" id="createTab">✨ CREAR SALA</button><button class="mode ${mode==='join'?'selected':''}" id="joinTab">🔗 ENTRAR A SALA</button></div><form id="joinForm"><label for="name">TU APODO</label><input id="name" maxlength="16" autocomplete="nickname" placeholder="Ej. TamerPixel" value="${esc(saved)}" required><div id="codeWrap" ${mode==='create'?'hidden':''}><label for="code">CÓDIGO DE SALA</label><input id="code" maxlength="6" placeholder="ABC123" autocapitalize="characters"></div><button class="primary" type="submit">${mode==='create'?'CREAR PARTIDA ONLINE':'ENTRAR A PARTIDA'}</button><div class="error" id="formError"></div></form><p class="hint">⚔️ Muévete con WASD/flechas o joystick táctil. Mantén Espacio o el botón de ataque para luchar. 💎 Recoge objetos para elegir una mejora bajo un escudo azul mientras la partida continúa para tus amigos. Las kills se guardan en el ranking global al salir.</p>`);
+ $('createTab').onclick=()=>{mode='create';const n=$('name').value;localStorage.setItem(roomKey,n);paintLobby()};$('joinTab').onclick=()=>{mode='join';const n=$('name').value;localStorage.setItem(roomKey,n);paintLobby()};
+ $('joinForm').onsubmit=e=>{e.preventDefault();let n=$('name').value.trim(),code=$('code')?.value.trim().toUpperCase();localStorage.setItem(roomKey,n);if(n.length<2||n.length>16){error('El apodo debe tener entre 2 y 16 caracteres.');return}if(mode==='join'&&!/^[A-Z2-9]{6}$/.test(code)){error('Introduce un código válido de seis caracteres.');return}
+ if(send(mode==='create'?'create':'join',{name:n,code})){$('formError').textContent='Entrando a la sala…'}
+ }
+}
+async function ranking(){showPanel(`<button class="close" aria-label="Cerrar">×</button><h1>🏆 RANKING GLOBAL DE KILLS</h1><p class="sub">Clasificación de las mejores partidas online terminadas. Las kills son calculadas en el servidor y se guardan en su base de datos. Los apodos no están vinculados a cuentas verificadas.</p><button class="pill" id="refresh">↻ ACTUALIZAR</button><div id="rankings" class="muted" style="padding:20px 0">Cargando clasificación…</div>`);$('refresh').onclick=loadRanking;await loadRanking()}
+async function loadRanking(){const el=$('rankings');try{let response=await fetch('/api/leaderboard',{cache:'no-store'});if(!response.ok)throw new Error('Servidor no disponible');let data=await response.json();renderRanking(data.ranking)}catch(e){if(el)el.textContent='Ranking no disponible: para verlo necesitas abrir la web desde el servidor online.'}}
+function renderRanking(rows){let el=$('rankings');if(!el)return;if(!rows?.length){el.innerHTML='<p>Aún no hay partidas registradas. ¡Consigue las primeras kills!</p>';return}
+ el.innerHTML=`<table class="ranktable"><thead><tr><th>#</th><th>JUGADOR</th><th>KILLS</th><th>OLA</th><th>FECHA</th></tr></thead><tbody>${rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${Number(r.kills)||0}</td><td>${Number(r.wave)||1}</td><td class="muted">${esc(r.date?.slice(0,10)||'')}</td></tr>`).join('')}</tbody></table>`}
+function info(){showPanel(`<button class="close" aria-label="Cerrar">×</button><h1>📖 GUÍA DE DIGIROGUE</h1><p>En el <b>modo online</b> cooperas con hasta otros tres jugadores, sobrevivís oleadas de enemigos y cada eliminación suma una kill al jugador que asesta el golpe final.</p><p>Recoge los cristales azules para elegir una de tres recompensas. Al recoger uno, <b>solo tu personaje</b> recibe un escudo azul retro y queda inmóvil e invulnerable durante la elección. El tiempo y las oleadas siguen para tus compañeros. Tienes 12 segundos para decidir.</p><p>Consigue 10 kills para subir de nivel y atacar más rápido. Las partidas se guardan en el ranking cuando sales o pierdes la conexión.</p><p class="sub">La arena online es una modalidad nueva y simplificada, separada del juego original. El modo original conserva sus mecánicas en su propia página.</p><button class="primary" id="openFromHelp">JUGAR ONLINE</button>`);$('openFromHelp').onclick=lobby}
+function options(){showPanel(`<button class="close" aria-label="Cerrar">×</button><h1>⚙️ OPCIONES</h1><p>🌬️ Los efectos ambientales de la portada están activos.</p><p>🎵 La música de fondo se añadirá cuando compartas la canción.</p><p class="sub">El modo online requiere este servidor en funcionamiento y una conexión a internet. No existe una modalidad local.</p>`)}
+function originalGame(){window.location.href='/game.html'}
+function leave(){if(roomID)send('leave');roomID='';state=null;hideReward();isAttacking=false;joystick={x:0,y:0};home()}
+function hideReward(){offer=null;offerBusy=false;$('rewardOverlay').classList.remove('open')}
+function showReward(msg){
+ if(screen!=='arena'||!Array.isArray(msg.choices)||msg.choices.length!==3)return;
+ offer=msg;offerBusy=false;isAttacking=false;joystick={x:0,y:0};keys.clear();
+ $('nub').style.transform='';$('rewardTimer').textContent=`${Math.ceil(msg.seconds)} s`;
+ $('rewardChoices').innerHTML=msg.choices.map((choice,i)=>`<button class="rewardChoice" data-choice="${esc(choice.id)}"><span class="rewardIcon">${esc(choice.icon)}</span><strong>${i+1}. ${esc(choice.name)}</strong><span>${esc(choice.detail)}</span></button>`).join('');
+ $('rewardChoices').querySelectorAll('button').forEach(b=>b.onclick=()=>selectReward(b.dataset.choice));
+ $('rewardOverlay').classList.add('open');$('rewardChoices').querySelector('button')?.focus();
+}
+function selectReward(id){
+ if(!offer||offerBusy||!offer.choices.some(x=>x.id===id))return;
+ offerBusy=true;
+ if(!send('choose_reward',{offer_id:offer.offer_id,choice:id}))offerBusy=false;
+ else $('rewardTimer').textContent='Aplicando mejora…';
+}
+$('goPlay').onclick=$('openOnline').onclick=lobby;$('goClassic').onclick=$('openSolo').onclick=originalGame;$('goHelp').onclick=info;$('goSettings').onclick=options;$('goExit').onclick=()=>showPanel(`<button class="close">×</button><h1>DIGIROGUE</h1><p>Para salir puedes cerrar esta pestaña.</p>`);$('openRanking').onclick=ranking;$('exitArena').onclick=leave;$('copyRoom').onclick=async()=>{try{await navigator.clipboard.writeText(roomID);toast('Código copiado: '+roomID)}catch{toast('Código: '+roomID)}};
+// HOME: the original image is left completely intact; effects are on a separate transparent canvas.
+const weather=$('weather'),wc=weather.getContext('2d');let startAt=performance.now(),leaves=[];
+function random(i){return (Math.sin(i*91.37)*104927.47)%1<0?1+(Math.sin(i*91.37)*104927.47)%1:(Math.sin(i*91.37)*104927.47)%1}
+for(let i=0;i<58;i++)leaves.push({x:random(i+2)*1672,y:random(i+13)*941,rate:23+random(i+17)*62,color:i%4===0?'#bafa74':'#ffa3d6'});
+function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'){
+ wc.clearRect(0,0,1672,941);
+ for(let i=0;i<leaves.length;i++){let p=leaves[i],x=(p.x+t*p.rate+Math.sin(t*2+i)*26)%1720-20,y=(p.y+t*(p.rate*.72+9))%990-20;wc.save();wc.translate(x,y);wc.rotate(t*2+i);wc.globalAlpha=.75;wc.fillStyle=p.color;wc.fillRect(-4,-2,9,5);wc.restore()}
+ for(let i=0;i<26;i++){let x=36+random(i+250)*555+Math.sin(t*1.8+i*.8)*16,y=10+random(i+130)*230;wc.fillStyle=i%2?'#affb6642':'#225c3a54';wc.fillRect(x,y,9,5)}
+ for(let i=0;i<33;i++){let x=630+(random(i+4)*540+t*27)%570,y=704+random(i+88)*112;wc.fillStyle='#d9fcff70';wc.fillRect(x,y,17,2)}
+ for(let i=0;i<18;i++){let x=1350+random(i+28)*68,y=440+(random(i+70)*250+t*95)%253;wc.fillStyle='#d3f8ffa0';wc.fillRect(x,y,3,17)}
+ for(let i=0;i<13;i++){let a=t*.78+i*Math.PI*2/13;wc.fillStyle='#83ffffaa';wc.fillRect(835+Math.cos(a)*138,155+Math.sin(a)*115,5,5)}
+ }requestAnimationFrame(homeMotion)}requestAnimationFrame(homeMotion);
+// ONLINE ARENA rendering + networking.
+const canvas=$('gameCanvas'),ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
+const sprites={};for(const name of ['agumon_idle','agumonWalk','agumon_attack','kunemon','goblimon']){let im=new Image();im.src='/assets/'+name+'.png';sprites[name]=im}
+let vw=innerWidth,vh=innerHeight,dpr=1,scale=1,cameraX=0,cameraY=0,camTarget=null;
+function resize(){vw=innerWidth;vh=innerHeight;dpr=Math.min(devicePixelRatio||1,2);canvas.width=Math.round(vw*dpr);canvas.height=Math.round(vh*dpr);canvas.style.width=vw+'px';canvas.style.height=vh+'px';ctx.imageSmoothingEnabled=false}addEventListener('resize',resize);resize();
+function hash(x,y){let n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n)}
+function tree(x,y,size,ts){let sway=Math.sin(ts*1.55+x*.013+y*.022)*3;ctx.save();ctx.translate(x,y);ctx.fillStyle='#0e2530';ctx.beginPath();ctx.ellipse(0,size*.31,size*.38,size*.12,0,0,7);ctx.fill();ctx.fillStyle='#63452b';ctx.fillRect(-5,-size*.52,10,size*.45);
+ for(let j=0;j<3;j++){ctx.fillStyle=['#16582e','#268748','#53b15d'][j];ctx.beginPath();let xx=sway*(.65+j*.12);ctx.moveTo(xx,-size*.95+j*size*.17);ctx.lineTo(-size*.39+xx,-size*.47+j*size*.1);ctx.lineTo(size*.39+xx,-size*.47+j*size*.1);ctx.closePath();ctx.fill()}ctx.restore()}
+function drawDrop(drop,t){
+ const x=drop.x,y=drop.y,glow=Math.sin(t*4+drop.id)*3;
+ ctx.save();ctx.translate(Math.round(x),Math.round(y-16+glow));
+ ctx.fillStyle='#071d39b3';ctx.fillRect(-22,10,44,9);
+ // Crystal and its pixelated blue light (no circular character cutout).
+ ctx.fillStyle='#0b3f7c';ctx.fillRect(-15,-18,30,29);
+ ctx.fillStyle='#70f8ff';ctx.fillRect(-9,-25,18,34);
+ ctx.fillStyle='#baffff';ctx.fillRect(-3,-18,7,17);
+ ctx.fillStyle='#1183d6';ctx.fillRect(-9,8,18,7);
+ ctx.fillStyle='#ecfbff';ctx.fillRect(-17,-9,7,6);ctx.fillRect(12,2,6,6);
+ ctx.strokeStyle='#93f8ff';ctx.lineWidth=2;ctx.strokeRect(-18,-28,36,47);
+ ctx.restore();
+}
+function drawRetroShield(x,y,t,remaining){
+ ctx.save();ctx.translate(Math.round(x),Math.round(y-51));
+ const shimmer=Math.sin(t*6)*3;
+ ctx.fillStyle='rgba(13,104,205,.20)';ctx.fillRect(-51,-59,102,119);
+ ctx.strokeStyle='#063d8c';ctx.lineWidth=10;ctx.strokeRect(-53,-62,106,125);
+ ctx.strokeStyle='#52edff';ctx.lineWidth=5;ctx.strokeRect(-53,-62,106,125);
+ ctx.strokeStyle='#e0ffff';ctx.lineWidth=2;ctx.strokeRect(-59+shimmer*.3,-67+shimmer*.3,118-shimmer*.6,134-shimmer*.6);
+ ctx.fillStyle='#7ff5ff';
+ for(let i=0;i<8;i++){let yy=-55+i*15,xx=i%2? -59:54;ctx.fillRect(xx,yy,6,6)}
+ for(let i=0;i<5;i++){let xx=-43+i*21;ctx.fillRect(xx,Math.round(-68+Math.sin(t*4+i)*2),8,4)}
+ ctx.fillStyle='#0e3b68';ctx.fillRect(-34,62,68,9);
+ ctx.fillStyle='#72f2ff';ctx.fillRect(-32,64,Math.max(0,Math.min(64,remaining/12*64)),5);
+ ctx.restore();
+}
+function arena(ts){requestAnimationFrame(arena);if(screen!=='arena')return;
+ ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,vw,vh);ctx.fillStyle='#092c35';ctx.fillRect(0,0,vw,vh);
+ let ts2=ts*.001, self=state?.players.find(p=>p.id===myID);if(self){if(!playerPos)playerPos={x:self.x,y:self.y};playerPos.x+=(self.x-playerPos.x)*.24;playerPos.y+=(self.y-playerPos.y)*.24}
+ scale=Math.min(1.6,Math.max(.65,Math.min(vw/1050,vh/670)));if(vw<600)scale=Math.max(.8,vw/560);
+ const focus=self?playerPos:{x:WORLD.w/2,y:WORLD.h/2};cameraX=focus.x-vw/(2*scale);cameraY=focus.y-vh/(2*scale);
+ ctx.save();ctx.scale(scale,scale);ctx.translate(-cameraX,-cameraY);
+ const left=cameraX-90,right=cameraX+vw/scale+90,top=cameraY-90,bottom=cameraY+vh/scale+90;
+ ctx.fillStyle='#3c9860';ctx.fillRect(0,0,WORLD.w,WORLD.h);
+ for(let y=Math.max(0,Math.floor(top/52)*52);y<Math.min(WORLD.h,bottom);y+=52)for(let x=Math.max(0,Math.floor(left/52)*52);x<Math.min(WORLD.w,right);x+=52){let h=hash(x,y);ctx.fillStyle=h<.18?'#4caa61':h<.46?'#399654':'#429d5a';ctx.fillRect(x,y,52,52);ctx.fillStyle='#75bd59';if(h>.75){ctx.fillRect(x+12,y+24,8,2);ctx.fillRect(x+32,y+9,6,2)}if(h<.07){ctx.fillStyle='#fbe18b';ctx.fillRect(x+26,y+31,5,5)}if(h>.95){ctx.fillStyle='#e4a1cd';ctx.fillRect(x+6,y+7,4,4)}}
+ // Grass & trees create a consistent rooted world boundary.
+ for(let j=0;j<64;j++){let x=32+hash(j,91)*1236,y=24+hash(j,19)*725,edge=x<150||x>1140||y<95||y>685;if(edge&&x>left-110&&x<right+110&&y>top-110&&y<bottom+110)tree(x,y,48+hash(j,37)*38,ts2)}
+ ctx.lineWidth=12;ctx.strokeStyle='#082d37';ctx.strokeRect(0,0,WORLD.w,WORLD.h);
+ for(let drop of state?.drops||[])drawDrop(drop,ts2);
+ const actors=[];for(let p of state?.players||[])actors.push({kind:'player',y:p.y,p});for(let e of state?.enemies||[])actors.push({kind:'enemy',y:e.y,e});actors.sort((a,b)=>a.y-b.y);
+ for(let a of actors){let p=a.p||a.e,x=p.x,y=p.y;
+ ctx.fillStyle='rgba(7,31,32,.32)';ctx.beginPath();ctx.ellipse(x,y-3,27,8,0,0,Math.PI*2);ctx.fill();
+ if(a.kind==='player'){
+  const moving=!p.shield&&p.id===myID&&(Math.abs(joystick.x)+Math.abs(joystick.y)>0.1||[...keys].some(k=>['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright'].includes(k)));
+  const sprite=moving?sprites.agumonWalk:sprites.agumon_idle;
+  if(sprite.complete&&sprite.naturalWidth){let col=Math.floor(ts2*(moving?9:3))%(moving?6:4),row=p.direction||4;ctx.drawImage(sprite,col*128,row*128,128,128,x-43,y-90,86,86)}else{ctx.fillStyle='#ffb723';ctx.fillRect(x-17,y-55,34,49)}
+  if(p.shield)drawRetroShield(x,y,ts2,p.shield_seconds);
+  const nameY = p.shield ? y-136 : y-102;
+  const hpY = p.shield ? y-128 : y-96;
+  ctx.textAlign='center';ctx.font='bold 15px system-ui';ctx.lineWidth=3;ctx.strokeStyle='#042431';ctx.strokeText(p.name,x,nameY);ctx.fillStyle=p.id===myID?'#ffef6d':'#e6ffff';ctx.fillText(p.name,x,nameY);
+  ctx.fillStyle='#142d33';ctx.fillRect(x-30,hpY,60,6);ctx.fillStyle=p.hp>30?'#7dfb96':'#ff735f';ctx.fillRect(x-30,hpY,p.hp*.6,6);
+ }else{
+  const sprite=sprites[p.type],col=Math.floor(ts2*4+p.id)%4,row=p.facing||4;
+  if(sprite?.complete&&sprite.naturalWidth){ctx.drawImage(sprite,col*96,row*96,96,96,x-35,y-75,70,75)}else{ctx.fillStyle='#bc7f6c';ctx.fillRect(x-19,y-43,38,42)}
+  if(p.hp<p.maxhp){ctx.fillStyle='#17252b';ctx.fillRect(x-24,y-71,48,5);ctx.fillStyle='#fb6b6b';ctx.fillRect(x-24,y-71,48*Math.max(0,p.hp/p.maxhp),5)}
+ }
+ }
+ for(let beam of state?.fx||[]){const age=performance.now()-lastState;if(age>200)continue;ctx.strokeStyle='#ffe69a';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(beam[0],beam[1]);ctx.lineTo(beam[2],beam[3]);ctx.stroke();ctx.fillStyle='#fffaad';ctx.fillRect(beam[2]-5,beam[3]-5,10,10)}
+ ctx.restore();if(!state){ctx.fillStyle='#ffffff';ctx.font='bold 20px system-ui';ctx.textAlign='center';ctx.fillText('Esperando al servidor online…',vw/2,vh/2)}
+}requestAnimationFrame(arena);
+function updateHUD(){if(!state)return;const self=state.players.find(p=>p.id===myID);$('hudRoom').textContent=state.code;$('hudWave').textContent=state.wave;$('hudTime').textContent=`${Math.floor(state.seconds/60)}:${String(state.seconds%60).padStart(2,'0')}`;$('hudKills').textContent=self?.kills??0;$('hudLevel').textContent=self?.level??1;$('hudHP').textContent=self?.hp??0;$('hudPlayers').innerHTML=state.players.map(p=>`<div>${p.shield?'🛡️ ':''}${esc(p.name)}: <b style="color:#ffde65">${p.kills} KOs</b></div>`).join('');
+ if(offer&&self?.shield&&!offerBusy)$('rewardTimer').textContent=`${Math.ceil(self.shield_seconds)} s`;
+ if(offer&&self&&!self.shield)hideReward();}
+function enterArena(){field.classList.remove('open');$('home').style.display='none';$('arenaView').classList.add('open');screen='arena';$('hudRoom').textContent=roomID;toast('¡Sala '+roomID+'! Comparte el código para invitar amigos.')}
+function moveVector(){let x=joystick.x,y=joystick.y;if(keys.has('a')||keys.has('arrowleft'))x-=1;if(keys.has('d')||keys.has('arrowright'))x+=1;if(keys.has('w')||keys.has('arrowup'))y-=1;if(keys.has('s')||keys.has('arrowdown'))y+=1;const mag=Math.hypot(x,y);if(mag>1){x/=mag;y/=mag}return{x,y}}
+setInterval(()=>{if(screen==='arena'&&roomID){let v=offer?{x:0,y:0}:moveVector();send('input',{x:v.x,y:v.y,attack:!offer&&(isAttacking||keys.has(' '))})}},100);
+addEventListener('keydown',e=>{let k=e.key.toLowerCase();if(screen==='arena'&&offer){if(['1','2','3'].includes(k))selectReward(offer.choices[+k-1]?.id);if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k))e.preventDefault();return}if([' ','arrowup','arrowdown','arrowleft','arrowright'].includes(k)&&screen==='arena')e.preventDefault();if(screen==='arena')keys.add(k)});
+addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));addEventListener('blur',()=>{keys.clear();isAttacking=false;joystick={x:0,y:0}});
+const joy=$('joystick'),nub=$('nub');function joyUpdate(e){const r=joy.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),m=Math.max(1,Math.hypot(dx,dy)),power=Math.min(1,m/45);joystick={x:dx/m*power,y:dy/m*power};nub.style.transform=`translate(${joystick.x*37}px,${joystick.y*37}px)`}
+joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.setPointerCapture(e.pointerId);joyUpdate(e)});joy.addEventListener('pointermove',e=>{if(e.pointerId===joyPointer)joyUpdate(e)});
+function joyEnd(e){if(e.pointerId===joyPointer){joyPointer=null;joystick={x:0,y:0};nub.style.transform=''}}joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
+const hit=$('hitButton');hit.addEventListener('pointerdown',e=>{e.preventDefault();hit.setPointerCapture(e.pointerId);isAttacking=true});hit.addEventListener('pointerup',()=>isAttacking=false);hit.addEventListener('pointercancel',()=>isAttacking=false);
+if(location.protocol==='file:'){$('offline').style.display='block'}else connect();
+</script></body></html>
