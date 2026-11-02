@@ -72,7 +72,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
   <button class="dockbtn" id="openSolo">🎮 JUEGO ORIGINAL</button>
  </nav>
 </div>
-<div id="offline" role="status">🔌 Sin conexión al servidor online. Abre la web desde el servidor, no desde un archivo local.</div>
+<div id="offline" role="status" aria-live="polite">🔌 <span id="connectionMessage">Conexión interrumpida.</span> <button type="button" id="retryConnection" style="border:1px solid #ffb9b9;background:#153d60;color:white;border-radius:5px;padding:6px 10px;margin-left:8px;font-weight:800;cursor:pointer">↻ Reintentar conexión</button></div>
 <section id="view" aria-live="polite"><div class="panel" id="panel"></div></section>
 <div id="arenaView">
  <canvas id="gameCanvas" width="1300" height="780" aria-label="Arena cooperativa online"></canvas>
@@ -93,6 +93,12 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 const $=id=>document.getElementById(id), WORLD={w:1300,h:780}, field=$('view'),panel=$('panel');
 let ws=null, connected=false,myID=null,roomID='',name='',mode='create',screen='home',state=null,lastState=0,playerPos=null,joystick={x:0,y:0},isAttacking=false,keys=new Set(),joyPointer=null,toastTimer=null,offer=null,offerBusy=false;
 const roomKey='digirogue_player_name';
+let retryTimer=null,retryCount=0;
+function showOffline(message){$('connectionMessage').textContent=message;$('offline').style.display='block'}
+function scheduleReconnect(){if(retryTimer||location.protocol==='file:')return;const delay=Math.min(30000,900*Math.pow(1.7,Math.min(retryCount++,7)));$('connectionMessage').textContent='Sin conexión. Reintentando en '+Math.ceil(delay/1000)+' s…';retryTimer=setTimeout(()=>{retryTimer=null;connect()},delay)}
+$('retryConnection').onclick=()=>{clearTimeout(retryTimer);retryTimer=null;retryCount=0;if(ws){try{ws.close()}catch{}ws=null}connect()};
+addEventListener('online',()=>{if(!connected){clearTimeout(retryTimer);retryTimer=null;connect()}});
+async function checkServerHealth(){try{const response=await fetch('/api/health',{cache:'no-store',signal:AbortSignal.timeout(7000)});return response.ok&&(await response.json()).ok===true}catch{return false}}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function statusHTML(){return `<div class="connection"><span class="dot ${connected?'ok':''}"></span>${connected?'Servidor conectado · partidas online reales':'Conectando al servidor…'}</div>`}
 function showPanel(content){$('home').style.display='none';$('arenaView').classList.remove('open');screen='panel';field.classList.add('open');panel.innerHTML=content;panel.querySelector('.close')?.addEventListener('click',home)}
@@ -101,10 +107,10 @@ function error(msg){const el=$('formError');if(el)el.textContent=msg;else toast(
 function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('on');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('on'),3000)}
 function connect(){if(ws&&(ws.readyState===WebSocket.OPEN||ws.readyState===WebSocket.CONNECTING))return;
  let protocol=location.protocol==='https:'?'wss':'ws';
- try{ws=new WebSocket(`${protocol}://${location.host}/ws`)}catch(e){$('offline').style.display='block';return}
- ws.onopen=()=>{connected=true;$('offline').style.display='none';if(screen==='panel'&&$('connection'))$('connection').innerHTML=statusHTML()};
- ws.onclose=()=>{connected=false;ws=null;hideReward();$('offline').style.display='block';if(screen==='arena'){showPanel(`<button class="close" aria-label="Volver">×</button><h1>🔌 Conexión perdida</h1><p class="sub">Se ha perdido la conexión con el servidor. No hay un modo local oculto: necesitas volver a conectarte.</p><button class="primary" id="retry">VOLVER A CONECTAR</button>`);$('retry').onclick=()=>{connect();lobby()}}};
- ws.onerror=()=>{$('offline').style.display='block'};
+ try{ws=new WebSocket(`${protocol}://${location.host}/ws`)}catch(e){showOffline('No se pudo iniciar la conexión.');scheduleReconnect();return}
+ ws.onopen=()=>{retryCount=0;clearTimeout(retryTimer);retryTimer=null;connected=true;$('offline').style.display='none';if(screen==='panel'&&$('connection'))$('connection').innerHTML=statusHTML()};
+ ws.onclose=()=>{connected=false;ws=null;hideReward();showOffline('Se perdió la conexión con el servidor.');scheduleReconnect();if(screen==='arena'){showPanel(`<button class="close" aria-label="Volver">×</button><h1>🔌 Conexión perdida</h1><p class="sub">Se ha perdido la conexión con el servidor. No hay un modo local oculto: necesitas volver a conectarte.</p><button class="primary" id="retry">VOLVER A CONECTAR</button>`);$('retry').onclick=()=>{connect();lobby()}}};
+ ws.onerror=()=>{showOffline('Error de conexión WebSocket.');};
  ws.onmessage=ev=>{let msg;try{msg=JSON.parse(ev.data)}catch{return}
  if(msg.type==='hello'){myID=msg.id}
  if(msg.type==='joined'){roomID=msg.code;name=msg.name;state=null;lastState=0;playerPos=null;hideReward();enterArena()}
@@ -241,5 +247,5 @@ const joy=$('joystick'),nub=$('nub');function joyUpdate(e){const r=joy.getBoundi
 joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.setPointerCapture(e.pointerId);joyUpdate(e)});joy.addEventListener('pointermove',e=>{if(e.pointerId===joyPointer)joyUpdate(e)});
 function joyEnd(e){if(e.pointerId===joyPointer){joyPointer=null;joystick={x:0,y:0};nub.style.transform=''}}joy.addEventListener('pointerup',joyEnd);joy.addEventListener('pointercancel',joyEnd);
 const hit=$('hitButton');hit.addEventListener('pointerdown',e=>{e.preventDefault();hit.setPointerCapture(e.pointerId);isAttacking=true});hit.addEventListener('pointerup',()=>isAttacking=false);hit.addEventListener('pointercancel',()=>isAttacking=false);
-if(location.protocol==='file:'){$('offline').style.display='block'}else connect();
+if(location.protocol==='file:'){showOffline('Abre DigiRogue desde la web pública.')}else{connect();checkServerHealth().then(ok=>{if(!ok&&!connected)showOffline('El servidor no responde; reintentando…')})}
 </script></body></html>
