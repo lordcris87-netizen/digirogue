@@ -5,6 +5,7 @@ on:
       - develop/portada-animada
     paths:
       - tools/build_title_layers.py
+      - tools/build_hd_assets.py
       - .github/workflows/build-title-layers.yml
   workflow_dispatch:
 permissions:
@@ -24,11 +25,13 @@ jobs:
         run: pip install pillow numpy opencv-python-headless
       - name: Generate transparent characters and background underpainting
         run: python tools/build_title_layers.py
+      - name: Generate sharp 2x HD title backgrounds
+        run: python tools/build_hd_assets.py
       - name: Store development assets in development branch only
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add assets/title_layers/
+          git add assets/title_layers/ assets/portada_hd.webp
           if git diff --cached --quiet; then
             echo "No generated asset changes."
           else
