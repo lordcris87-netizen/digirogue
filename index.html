@@ -168,6 +168,26 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 @media(max-width:700px){.subview#view-incubadora{padding:30px 0 115px}.vpet-device{padding:11px}.vpet-screen{min-height:230px}.vpet-controls{gap:6px}.pixel-action{font-size:7px;min-height:40px}.egg-storage{padding:13px}.egg-storage-heading small{font-size:6px}.egg-inventory{grid-template-columns:1fr}.egg-entry{min-height:66px}}
 @media(prefers-reduced-motion:reduce){.pixel-egg,.vpet-digimon,.pet-sparkle{animation:none!important}.pet-meter span{transition:none!important}}
 
+
+/* Classic egg-shaped virtual pet housing: screen and three physical controls inside the shell. */
+.vpet-device{width:min(100%,350px)!important;min-height:420px!important;margin:0 auto!important;padding:29px 36px 25px!important;border:0!important;clip-path:polygon(50% 0%,64% 2%,78% 8%,90% 19%,98% 34%,100% 50%,96% 67%,88% 82%,75% 94%,60% 100%,40% 100%,25% 94%,12% 82%,4% 67%,0 50%,2% 34%,10% 19%,22% 8%,36% 2%)!important;background:radial-gradient(ellipse at 50% 14%,#fff8bd66,transparent 32%),var(--pet-case)!important;box-shadow:none!important;filter:drop-shadow(0 5px 0 #071426) drop-shadow(0 10px 0 #020812)!important}
+.vpet-device:before{content:"";position:absolute;top:16px;left:calc(50% - 4px);width:8px;height:5px;background:#132339;box-shadow:-10px 0 0 #132339,10px 0 0 #132339;opacity:.8}
+.vpet-device:after{content:"";position:absolute;bottom:18px;left:calc(50% - 2px);width:4px;height:4px;background:#23324a;box-shadow:-8px 0 #23324a,8px 0 #23324a,-16px 0 #23324a,16px 0 #23324a;opacity:.75}
+.vpet-device-top{position:relative;z-index:1;justify-content:center;margin:3px 0 9px!important;font-size:7px!important;letter-spacing:.04em}
+.vpet-device-top span+span{display:none}
+.vpet-screen{width:100%!important;min-height:220px!important;margin:0 auto!important;padding:11px 12px!important;border:4px solid #101e2d!important}
+.vpet-creature{height:105px!important}
+.vpet-name{font-size:8px!important}.vpet-stage{font-size:6px!important}
+.vpet-controls{display:flex!important;justify-content:center!important;align-items:flex-start!important;gap:13px!important;margin:14px auto 0!important}
+.tama-control{width:56px!important;min-height:50px!important;flex:none!important;display:flex!important;flex-direction:column!important;align-items:center!important;gap:5px!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;color:#15243a!important;cursor:pointer}
+.tama-control i{width:34px;height:32px;display:grid;place-items:center;border:3px solid #101b2d;border-radius:50%;background:linear-gradient(145deg,#fffbe8,#d6d5cc);box-shadow:2px 3px 0 #07101c;font:9px "Press Start 2P",monospace;font-style:normal}
+.tama-control:nth-child(2) i{background:linear-gradient(145deg,#ffe8a0,#e5ac49)}.tama-control:nth-child(3) i{background:linear-gradient(145deg,#d9f2ff,#84b8d5)}
+.tama-control small{font:5px "Press Start 2P",monospace;white-space:nowrap}
+.tama-control:disabled{opacity:.48;cursor:not-allowed}.tama-control:not(:disabled):active i{translate:1px 2px;box-shadow:0 1px 0 #07101c}
+.pet-message{position:relative;z-index:1;max-width:235px;margin:8px auto 0!important;font-size:7px!important;color:#172c2c!important}
+@media(max-width:800px){.vpet-device{width:min(100%,350px)!important}}
+@media(max-width:700px){.vpet-device{width:min(100%,320px)!important;min-height:400px!important;padding:27px 34px 24px!important}.vpet-screen{min-height:205px!important}.vpet-controls{gap:9px!important}.tama-control{width:54px!important}.tama-control i{width:32px;height:30px}}
+
 </style>
 </head>
 <body>
@@ -199,13 +219,13 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     <div class="subhead"><div class="kicker"><i></i> CUIDA A TU PRÓXIMO COMPAÑERO</div><h1>Incubadora <em>digital</em></h1><p>Los huevos que rescates en la partida te esperan aquí. Acarícialos y descubre quién viene dentro.</p></div>
     <div class="incubator-layout">
       <section class="vpet-device" id="vpetDevice" aria-label="Dispositivo virtual Digimon">
-        <div class="vpet-device-top"><span>◇ DIGI PET</span><span>01 / 01</span></div>
+        <div class="vpet-device-top"><span>◇ DIGIMON V-PET</span><span>01 / 01</span></div>
         <div class="vpet-screen" id="vpetScreen">
           <div class="vpet-status"><span id="petStatus">SIN HUEVO</span><span id="petClock">--:--</span></div>
           <div class="vpet-creature"><div id="petEgg" class="pixel-egg" aria-label="Huevo Digimon"></div><img id="petImage" class="vpet-digimon hidden" alt=""><span class="pet-sparkle">✦</span></div>
           <b id="petName" class="vpet-name">HUEVO VACÍO</b><small id="petStage" class="vpet-stage">ENCUENTRA UN HUEVO EN PARTIDA</small><div class="pet-meter"><span id="petProgress"></span></div>
         </div>
-        <div class="vpet-controls"><button id="petButton" class="pixel-action" disabled>♥ ACARICIAR</button><button id="petFeedButton" class="pixel-action secondary" disabled>✦ ANIMAR</button></div>
+        <div class="vpet-controls"><button id="petButton" class="tama-control" disabled><i>A</i><small>ACARICIAR</small></button><button id="petFeedButton" class="tama-control" disabled><i>B</i><small>ANIMAR</small></button><button id="petStatusButton" class="tama-control" disabled><i>C</i><small>ESTADO</small></button></div>
         <p id="petMessage" class="pet-message">Derrota a un guardián para rescatar un huevo.</p>
       </section>
       <section class="egg-storage"><div class="egg-storage-heading"><div><small>RESCATADOS EN TUS PARTIDAS</small><h2>Tus huevos</h2></div><strong id="eggCount">0 / 08</strong></div><div id="eggInventory" class="egg-inventory"></div><div class="egg-hint"><span>▣</span><p>Cada huevo pertenece a un Digimon distinto. Su dispositivo y su reacción cambiarán con cada compañero.</p></div></section>
@@ -403,7 +423,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   let eggs=getEggs(),selected=localStorage.getItem("digirogue-active-egg")||"";
   const inventory=document.getElementById("eggInventory"), nameEl=document.getElementById("petName"),stageEl=document.getElementById("petStage");
   const eggEl=document.getElementById("petEgg"),imgEl=document.getElementById("petImage"),statusEl=document.getElementById("petStatus"),clockEl=document.getElementById("petClock");
-  const meter=document.getElementById("petProgress"),message=document.getElementById("petMessage"),petButton=document.getElementById("petButton"),feedButton=document.getElementById("petFeedButton");
+  const meter=document.getElementById("petProgress"),message=document.getElementById("petMessage"),petButton=document.getElementById("petButton"),feedButton=document.getElementById("petFeedButton"),statusButton=document.getElementById("petStatusButton");
   const save=()=>localStorage.setItem(inventoryKey,JSON.stringify(eggs));
   const activeEgg=()=>eggs.find(e=>e.id===selected)||null;
   function chooseDefault(){if(eggs.some(e=>e.id===selected))return;const e=eggs.find(x=>!x.hatched)||eggs[eggs.length-1];selected=e?.id||"";try{localStorage.setItem("digirogue-active-egg",selected)}catch(_){}}
@@ -429,7 +449,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   function renderScreen(){
     chooseDefault();const e=activeEgg(),line=e?(lines[e.species]||lines.agumon):null;
     device.dataset.line=e?.species||"";document.getElementById("eggCount").textContent=eggs.length+" / 08";
-    petButton.disabled=!e;feedButton.disabled=!e||!e.hatched;
+    petButton.disabled=!e||e.hatched;feedButton.disabled=!e||!e.hatched;statusButton.disabled=!e;
     if(!e){statusEl.textContent="SIN HUEVO";clockEl.textContent="--:--";nameEl.textContent="HUEVO VACÍO";stageEl.textContent="ENCUENTRA UNO EN PARTIDA";eggEl.classList.remove("hidden");imgEl.classList.add("hidden");meter.style.width="0%";meter.parentElement.style.visibility="hidden";message.textContent="Derrota a un guardián para rescatar un huevo.";return}
     meter.parentElement.style.visibility="visible";
     if(e.hatched){statusEl.textContent="NUEVO COMPAÑERO";clockEl.textContent="LISTO";nameEl.textContent=line.name.toUpperCase();stageEl.textContent="PRIMERA FORMA · TU EQUIPO";eggEl.classList.add("hidden");imgEl.src=line.art;imgEl.alt=line.name;imgEl.classList.remove("hidden");meter.style.width="100%";petButton.disabled=true;feedButton.disabled=false;if(!message.textContent.startsWith("¡"))message.textContent=line.name+" te está esperando.";return}
@@ -450,7 +470,8 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     statusEl.textContent="¡QUÉ COSQUILLAS!";react();updateTimer();
   }
   function animateBuddy(){const e=activeEgg();if(!e?.hatched)return;message.textContent="¡"+(lines[e.species]||lines.agumon).name+" te saluda desde su dispositivo!";react()}
-  petButton.addEventListener("click",pet);feedButton.addEventListener("click",animateBuddy);
+  function reportStatus(){const e=activeEgg();if(!e)return;message.textContent=e.hatched?(lineName(e.species)+" está contento y te acompaña."):(e.startedAt?"El huevo sigue calentito. Quedan "+clockEl.textContent+".":"El huevo espera su primera caricia.");react()}
+  petButton.addEventListener("click",pet);feedButton.addEventListener("click",animateBuddy);statusButton.addEventListener("click",reportStatus);
   function syncDigidex(){
     let buddies=[];try{buddies=JSON.parse(localStorage.getItem(buddyKey)||"[]")}catch(_){}
     const reveal=(card,id,line)=>{
