@@ -61,7 +61,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 <div id="home">
  <div class="stage" aria-label="Portada pixel art DigiRogue">
   <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
-  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada animada (pruebas)</span>
+  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — prototipo de animación</span>
   <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
   <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
   <button class="hotspot guide" aria-label="Guía" id="goHelp"></button>
@@ -189,24 +189,25 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
  }requestAnimationFrame(homeMotion)}requestAnimationFrame(homeMotion);
 // Independent, reusable animated-sprite layer. Its sprites never copy pixels from the cover.
 const titleActors=[
-  {src:'/assets/bat.png',frameW:96,frameH:96,fps:7,columns:4,x:290,y:94,w:70,h:70,phase:0,move:'flight'}
+ {src:'/assets/bat.png',frameW:96,frameH:96,columns:8,rows:8,fps:8,x:280,y:108,w:78,h:78,phase:0,alpha:.94}
 ];
 const titleActorImages=new Map();
-for(const actor of titleActors){const image=new Image();image.decoding='async';image.src=actor.src;titleActorImages.set(actor.src,image)}
+for(const actor of titleActors){const im=new Image();im.decoding='async';im.src=actor.src;titleActorImages.set(actor.src,im)}
 function drawTitleActors(t){
  for(const actor of titleActors){
   const im=titleActorImages.get(actor.src);
   if(!im?.complete||!im.naturalWidth)continue;
-  const cols=Math.max(1,Math.min(actor.columns,Math.floor(im.naturalWidth/actor.frameW)));
-  const rows=Math.max(1,Math.floor(im.naturalHeight/actor.frameH));
-  const frame=Math.floor(t*actor.fps+actor.phase)%(cols*rows);
-  const sx=frame%cols*actor.frameW,sy=Math.floor(frame/cols)*actor.frameH;
-  const x=actor.x+Math.sin(t*.65+actor.phase)*66;
-  const y=actor.y+Math.sin(t*2.7+actor.phase)*13;
-  wc.save();wc.imageSmoothingEnabled=false;wc.globalAlpha=.9;
+  const cols=Math.min(actor.columns,Math.floor(im.naturalWidth/actor.frameW));
+  const rows=Math.min(actor.rows,Math.floor(im.naturalHeight/actor.frameH));
+  if(!cols||!rows)continue;
+  // Use a consistent facing row (eight real animation frames), not mixed facing directions.
+  const frame=Math.floor(t*actor.fps+actor.phase)%cols;
+  const x=actor.x+Math.sin(t*.55+actor.phase)*48;
+  const y=actor.y+Math.sin(t*2.8+actor.phase)*12;
+  wc.save();wc.imageSmoothingEnabled=false;wc.globalAlpha=actor.alpha;
   wc.translate(Math.round(x),Math.round(y));
-  wc.scale(Math.cos(t*.65+actor.phase)>=0?1:-1,1);
-  wc.drawImage(im,sx,sy,actor.frameW,actor.frameH,-actor.w/2,-actor.h/2,actor.w,actor.h);
+  wc.drawImage(im,frame*actor.frameW,0,actor.frameW,actor.frameH,
+               -actor.w/2,-actor.h/2,actor.w,actor.h);
   wc.restore();
  }
 }
