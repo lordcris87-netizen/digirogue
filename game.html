@@ -983,7 +983,7 @@ function takeDamage(d){if(player.shield>0||player.invulnerable>0)return;
  anim.hit=.32;anim.kind='hurt';anim.time=.32;anim.duration=.32;anim.buffer=0;world.pendingMelee=null;world.pendingFire=null;
  player.hp=Math.max(0,player.hp-d);
  burst(player.x,player.z,'#fa7477',8);if(player.hp<=0&&player.perks.revive>0){player.perks.revive--;player.hp=Math.round(player.maxHp*.5);player.shield=4;toast('✚ Reinicio ancestral: segunda oportunidad');burst(player.x,player.z,'#ffe483',30)}
- if(player.hp<=0&&!over){over=true;openPanel('FIN DE LA PARTIDA',`Llegaste al nivel ${player.level} y derrotaste ${world.kill} enemigos.`,[],[{name:'Volver a jugar',action:()=>location.reload()}])}
+ if(player.hp<=0&&!over){over=true;const eggNote=player.eggFound?' También rescataste un huevo de '+({agumon:'Agumon',gabumon:'Gabumon',patamon:'Patamon',koromon:'Koromon'}[player.eggFound])+'.':'';openPanel('FIN DE LA PARTIDA','Llegaste al nivel '+player.level+' y derrotaste '+world.kill+' enemigos.'+eggNote,[],[{name:'Volver al launcher',action:()=>location.href='index.html#incubadora'},{name:'Volver a jugar',action:()=>location.reload()}])}
 }
 function shootAtPlayer(e){e.attackTimer=.52;e.attackDuration=.52;let a=Math.atan2(player.x-e.x,player.z-e.z),v=7.1;world.enemyShots.push({x:e.x,z:e.z,vx:Math.sin(a)*v,vz:Math.cos(a)*v,life:3,kind:'toxin',damage:5+Math.floor(world.elapsed/220)});burst(e.x,e.z,'#aa76eb',4)}
 function bossAI(e,dt,dx,dz,dist){
@@ -1035,6 +1035,19 @@ function openPanel(title,desc,options,extra){paused=true;ui('overlay').style.dis
 function closePanel(){ui('overlay').style.display='none';paused=false;menuOpen=false}
 function openLevel(){let pool=statDefs.filter(s=>player.statRanks[s.id]<5).map(s=>({icon:s.icon,name:s.name,desc:s.desc+` · ${player.statRanks[s.id]}/5`,action:()=>{player.statRanks[s.id]++;applyStat(s.id,{attack:.10,aspeed:.08,move:.07,crit:.04,hp:.12}[s.id])}}));let skills=player.skills.filter(s=>s.rank<5).map(s=>({icon:{fire:'🔥',dash:'⚡',shield:'🛡️'}[s.key],name:s.name,desc:`Mejorar al nivel ${s.rank+1}/5`,action:()=>s.rank++}));pool.push(...skills);pool.sort(()=>Math.random()-.5);openPanel(`¡NIVEL ${player.level}!`,'Elige una mejora. Tus tres habilidades se conservan al digievolucionar.',pool.slice(0,3))}
 function openEvolution(){let choices=player.level===10?[{name:'Greymon',desc:'Fuego · +35% de daño',icon:'🔥',act:()=>applyStat('attack',.35)},{name:'Tyrannomon',desc:'Defensa · +45% de vida',icon:'🦖',act:()=>applyStat('hp',.45)}]:player.level===20?[{name:'MetalGreymon',desc:'Fuego · +30% de daño',icon:'⚙️',act:()=>applyStat('attack',.3)},{name:'SkullGreymon',desc:'Oscuridad · +18% crítico',icon:'💀',act:()=>applyStat('crit',.18)}]:[{name:'WarGreymon',desc:'Poder · +45% daño',icon:'⚔️',act:()=>applyStat('attack',.45)},{name:'BlackWarGreymon',desc:'Resistencia · +60% vida',icon:'🛡️',act:()=>applyStat('hp',.6)}];openPanel('¡DIGIEVOLUCIÓN!','El tiempo y las oleadas se detienen. Elige uno de los dos caminos.',choices.map(c=>({name:c.name,icon:c.icon,desc:c.desc,action:()=>{player.evolution=c.name;c.act();world.attackFX.push({type:'evolve',x:player.x,z:player.z,life:1.2,max:1.2});toast(`¡${c.name}!`);}})))}
+function saveDigiEgg(){
+ try{
+  const key='digirogue-egg-inventory',inventory=JSON.parse(localStorage.getItem(key)||'[]');
+  if(!Array.isArray(inventory))throw new Error('bad inventory');
+  if(inventory.length>=8){toast('La incubadora ya tiene 8 huevos.');return ''}
+  const species=['agumon','gabumon','patamon','koromon'][Math.floor(Math.random()*4)];
+  const egg={id:Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8),species,foundAt:Date.now(),source:'guardián',startedAt:0,pets:0,hatched:false};
+  inventory.push(egg);localStorage.setItem(key,JSON.stringify(inventory));player.eggFound=species;
+  const names={agumon:'Agumon',gabumon:'Gabumon',patamon:'Patamon',koromon:'Koromon'};
+  toast('¡Huevo de '+names[species]+' encontrado! Incúbalo en el launcher.');
+  return species;
+ }catch(_){toast('¡Guardián derrotado! No se pudo guardar el huevo.');return ''}
+}
 function damageEnemy(e,n){if(!e||e.hp<=0)return;let crit=Math.random()<Math.min(.75,player.crit);let d=Math.round(n*player.attack*(crit?1.8:1));e.hp-=d;e.hurt=.28;e.stagger=e.boss?.035:.10;
 registerImpact(crit?1.65:e.boss?1.25:0.8);
 world.attackFX.push({type:'impact',x:e.x,z:e.z,life:.24,max:.24,color:crit?'#ffe17c':'#ff9b65'});
@@ -1047,7 +1060,7 @@ addText((crit?'✦ ':'')+d,e.x,e.z,crit?'#ffe285':'#f7efcc');for(let i=0;i<4;i++
    world.deadEnemies.push({...e,dead:true,life:.75,animClock:0,hp:0});
    if(world.deadEnemies.length>32)world.deadEnemies.shift();
  }
- world.kill++;world.enemies.splice(world.enemies.indexOf(e),1);world.orbs.push({x:e.x,z:e.z,amount:e.boss?650:22+Math.floor(world.elapsed/90)*5,seed:rnd(0,10)});if(e.boss){world.bossDead=true;toast('¡Kuwagamon derrotado! +650 EXP')}}}
+ world.kill++;world.enemies.splice(world.enemies.indexOf(e),1);world.orbs.push({x:e.x,z:e.z,amount:e.boss?650:22+Math.floor(world.elapsed/90)*5,seed:rnd(0,10)});if(e.boss){world.bossDead=true;saveDigiEgg()}}}
 function target(maxDist){return world.enemies.reduce((best,e)=>{let d=Math.hypot(e.x-player.x,e.z-player.z);return d<maxDist&&(!best||d<best.d)?{e,d}:best},null)?.e}
 function burst(x,z,color,count){for(let i=0;i<count;i++)world.particles.push({x:x+rnd(-1.8,1.8),z:z+rnd(-1.8,1.8),y:rnd(.3,2.5),life:rnd(.2,.6),color,size:rnd(.09,.23)})}
 function attack(){
