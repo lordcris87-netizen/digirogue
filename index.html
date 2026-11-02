@@ -215,7 +215,10 @@ function drawTitleActors(t){
   wc.globalAlpha=.93;
   wc.translate(Math.round(x),Math.round(y));
   // Sprite atlas already provides facing directions: do not mirror facial details.
-  wc.drawImage(image,frame*actor.cell,actor.row*actor.cell,actor.cell,actor.cell,-actor.w/2,-actor.h/2,actor.w,actor.h);
+  // Skip transparent/empty frames if the atlas happens to contain padding;
+  // keep the draw bounded and pixel aligned.
+  wc.drawImage(image,frame*actor.cell,actor.row*actor.cell,actor.cell,actor.cell,
+               Math.round(-actor.w/2),Math.round(-actor.h/2),actor.w,actor.h);
   wc.restore();
  }
 }
