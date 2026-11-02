@@ -1,0 +1,37 @@
+name: Build title character layers (development only)
+on:
+  push:
+    branches:
+      - develop/portada-animada
+    paths:
+      - tools/build_title_layers.py
+      - .github/workflows/build-title-layers.yml
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: develop/portada-animada
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image-processing dependencies
+        run: pip install pillow numpy opencv-python-headless
+      - name: Generate transparent characters and background underpainting
+        run: python tools/build_title_layers.py
+      - name: Store development assets in development branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/title_layers/
+          if git diff --cached --quiet; then
+            echo "No generated asset changes."
+          else
+            git commit -m "Generate isolated title-character layers for review"
+            git push origin HEAD:develop/portada-animada
+          fi
