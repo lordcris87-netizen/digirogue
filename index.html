@@ -60,7 +60,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 <body>
 <div id="home">
  <div class="stage" aria-label="Portada pixel art DigiRogue">
-  <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
+  <img id="homeCoverArt" src="/assets/portada.webp" alt="Portada pixel art de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
   <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada — prototipo de sprites v3</span>
   <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
   <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
@@ -163,6 +163,7 @@ for(let i=0;i<58;i++)leaves.push({x:random(i+2)*1672,y:random(i+13)*941,rate:23+
 const reducedMotion=matchMedia('(prefers-reduced-motion: reduce)');
 function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!document.hidden&&!reducedMotion.matches){
  wc.clearRect(0,0,1672,941);
+ drawOriginalTitleCharacters(t);
  for(let i=0;i<leaves.length;i++){let p=leaves[i],x=(p.x+t*p.rate+Math.sin(t*2+i)*26)%1720-20,y=(p.y+t*(p.rate*.72+9))%990-20;wc.save();wc.translate(x,y);wc.rotate(t*2+i);wc.globalAlpha=.75;wc.fillStyle=p.color;wc.fillRect(-4,-2,9,5);wc.restore()}
  for(let i=0;i<26;i++){let x=36+random(i+250)*555+Math.sin(t*1.8+i*.8)*16,y=10+random(i+130)*230;wc.fillStyle=i%2?'#affb6642':'#225c3a54';wc.fillRect(x,y,9,5)}
  for(let i=0;i<33;i++){let x=630+(random(i+4)*540+t*27)%570,y=704+random(i+88)*112;wc.fillStyle='#d9fcff70';wc.fillRect(x,y,17,2)}
@@ -219,6 +220,69 @@ function drawTitleActors(t){
   // keep the draw bounded and pixel aligned.
   wc.drawImage(image,frame*actor.cell,actor.row*actor.cell,actor.cell,actor.cell,
                Math.round(-actor.w/2),Math.round(-actor.h/2),actor.w,actor.h);
+  wc.restore();
+ }
+}
+// Isolated character layers reconstructed from the source art. All assets
+// must load successfully BEFORE the flattened cover is replaced. On any error,
+// preserve the original graphic; never display an empty/incomplete background.
+// No server changes and no impact on gameplay or multiplayer.
+const originalCoverURL='/assets/portada.webp';
+const isolatedCoverURL='/assets/title_layers/background.webp';
+const titleLayerPositions=[
+ {name:'agumon',x:0,y:493,w:298,h:297,kind:'breathe',phase:0},
+ {name:'gabumon',x:228,y:509,w:275,h:305,kind:'breathe',phase:1.6},
+ {name:'bat',x:1213,y:84,w:205,h:131,kind:'fly',phase:0.8},
+ {name:'bird',x:1425,y:509,w:176,h:208,kind:'hop',phase:2.2}
+];
+let originalTitleLayers=null;
+const homeCoverArt=$('homeCoverArt');
+function loadTitleLayer(url){
+ return new Promise((resolve,reject)=>{
+  const image=new Image();
+  image.decoding='async';
+  image.onload=()=>image.naturalWidth?resolve(image):reject(new Error('Empty image'));
+  image.onerror=()=>reject(new Error('Could not load '+url));
+  image.src=url;
+ });
+}
+function setOriginalTitleMotionMode(){
+ const showLayers=!!originalTitleLayers&&!reducedMotion.matches;
+ homeCoverArt.src=showLayers?isolatedCoverURL:originalCoverURL;
+ $('visualVersion').textContent=showLayers?'Portada · personajes animados (desarrollo)':'Portada original · movimiento ambiental';
+}
+Promise.all([loadTitleLayer(isolatedCoverURL),...titleLayerPositions.map(a=>loadTitleLayer('/assets/title_layers/'+a.name+'.png'))])
+ .then(([background,...actors])=>{
+  // Reject incompatible or incomplete assets rather than misaligning layers.
+  if(background.naturalWidth!==1672||background.naturalHeight!==941)throw new Error('Wrong background size');
+  if(actors.some((img,i)=>img.naturalWidth!==titleLayerPositions[i].w||img.naturalHeight!==titleLayerPositions[i].h))
+    throw new Error('Wrong character dimensions');
+  originalTitleLayers=actors;
+  setOriginalTitleMotionMode();
+ })
+ .catch(error=>{
+  console.warn('DigiRogue: original cover retained; title layers unavailable:',error);
+  originalTitleLayers=null;
+  homeCoverArt.src=originalCoverURL;
+  $('visualVersion').textContent='Portada original · modo seguro';
+ });
+if(reducedMotion.addEventListener)reducedMotion.addEventListener('change',setOriginalTitleMotionMode);
+function drawOriginalTitleCharacters(t){
+ if(!originalTitleLayers||reducedMotion.matches)return;
+ for(let i=0;i<titleLayerPositions.length;i++){
+  const a=titleLayerPositions[i],img=originalTitleLayers[i];
+  const aTime=t+a.phase;
+  const bob=a.kind==='fly'?Math.sin(aTime*3.4)*4:
+            a.kind==='hop'?Math.max(0,Math.sin(aTime*1.7))*2.5:
+            Math.sin(aTime*1.5)*1.5;
+  const breathe=a.kind==='breathe'?1+Math.sin(aTime*1.5)*0.006:1;
+  const wing=a.kind==='fly'?1+Math.sin(aTime*6)*0.028:1;
+  wc.save();
+  wc.imageSmoothingEnabled=false;
+  // Pivot at feet, preserving registration with the original illustration.
+  wc.translate(a.x+a.w/2,a.y+a.h);
+  wc.scale(breathe,wing*breathe);
+  wc.drawImage(img,-a.w/2,-a.h-bob,a.w,a.h);
   wc.restore();
  }
 }
