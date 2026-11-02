@@ -68,6 +68,18 @@ class DigiRogueStaticTests(unittest.TestCase):
         self.assertIn('reducedMotion.matches', self.page)
         self.assertIn('document.hidden', self.page)
 
+    def test_cover_painter_order_and_no_duplicate_flying_actor(self):
+        # The original cover draws Gabumon behind Agumon, so the independent
+        # layers must respect that order and not add a duplicate flying sprite.
+        start=self.page.index('const titleLayerPositions=[')
+        end=self.page.index('];', start)
+        painter=self.page[start:end]
+        self.assertLess(painter.index("name:'gabumon'"),painter.index("name:'agumon'"))
+        sprites=self.page[self.page.index('const titleActors=['):]
+        sprites=sprites.split('];',1)[0]
+        self.assertNotIn("src:'/assets/bat.png'",sprites)
+        self.assertIn("src:'/assets/kunemon.png'",sprites)
+
     def test_title_atlas_frame_boundaries(self):
         self.assertIn('image.naturalWidth%actor.cell', self.page)
         self.assertIn('image.naturalHeight%actor.cell', self.page)
