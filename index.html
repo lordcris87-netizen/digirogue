@@ -61,7 +61,7 @@ label{display:block;color:#b9eefe;font-size:13px;font-weight:800;margin:14px 0 6
 <div id="home">
  <div class="stage" aria-label="Portada pixel art DigiRogue">
   <img src="/assets/portada.webp" alt="Portada original de DigiRogue con criaturas, cascada, montañas y árbol de fantasía">
-  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas>
+  <canvas id="weather" width="1672" height="941" aria-hidden="true"></canvas><span id="visualVersion" style="position:absolute;right:7px;bottom:7px;z-index:2;background:#061a34b9;color:#d7faff;font:700 10px system-ui;padding:3px 6px;border-radius:3px;pointer-events:none">Portada animada v2.2</span>
   <button class="hotspot play" aria-label="Jugar online" id="goPlay"></button>
   <button class="hotspot continue" aria-label="Continuar juego individual" id="goClassic"></button>
   <button class="hotspot guide" aria-label="Guía" id="goHelp"></button>
@@ -167,6 +167,8 @@ function homeMotion(ts){let t=(ts-startAt)/1000;if(screen==='home'&&!matchMedia(
  for(let i=0;i<33;i++){let x=630+(random(i+4)*540+t*27)%570,y=704+random(i+88)*112;wc.fillStyle='#d9fcff70';wc.fillRect(x,y,17,2)}
  for(let i=0;i<18;i++){let x=1350+random(i+28)*68,y=440+(random(i+70)*250+t*95)%253;wc.fillStyle='#d3f8ffa0';wc.fillRect(x,y,3,17)}
  for(let i=0;i<13;i++){let a=t*.78+i*Math.PI*2/13;wc.fillStyle='#83ffffaa';wc.fillRect(835+Math.cos(a)*138,155+Math.sin(a)*115,5,5)}
+ // Visible animated foliage and pixel particles; no image cutouts.
+ for(let i=0;i<34;i++){const x=((i*131+53+t*(16+i%5*5))%1750)-30;const y=((i*89+60+t*(8+i%3*7))%1010)-30;wc.save();wc.translate(x+Math.sin(t*1.7+i)*16,y);wc.rotate(t*.6+i);wc.fillStyle=i%3===0?'#fff0aaaf':i%3===1?'#8aee8bb8':'#ffb9d4a6';wc.fillRect(-6,-2,12,5);wc.fillRect(-2,-6,4,13);wc.restore()}
  // Additive ambient effects: no cutouts of characters or moving background patches.
  wc.save();wc.globalAlpha=.11;
  for(let i=0;i<5;i++){const x=((190+i*315+t*(4+i%3*2))%1920)-120,y=65+i%2*32;wc.fillStyle='#f4ffff';wc.fillRect(Math.round(x/6)*6,y,66,6);wc.fillRect(Math.round(x/6)*6+15,y-6,40,6);wc.fillRect(Math.round(x/6)*6+18,y+6,48,5)}
