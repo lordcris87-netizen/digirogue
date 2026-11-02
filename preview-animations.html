@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DigiRogue — laboratorio de sprites (NO PUBLICAR)</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui}body{margin:0;background:#091a2e;color:#f3fcff}
+header{padding:12px 18px;background:#112b47}h1{font-size:1.2rem;margin:0 0 8px}
+label{display:inline-flex;gap:6px;align-items:center;margin:5px 14px 5px 0}
+select,button{background:#193b5a;color:white;border:1px solid #78d9ef;border-radius:5px;padding:7px}
+canvas{display:block;width:min(100vw,1080px);aspect-ratio:1672/941;margin:auto;image-rendering:pixelated;background:#061d36}
+aside{font-size:13px;padding:12px;line-height:1.5;color:#badce6}
+</style></head><body>
+<header><h1>Laboratorio de portada — solo desarrollo</h1>
+<label>Personaje <select id="who"><option value="bat">Criatura voladora</option><option value="kunemon">Kunemon</option><option value="agumon">Agumon (sprite de arena, no recorte de portada)</option></select></label>
+<label><input type="checkbox" id="cover" checked> Mostrar portada original</label>
+<label><input type="checkbox" id="motion" checked> Animación</label>
+<button id="step">Fotograma siguiente</button>
+<span id="status" role="status">Cargando...</span></header>
+<canvas id="scene" width="1672" height="941" aria-label="Previsualización del sprite y portada"></canvas>
+<aside>Esta pantalla es una herramienta de pruebas, no sustituye la portada oficial. Los personajes de la imagen de fondo siguen pintados y no se pueden mover sin restaurar primero el paisaje que ocultan. Los sprites sueltos aparecen en un área de inspección, no sobre sus equivalentes pintados. Revisa orientación, transparencia, bordes y ciclo de animación antes de fusionar.</aside>
+<script>
+'use strict';
+const defs={
+ bat:{url:'/assets/bat.png',cell:96,row:4,frames:8,fps:8},
+ kunemon:{url:'/assets/kunemon.png',cell:96,row:3,frames:4,fps:4},
+ agumon:{url:'/assets/agumon_idle.png',cell:128,row:4,frames:4,fps:3}
+};
+const canvas=document.getElementById('scene'),ctx=canvas.getContext('2d');
+const who=document.getElementById('who'),cover=document.getElementById('cover');
+const motion=document.getElementById('motion'),status=document.getElementById('status');
+const images={};let step=0,clock=0,then=0;
+const back=new Image();back.src='/assets/portada.webp';
+for(const [name,def] of Object.entries(defs)){
+ const im=new Image();im.src=def.url;images[name]=im;
+}
+document.getElementById('step').onclick=()=>{step++;motion.checked=false;draw()};
+for(const el of [who,cover,motion])el.addEventListener('change',draw);
+function draw(now=0){
+ const elapsed=Math.min(.05,(now-then)/1000||0);then=now;
+ if(motion.checked&&!document.hidden)clock+=elapsed;
+ ctx.clearRect(0,0,1672,941);ctx.imageSmoothingEnabled=false;
+ if(cover.checked&&back.complete&&back.naturalWidth)ctx.drawImage(back,0,0,1672,941);
+ else{ctx.fillStyle='#123150';ctx.fillRect(0,0,1672,941)}
+ // Checkerboard inspection backdrop deliberately does not overlap painted creatures.
+ ctx.fillStyle='#041325e8';ctx.fillRect(658,351,356,315);
+ const d=defs[who.value],im=images[who.value];
+ if(im?.complete&&im.naturalWidth){
+  const cols=Math.floor(im.naturalWidth/d.cell),rows=Math.floor(im.naturalHeight/d.cell);
+  if(cols<1||rows<=d.row){status.textContent='ERROR: dimensiones incompatibles';return}
+  const frame=motion.checked?Math.floor(clock*d.fps)%Math.min(cols,d.frames):step%Math.min(cols,d.frames);
+  const x=836,y=505+(motion.checked?Math.sin(clock*3)*7:0);
+  ctx.drawImage(im,frame*d.cell,d.row*d.cell,d.cell,d.cell,x-100,y-100,200,200);
+  status.textContent=who.value+' · '+im.naturalWidth+'×'+im.naturalHeight+' · fila '+d.row+' · cuadro '+frame;
+ }else status.textContent='Esperando al sprite...';
+}
+function loop(now){draw(now);requestAnimationFrame(loop)}requestAnimationFrame(loop);
+</script></body></html>
