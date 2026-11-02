@@ -1060,7 +1060,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   const backupKeys=["digirogue-run-progress","digirogue-egg-inventory","digirogue-buddies","digirogue-active-egg",profileKey,"digirogue-volume"];
   const status=document.getElementById("backupStatus"),fileInput=document.getElementById("backupFileInput");
   document.getElementById("backupExportBtn")?.addEventListener("click",()=>{
-    const data={};backupKeys.forEach(key=>{data[key]=read(key,null)});
+    const data={};backupKeys.forEach(key=>{const fallback=key==="digirogue-egg-inventory"||key==="digirogue-buddies"?[]:null;data[key]=read(key,fallback)});
     const payload={app:"DigiRogue",version:1,exportedAt:new Date().toISOString(),data};
     const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
     const url=URL.createObjectURL(blob),link=document.createElement("a");
