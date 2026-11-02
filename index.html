@@ -260,6 +260,39 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 .vpet-device .tama-control:nth-child(2) i,.vpet-device .tama-control:nth-child(3) i{background:linear-gradient(145deg,#536bdd 0%,#263fba 48%,#182a84 100%)!important;color:#d9e4ff!important}
 .tama-control:focus-visible i{outline:3px solid #fff3a6;outline-offset:3px}
 
+
+/* Real illustrated shell based on the supplied Digivice photo; HTML stays live over it. */
+.vpet-device{width:min(100%,560px)!important;max-width:560px!important;aspect-ratio:3/2!important;height:auto!important;min-height:0!important;padding:0!important;margin:0 auto 24px!important;border:0!important;clip-path:none!important;background:transparent!important;box-shadow:none!important;filter:none!important;overflow:visible!important;isolation:isolate}
+.vpet-device:before,.vpet-device:after{display:none!important}
+.digivice-art{position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:contain;image-rendering:pixelated;pointer-events:none}
+.vpet-device-top,.digivice-port,.digivice-markings{display:none!important}
+.vpet-screen{position:absolute!important;z-index:2!important;left:50%!important;top:49.5%!important;transform:translate(-50%,-50%)!important;width:36.5%!important;max-width:none!important;height:auto!important;min-height:0!important;aspect-ratio:1/1!important;margin:0!important;padding:9px 10px 8px!important;border:0!important;border-radius:50%!important;background:linear-gradient(180deg,#acd28c 0%,#8fbd78 56%,#7daa68 100%)!important;box-shadow:none!important;overflow:hidden!important;color:#142c24!important}
+.vpet-screen:before{inset:0!important;border-radius:50%!important;opacity:.2!important;background:repeating-linear-gradient(0deg,transparent 0 3px,#16291a 3px 4px)!important}
+.vpet-status{font-size:5px!important}
+.vpet-creature{height:82px!important}
+.vpet-digimon{width:76px!important;height:76px!important}
+.vpet-name{font-size:7px!important}
+.vpet-stage{font-size:5px!important;line-height:1.4!important;margin-top:3px!important}
+.pet-meter{width:78%!important;height:7px!important;margin-top:4px!important}
+.pet-needs{width:96%!important;gap:2px!important;margin-top:3px!important;font-size:4px!important}
+.pet-needs>div{grid-template-columns:34px 1fr 15px!important;gap:2px!important}
+.pet-needs>div>span{height:4px!important}.pet-needs small{font-size:4px!important}
+.vpet-screen:has(.pet-needs:not(.hidden)) .vpet-creature{height:51px!important}
+.vpet-screen:has(.pet-needs:not(.hidden)) .vpet-digimon{width:52px!important;height:52px!important}
+.vpet-controls{position:absolute!important;z-index:4!important;inset:0!important;display:block!important;margin:0!important;pointer-events:none!important}
+.tama-control{position:absolute!important;display:block!important;width:15%!important;height:22%!important;min-height:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important;pointer-events:auto!important;cursor:pointer!important;touch-action:manipulation}
+.tama-control i,.tama-control small{opacity:0!important}
+.tama-control-a{left:6.5%!important;top:39%!important}
+.tama-control-b{right:6.5%!important;left:auto!important;top:31%!important}
+.tama-control-c{right:6.5%!important;left:auto!important;top:53.5%!important}
+.tama-control:disabled{opacity:.4!important;cursor:not-allowed!important}
+.tama-control:focus-visible{outline:3px solid #fff4ad!important;outline-offset:-3px!important;border-radius:50%!important}
+.tama-control:not(:disabled):active{transform:scale(.92)!important}
+.pet-message{position:absolute!important;z-index:5!important;left:23%!important;right:23%!important;bottom:3%!important;max-width:none!important;min-height:14px!important;margin:0!important;color:#172c2c!important;font-size:5px!important;line-height:1.35!important;text-align:center!important;text-shadow:1px 1px #d8e9ba!important;pointer-events:none!important}
+@media(max-width:1000px){.incubator-layout{grid-template-columns:1fr!important;max-width:620px!important}.vpet-device{width:min(100%,580px)!important;max-width:580px!important}}
+@media(max-width:700px){.vpet-device{width:min(100%,520px)!important;max-width:520px!important;aspect-ratio:3/2!important;margin-bottom:24px!important}.vpet-screen{width:36.5%!important}.vpet-creature{height:78px!important}.vpet-digimon{width:68px!important;height:68px!important}.pet-message{font-size:4px!important}}
+@media(max-width:380px){.vpet-device{width:100%!important}.vpet-screen{width:36.5%!important;padding:7px!important}.vpet-creature{height:66px!important}.vpet-digimon{width:58px!important;height:58px!important}}
+
 </style>
 </head>
 <body>
@@ -291,13 +324,14 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     <div class="subhead"><div class="kicker"><i></i> CUIDA A TU PRÓXIMO COMPAÑERO</div><h1>Incubadora <em>digital</em></h1><p>Los huevos que rescates en la partida te esperan aquí. Acarícialos y descubre quién viene dentro.</p></div>
     <div class="incubator-layout">
       <section class="vpet-device" id="vpetDevice" aria-label="Dispositivo virtual Digimon">
+        <img class="digivice-art" src="assets/launcher/digivice_shell_16bit.png" alt="" aria-hidden="true">
         <div class="vpet-device-top"><span>◇ DIGIVICE · DIGIROGUE</span><span>01 / 01</span></div><span class="digivice-port" aria-hidden="true"></span><div class="digivice-markings digivice-markings-top" aria-hidden="true">◈ · ᚷ · ◇ · ᚷ · ◈</div>
         <div class="vpet-screen" id="vpetScreen">
           <div class="vpet-status"><span id="petStatus">SIN HUEVO</span><span id="petClock">--:--</span></div>
           <div class="vpet-creature"><div id="petEgg" class="pixel-egg" aria-label="Huevo Digimon"></div><img id="petImage" class="vpet-digimon hidden" alt=""><span class="pet-sparkle">✦</span></div>
           <b id="petName" class="vpet-name">HUEVO VACÍO</b><small id="petStage" class="vpet-stage">ENCUENTRA UN HUEVO EN PARTIDA</small><div class="pet-meter" id="incubationMeter"><span id="petProgress"></span></div><div class="pet-needs hidden" id="petNeeds" aria-label="Cuidados del Digimon"><div><b>COMIDA</b><span><i id="needFood"></i></span><small id="needFoodValue">100</small></div><div><b>BAÑO</b><span><i id="needClean"></i></span><small id="needCleanValue">100</small></div><div><b>FUERZA</b><span><i id="needStrength"></i></span><small id="needStrengthValue">0</small></div></div>
         </div>
-        <div class="digivice-markings digivice-markings-bottom" aria-hidden="true">DIGITAL MONSTER · ADVENTURE GEAR</div><div class="vpet-controls"><button id="petButton" class="tama-control tama-control-a"><i>A</i><small id="controlALabel">ACARICIAR</small></button><button id="petFeedButton" class="tama-control tama-control-b"><i>B</i><small id="controlBLabel">BAÑO</small></button><button id="petStatusButton" class="tama-control tama-control-c"><i>C</i><small id="controlCLabel">ENTRENAR</small></button></div>
+        <div class="digivice-markings digivice-markings-bottom" aria-hidden="true">DIGITAL MONSTER · ADVENTURE GEAR</div><div class="vpet-controls"><button id="petButton" class="tama-control tama-control-a" aria-label="Acariciar el huevo o dar comida al Digimon"><i>A</i><small id="controlALabel">ACARICIAR</small></button><button id="petFeedButton" class="tama-control tama-control-b" aria-label="Bañar al Digimon"><i>B</i><small id="controlBLabel">BAÑO</small></button><button id="petStatusButton" class="tama-control tama-control-c" aria-label="Entrenar al Digimon"><i>C</i><small id="controlCLabel">ENTRENAR</small></button></div>
         <p id="petMessage" class="pet-message">Derrota a un guardián para rescatar un huevo.</p>
       </section>
       <section class="egg-storage"><div class="egg-storage-heading"><div><small>RESCATADOS EN TUS PARTIDAS</small><h2>Tus huevos</h2></div><strong id="eggCount">0 / 08</strong></div><div id="eggInventory" class="egg-inventory"></div><div class="egg-hint"><span>▣</span><p>Cada huevo pertenece a un Digimon distinto. Su dispositivo y su reacción cambiarán con cada compañero.</p></div></section>
