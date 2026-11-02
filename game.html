@@ -1003,12 +1003,22 @@ function spawnEnemy(boss=false){
  world.enemies.push({x,z,type,boss,hp,maxHp:hp,speed:boss?1.75:type==='bat'?2.25:type==='goblimon'?1.35:1.5,
  damage:boss?19:type==='goblimon'?9:type==='bat'?5:5,cd:rnd(.3,1.2),phase:'approach',windup:0,burst:0,strafe:rnd(-1,1),special:rnd(2,5),targetX:0,targetZ:0,animSeed:rnd(0,TAU),hurt:0});
 }
+function recordRunProgress(){
+ try{
+  const key='digirogue-run-progress',saved=JSON.parse(localStorage.getItem(key)||'{}'),previous=saved&&typeof saved==='object'?saved:{};
+  const stats={gamesPlayed:Number(previous.gamesPlayed)||0,bestLevel:Number(previous.bestLevel)||0,bossWins:Number(previous.bossWins)||0,bestKills:Number(previous.bestKills)||0};
+  stats.gamesPlayed++;stats.bestLevel=Math.max(stats.bestLevel,player.level);stats.bestKills=Math.max(stats.bestKills,world.kill);
+  if(world.bossDead)stats.bossWins++;
+  Object.assign(stats,{lastLevel:player.level,lastKills:world.kill,lastSeconds:Math.floor(world.elapsed),updatedAt:Date.now()});
+  localStorage.setItem(key,JSON.stringify(stats));
+ }catch(_){}
+}
 function takeDamage(d){if(player.shield>0||player.invulnerable>0)return;
  player.invulnerable=.58;registerImpact(1.1);
  anim.hit=.32;anim.kind='hurt';anim.time=.32;anim.duration=.32;anim.buffer=0;world.pendingMelee=null;world.pendingFire=null;
  player.hp=Math.max(0,player.hp-d);
  burst(player.x,player.z,'#fa7477',8);if(player.hp<=0&&player.perks.revive>0){player.perks.revive--;player.hp=Math.round(player.maxHp*.5);player.shield=4;toast('✚ Reinicio ancestral: segunda oportunidad');burst(player.x,player.z,'#ffe483',30)}
- if(player.hp<=0&&!over){over=true;const eggNote=player.eggFound?' También rescataste un huevo de '+({agumon:'Agumon',gabumon:'Gabumon',patamon:'Patamon',koromon:'Koromon'}[player.eggFound])+'.':'';openPanel('FIN DE LA PARTIDA','Llegaste al nivel '+player.level+' y derrotaste '+world.kill+' enemigos.'+eggNote,[],[{name:'Volver al launcher',action:()=>location.href='index.html#incubadora'},{name:'Volver a jugar',action:()=>location.reload()}])}
+ if(player.hp<=0&&!over){over=true;recordRunProgress();const eggNote=player.eggFound?' También rescataste un huevo de '+({agumon:'Agumon',gabumon:'Gabumon',patamon:'Patamon',koromon:'Koromon'}[player.eggFound])+'.':'';openPanel('FIN DE LA PARTIDA','Llegaste al nivel '+player.level+' y derrotaste '+world.kill+' enemigos.'+eggNote,[],[{name:'Volver al launcher',action:()=>location.href='index.html#incubadora'},{name:'Volver a jugar',action:()=>location.reload()}])}
 }
 function shootAtPlayer(e){e.attackTimer=.52;e.attackDuration=.52;let a=Math.atan2(player.x-e.x,player.z-e.z),v=7.1;world.enemyShots.push({x:e.x,z:e.z,vx:Math.sin(a)*v,vz:Math.cos(a)*v,life:3,kind:'toxin',damage:5+Math.floor(world.elapsed/220)});burst(e.x,e.z,'#aa76eb',4)}
 function bossAI(e,dt,dx,dz,dist){
