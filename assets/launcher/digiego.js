@@ -25,7 +25,7 @@
   ];
   const copy = {
     es:{
-      title:'DigiEgo: tu compañero tiene vida propia',subtitle:'Un minijuego de compañía, recuerdos y vínculo. Todo ocurre aquí, sin conexión.',
+      title:'DigiTama: tu Digimon de bolsillo',subtitle:'Cuídalo, aliméntalo, báñalo y entrénalo en su pequeño mundo digital.',
       badge:'MINIJUEGO OFFLINE',tamerTitle:'CREA TU TAMER',tamerName:'NOMBRE DEL TAMER',tamerLook:'ELIGE TU ASPECTO',createTamer:'CREAR TAMER',editTamer:'CAMBIAR',tamerHelp:'Tu tamer y DigiEgo se guardan en este navegador, aparte de las partidas.',tamerReady:'TAMER CREADO',createTamerFirst:'Crea tu tamer para empezar.',lookSky:'CIELO',lookSun:'SOL',lookForest:'BOSQUE',lookFlame:'FUEGO',lookTide:'MAREA',lookMoon:'LUNA',partner:'COMPAÑERO',trait:'CARÁCTER',bond:'VÍNCULO',gift:'A partir de tres corazones empieza a traerte pequeños regalos.',carry:'Al completar el vínculo, un corazón quedará para el próximo huevo.',
       talk:'Hablar',praise:'Elogiar',scold:'Regañar',pet:'Acariciar',greet:'¡Hola! ¿Qué hacemos juntos?',
       memory:'MEMORIAS COMPARTIDAS',life:'Una vida antes de conocerte',empty:'Aún no hay recuerdos. Elige un momento para empezar vuestra historia.',
@@ -39,7 +39,7 @@
       sceneDone:'Momento vivido',hintLabel:'PISTA',pick:'Elige un momento para compartirlo.'
     },
     en:{
-      title:'DigiEgo: your partner has a life of its own',subtitle:'A little companion game about memories and bond. It all happens here, offline.',
+      title:'DigiTama: your pocket Digimon',subtitle:'Feed, bathe, care for, and train your partner in its little digital world.',
       badge:'OFFLINE MINIGAME',tamerTitle:'CREATE YOUR TAMER',tamerName:'TAMER NAME',tamerLook:'CHOOSE YOUR LOOK',createTamer:'CREATE TAMER',editTamer:'EDIT',tamerHelp:'Your tamer and DigiEgo are saved in this browser, separately from game runs.',tamerReady:'TAMER CREATED',createTamerFirst:'Create your tamer to begin.',lookSky:'SKY',lookSun:'SUN',lookForest:'FOREST',lookFlame:'FIRE',lookTide:'TIDE',lookMoon:'MOON',partner:'PARTNER',trait:'PERSONALITY',bond:'BOND',gift:'At three hearts, your partner starts bringing little gifts.',carry:'Complete the bond and one heart will carry to the next egg.',
       talk:'Talk',praise:'Praise',scold:'Scold',pet:'Pet',greet:'Hey! What should we do together?',
       memory:'SHARED MEMORIES',life:'A life before you met',empty:'No memories yet. Pick a moment to begin your story.',
