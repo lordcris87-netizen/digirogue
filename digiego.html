@@ -27,7 +27,30 @@ const ctx=canvas.getContext('2d');const objTextures={body:new Image(),mouth:new 
 const texFiles={body:'agumon-body.svg',mouth:'agumon-mouth.svg',claw:'agumon-claw.svg'};
 const tamerSprite=new Image();tamerSprite.onload=()=>paint();tamerSprite.src='/assets/launcher/digiego/tamer-ps1.svg';
 for(const key of Object.keys(objTextures)){objTextures[key].onload=()=>{canvas.dataset['tex'+key]=String(objTextures[key].naturalWidth);paint()};objTextures[key].onerror=()=>{canvas.dataset['tex'+key]='error'};objTextures[key].src='assets/launcher/digiego/'+texFiles[key]}
-let objTriangles=[];
+let objTriangles=[];let tamerTriangles=[];
+const tamerTexture=new Image();
+tamerTexture.onload=()=>paint();
+tamerTexture.onerror=()=>{canvas.dataset.tamerTexture='error'};
+tamerTexture.src='/assets/launcher/digiego/mameo/player.png';
+canvas.dataset.tamerModel='loading';
+fetch('/assets/launcher/digiego/mameo/player.obj').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()}).then(source=>{
+ const vertices=[],uvs=[];let object='';
+ for(const line of source.split(String.fromCharCode(10))){
+  const q=line.trim().split(/\s+/);
+  if(q[0]==='v')vertices.push(q.slice(1,4).map(Number));
+  else if(q[0]==='vt')uvs.push(q.slice(1,3).map(Number));
+  else if(q[0]==='o')object=q.slice(1).join(' ');
+  else if(q[0]==='f'){
+   const corners=q.slice(1).map(v=>v.split('/').map(Number));
+   for(let i=1;i<corners.length-1;i++){
+    const tri=[corners[0],corners[i],corners[i+1]];
+    tamerTriangles.push({p:tri.map(v=>vertices[v[0]-1]),uv:tri.map(v=>uvs[v[1]-1]),o:object});
+   }
+  }
+ }
+ canvas.dataset.tamerModel=String(tamerTriangles.length);
+ paint();
+}).catch(error=>{canvas.dataset.tamerModel='error '+String(error.message||error)});
 canvas.dataset.objStatus='loading';
 fetch('/assets/launcher/digiego/agumon-world-ps1.obj').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()}).then(source=>{
  const vertices=[],uvs=[];let material='body',object='';
@@ -107,15 +130,31 @@ function paint(){
  const gait=isWalking?Math.abs(Math.sin(phase*1.5))*.38:Math.sin(now*2.1)*.1;
  const pitch=isWalking?Math.sin(phase)*.055:Math.sin(now*1.3)*.012;
  const lift=isPet?(isWalking?gait:.12+gait)+(busy?Math.abs(Math.sin(now*9))*.2:0):0;
- if(!isPet&&tamerSprite.complete&&tamerSprite.naturalWidth){
-  const foot=project(x,0,z),height=126,width=height*tamerSprite.naturalWidth/tamerSprite.naturalHeight;
-  faces.push({depth:foot[2]+.05,render:()=>{
-   ctx.save();ctx.imageSmoothingEnabled=false;
-   const faceLeft=Math.cos(heading)<-.15;
-   if(faceLeft){ctx.translate(foot[0]*2,0);ctx.scale(-1,1)}
-   ctx.drawImage(tamerSprite,foot[0]-width/2,foot[1]-height,width,height);
-   ctx.restore();
-  }});
+ if(!isPet&&tamerTriangles.length&&tamerTexture.complete&&tamerTexture.naturalWidth){
+  const turn=Math.round(heading/(Math.PI/4))*(Math.PI/4),scale=2.6,cs=Math.cos(turn),sn=Math.sin(turn),walking=!!(!busy&&(keys.size||target));
+  const foot=project(x,0,z);
+  faces.push({depth:foot[2]+.01,render:()=>{ctx.save();ctx.fillStyle='#07101955';ctx.beginPath();ctx.ellipse(foot[0],foot[1]+2,15,5,0,0,Math.PI*2);ctx.fill();ctx.restore()}});
+  for(const tri of tamerTriangles){
+   const part=Number((tri.o.match(/#(\d+)/)||[])[1]);
+   const points=tri.p.map(([a,rawY,b])=>{
+    let h=rawY;
+    if([3,4,6,7].includes(part)){
+     const side=(part===3||part===4)?-1:1,pivotX=side*1.48,pivotY=.45,pivotZ=.52;
+     const swing=walking?Math.sin(phase*1.35)*side*.16:Math.sin(now*1.3)*side*.012;
+     const angle=-side*1.02+swing,dx=a-pivotX,dy=h-pivotY,ca=Math.cos(angle),sa=Math.sin(angle);
+     a=pivotX+dx*ca-dy*sa;h=pivotY+dx*sa+dy*ca;
+    }else if([8,9,10,11,12,13].includes(part)){
+     const side=[8,9,10].includes(part)?-1:1,pivotY=-1.08,pivotZ=.52;
+     const angle=walking?Math.sin(phase*1.45+(side>0?Math.PI:0))*.28:Math.sin(now*1.65+(side>0?Math.PI:0))*.012;
+     const dy=h-pivotY,dz=b-pivotZ,ca=Math.cos(angle),sa=Math.sin(angle);
+     h=pivotY+dy*ca-dz*sa;b=pivotZ+dy*sa+dz*ca;
+    }
+    a-= -0.012885;b-=.881128;h+=4.051598;
+    const px=a*scale,pz=b*scale;
+    return project(x+px*cs+pz*sn,h*scale,z+pz*cs-px*sn);
+   });
+   faces.push({depth:points.reduce((n,p)=>n+p[2],0)/3,render:()=>texturedTriangle(points,tri.uv,tamerTexture)});
+  }
   return;
  }
  if(isPet&&id==='agumon'&&objTriangles.length){
