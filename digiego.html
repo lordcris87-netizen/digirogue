@@ -299,29 +299,6 @@ screen.tabIndex=0;
 screen.setAttribute('aria-label','Mundo DigiEgo. Mueve al Tamer con WASD o flechas. E para interactuar.');
 const hint=document.createElement('small');hint.textContent='WASD / flechas para caminar · E para interactuar · Arrastra para girar la cámara. Toca un lugar para visitarlo.';bar.append(hint);
 const meter=document.createElement('span');bar.append(meter);
-const moveNames={up:'arrowup',left:'arrowleft',down:'arrowdown',right:'arrowright'};
-mobile.querySelectorAll('[data-move]').forEach(button=>{
- const k=moveNames[button.dataset.move];
- button.addEventListener('pointerdown',e=>{e.preventDefault();keys.add(k);start();if(button.setPointerCapture)button.setPointerCapture(e.pointerId)});
- ['pointerup','pointercancel','lostpointercapture'].forEach(type=>button.addEventListener(type,()=>keys.delete(k)));
-});
-mobile.querySelector('[data-interact]').onclick=interact;
-photoButton.onclick=()=>{
- try{const a=document.createElement('a');a.download='digiego-'+dailyKey()+'.png';a.href=canvas.toDataURL('image/png');a.click();notifyWorld(localeIsEnglish()?'World snapshot saved':'Captura del mundo guardada')}
- catch{notifyWorld('No se pudo guardar la captura')}
-};
-backupButton.onclick=()=>{
- const payload={version:1,savedAt:new Date().toISOString(),world:state,companion:JSON.parse(localStorage.getItem('digirogue-digiego-v1')||'{}')};
- const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
- a.href=url;a.download='digiego-copia-'+dailyKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
- notifyWorld(localeIsEnglish()?'Local backup downloaded':'Copia local descargada')
-};
-weatherButton.onclick=()=>{
- const options=['sun','rain','snow'];state.weather=options[(options.indexOf(state.weather)+1)%options.length];
- weatherButton.textContent=({sun:'☀ CLIMA',rain:'🌧 LLUVIA',snow:'❄ NIEVE'})[state.weather];
- save();paint();notifyWorld(({sun:'Ha salido el sol.',rain:'Empieza a llover.',snow:'Caen copos en la isla.'})[state.weather])
-};
-
 const enhanceStyle=document.createElement('style');
 enhanceStyle.textContent=`
 .world-controls{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 10px}
@@ -392,7 +369,28 @@ function recordWorldAction(kind){
  if(milestone[kind]&&!state.badges.includes(kind)){state.badges.push(kind);notifyWorld('¡Insignia desbloqueada! '+milestone[kind])}
  save();refreshLife();
 }
-
+const moveNames={up:'arrowup',left:'arrowleft',down:'arrowdown',right:'arrowright'};
+mobile.querySelectorAll('[data-move]').forEach(button=>{
+ const k=moveNames[button.dataset.move];
+ button.addEventListener('pointerdown',e=>{e.preventDefault();keys.add(k);start();if(button.setPointerCapture)button.setPointerCapture(e.pointerId)});
+ ['pointerup','pointercancel','lostpointercapture'].forEach(type=>button.addEventListener(type,()=>keys.delete(k)));
+});
+mobile.querySelector('[data-interact]').onclick=interact;
+photoButton.onclick=()=>{
+ try{const a=document.createElement('a');a.download='digiego-'+dailyKey()+'.png';a.href=canvas.toDataURL('image/png');a.click();notifyWorld(localeIsEnglish()?'World snapshot saved':'Captura del mundo guardada')}
+ catch{notifyWorld('No se pudo guardar la captura')}
+};
+backupButton.onclick=()=>{
+ const payload={version:1,savedAt:new Date().toISOString(),world:state,companion:JSON.parse(localStorage.getItem('digirogue-digiego-v1')||'{}')};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='digiego-copia-'+dailyKey()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+ notifyWorld(localeIsEnglish()?'Local backup downloaded':'Copia local descargada')
+};
+weatherButton.onclick=()=>{
+ const options=['sun','rain','snow'];state.weather=options[(options.indexOf(state.weather)+1)%options.length];
+ weatherButton.textContent=({sun:'☀ CLIMA',rain:'🌧 LLUVIA',snow:'❄ NIEVE'})[state.weather];
+ save();paint();notifyWorld(({sun:'Ha salido el sol.',rain:'Empieza a llover.',snow:'Caen copos en la isla.'})[state.weather])
+};
 function interact(){const nearby=[...Object.entries(stations),['Limpiar',state.dirt]].find(([,p])=>p&&Math.hypot(state.x-p[0],state.y-p[1])<9);if(nearby)action(nearby[0]);else say('Acércate a una puerta o a lo que quieras recoger.')}
 document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable=true]'))return;const k=e.key.toLowerCase();if(directions[k]){e.preventDefault();target=null;pending='';keys.add(k);start()}else if(k==='e'&&!e.repeat)interact()});
 window.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>keys.clear());window.addEventListener('pagehide',save);
