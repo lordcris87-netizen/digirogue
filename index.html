@@ -978,7 +978,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   <header class="topbar">
     <a class="brand" href="#inicio" data-nav="inicio" aria-label="DigiRogue, inicio"><span class="brandmark" aria-hidden="true"><svg viewBox="0 0 48 48" focusable="false"><path d="M14 2h20v4h7v6h4v22h-4v6h-7v4H14v-4H7v-6H3V12h4V6h7Z" fill="#f5bf45" stroke="#061426" stroke-width="2"/><path d="M13 9h22v3h4v14H9V12h4Z" fill="#0d2b42" stroke="#ffe28b" stroke-width="1.5"/><path d="M14 13h20v9H14Z" fill="#5bd4df"/><path d="M17 15h5v2h-3v2h-2Zm9 0h5v2h-3v2h-2Z" fill="#e9ffff"/><path d="M20 19h8v2h-8Z" fill="#e9ffff"/><path d="M15 29h18v3H15Zm3 5h12v3H18Z" fill="#173a52"/><path d="M17 30h4v2h-4Zm10 0h4v2h-4Z" fill="#fff0aa"/><rect x="21" y="35" width="6" height="4" fill="#e54d50" stroke="#702636" stroke-width="1"/><path d="M14 41h20" stroke="#ffecae" stroke-width="2"/></svg></span><span class="brandname">DIGI<span>ROGUE</span></span></a>
     <nav class="main-nav" aria-label="Secciones principales"><button class="nav-item active" data-nav="inicio">Inicio</button><button class="nav-item" data-nav="temporada">Temporada</button><button class="nav-item" data-nav="digidex">Digidex</button><button class="nav-item" data-nav="incubadora">Incubadora</button><button class="nav-item" data-nav="equipo">Mi equipo</button><button class="nav-item" onclick="location.href='digiego.html'" aria-label="Abrir DigiTama, el minijuego de cuidados">DigiTama</button></nav>
-    <div class="profile-tools"><span class="season-chip"><i></i> TEMPORADA 01</span><button id="soundBtn" class="sound-btn" aria-label="Activar o silenciar música">♪</button><button id="settingsBtn" class="settings-btn" aria-label="Ajustes">⚙</button><div class="profile"><span class="avatar" id="tamerAvatar"><span id="tamerAvatarFallback">T</span><img id="tamerAvatarImage" alt="" hidden></span><span><b id="tamerDisplayName">Tamer</b><small id="tamerDisplayTitle">TAMER NOVATO · NIVEL 01</small></span><span class="chev">⌄</span></div></div>
+    <div class="profile-tools"><span class="season-chip"><i></i> TEMPORADA 01</span><button id="commandBtn" class="settings-btn" aria-label="Búsqueda rápida, Ctrl K">⌕</button><button id="soundBtn" class="sound-btn" aria-label="Activar o silenciar música">♪</button><button id="settingsBtn" class="settings-btn" aria-label="Ajustes">⚙</button><div class="profile"><span class="avatar" id="tamerAvatar"><span id="tamerAvatarFallback">T</span><img id="tamerAvatarImage" alt="" hidden></span><span><b id="tamerDisplayName">Tamer</b><small id="tamerDisplayTitle">TAMER NOVATO · NIVEL 01</small></span><span class="chev">⌄</span></div></div>
   </header>
   <section id="view-inicio" class="view home-view">
     <div class="home-copy">
@@ -1139,10 +1139,76 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       button.classList.toggle("active", button.dataset.nav === view);
     });
     document.getElementById("launcher").classList.toggle("home-active", view === "inicio");
+    const sectionTitles={inicio:"DigiRogue",temporada:"Temporada · DigiRogue",digidex:"Digidex · DigiRogue",equipo:"Mi equipo · DigiRogue",ajustes:"Ajustes · DigiRogue",incubadora:"Incubadora · DigiRogue"};
+    document.title=sectionTitles[view]||"DigiRogue";
+    document.querySelectorAll("[data-nav]").forEach(button=>{if(button.dataset.nav===view)button.setAttribute("aria-current","page");else button.removeAttribute("aria-current")});
     if (location.hash !== `#${view}`) location.hash = view;
   }
   document.querySelectorAll("[data-nav]").forEach((button) => button.addEventListener("click", () => navigate(button.dataset.nav)));
   document.querySelectorAll("[data-info]").forEach((button) => button.addEventListener("click", () => notify(button.dataset.info)));
+  const paletteStyle=document.createElement("style");
+  paletteStyle.textContent=`
+  .command-overlay{position:fixed;inset:0;z-index:50;display:grid;place-items:start center;padding:12vh 16px 24px;background:#030811d9;backdrop-filter:blur(8px)}
+  .command-overlay.hidden{display:none!important}
+  .command-box{width:min(570px,100%);max-height:76vh;overflow:auto;border:2px solid #67d8e8;background:linear-gradient(145deg,#102340,#091322);box-shadow:8px 8px 0 #02060d,inset 0 0 0 2px #ffffff14;padding:18px;color:#f4f0df}
+  .command-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .command-head h2{margin:0;color:#ffdf83;font:12px "Press Start 2P",monospace}
+  .command-head button{background:#182e49;color:#fff;border:1px solid #7bdced;font:12px "Press Start 2P";padding:7px;cursor:pointer}
+  .command-box label{display:block;color:#b7e7f0;font:7px "Press Start 2P";margin-bottom:10px}
+  .command-box input{display:block;width:100%;margin-top:8px;padding:13px;border:2px solid #557998;background:#050e1b;color:white;font:12px "Silkscreen",monospace}
+  .command-options{display:grid;gap:6px}
+  .command-options button{display:flex;justify-content:space-between;align-items:center;gap:12px;text-align:left;padding:10px;border:1px solid #486583;background:#122541;color:#f4f0df;font:9px "Press Start 2P",monospace;cursor:pointer}
+  .command-options button:hover,.command-options button:focus-visible{border-color:#ffe078;background:#253c5a;outline:2px solid #ffe078}
+  .command-options small{color:#9edbe6;font:7px "Silkscreen",monospace}
+  .command-help{margin:12px 0 0;color:#a9bed0;font:7px "Press Start 2P";line-height:1.8}
+  @media(prefers-reduced-motion:reduce){.command-overlay{backdrop-filter:none}}
+  `;
+  document.head.append(paletteStyle);
+  const palette=document.createElement("div");palette.id="launcherPalette";palette.className="command-overlay hidden";palette.setAttribute("role","dialog");palette.setAttribute("aria-modal","true");palette.setAttribute("aria-labelledby","launcherPaletteTitle");
+  palette.innerHTML='<div class="command-box"><div class="command-head"><h2 id="launcherPaletteTitle">IR A…</h2><button type="button" id="closePalette" aria-label="Cerrar búsqueda">✕</button></div><label for="launcherPaletteInput">BUSCA UNA SECCIÓN O ACCIÓN<input id="launcherPaletteInput" type="search" role="combobox" aria-controls="launcherPaletteOptions" aria-expanded="true" autocomplete="off" placeholder="Escribe: equipo, huevos, Digimon…"></label><div class="command-options" id="launcherPaletteOptions" role="listbox" aria-label="Accesos del launcher"></div><p class="command-help">FLECHAS: MOVER · ENTER: ABRIR · ESC: CERRAR<br>ATAJOS: 1–6 SECCIONES · G DIGITAMA</p></div>';
+  document.body.append(palette);
+  const paletteInput=palette.querySelector("#launcherPaletteInput"),paletteOptions=palette.querySelector("#launcherPaletteOptions"),commandBtn=document.getElementById("commandBtn"),closePalette=palette.querySelector("#closePalette");
+  let previousFocus=null;
+  const commands=[
+    {name:"Inicio",hint:"Portada",keys:"1",run:()=>navigate("inicio")},
+    {name:"Temporada",hint:"Capítulo activo",keys:"2",run:()=>navigate("temporada")},
+    {name:"Digidex",hint:"Colección",keys:"3",run:()=>navigate("digidex")},
+    {name:"Mi equipo",hint:"Tus compañeros",keys:"4",run:()=>navigate("equipo")},
+    {name:"Incubadora",hint:"Huevos y eclosión",keys:"5",run:()=>navigate("incubadora")},
+    {name:"Ajustes",hint:"Audio y movimiento",keys:"6",run:()=>navigate("ajustes")},
+    {name:"DigiTama",hint:"Cuida a tu Digimon",keys:"G",run:()=>location.href="digiego.html"},
+    {name:"Jugar en el bosque",hint:"Abrir la aventura",keys:"",run:()=>location.href="loading.html"}
+  ];
+  function paintCommands(){
+    const query=paletteInput.value.trim().toLocaleLowerCase("es");
+    const matches=commands.filter(command=>(command.name+" "+command.hint).toLocaleLowerCase("es").includes(query));
+    paletteOptions.innerHTML=matches.map((command,index)=>'<button type="button" role="option" aria-selected="false" data-command="'+commands.indexOf(command)+'"><span>'+command.name+'<small>'+command.hint+'</small></span><kbd>'+command.keys+'</kbd></button>').join("")||'<p class="command-help">No encuentro esa sección. Prueba «equipo» o «huevos».</p>';
+    paletteOptions.querySelectorAll("[data-command]").forEach(button=>button.addEventListener("click",()=>{const command=commands[Number(button.dataset.command)];closeCommandPalette();command.run()}));
+  }
+  function openCommandPalette(){
+    previousFocus=document.activeElement;palette.classList.remove("hidden");paletteInput.value="";paintCommands();paletteInput.focus();commandBtn.setAttribute("aria-expanded","true");
+  }
+  function closeCommandPalette(){
+    palette.classList.add("hidden");commandBtn.setAttribute("aria-expanded","false");if(previousFocus?.isConnected)previousFocus.focus();
+  }
+  commandBtn.setAttribute("aria-haspopup","dialog");commandBtn.setAttribute("aria-expanded","false");commandBtn.setAttribute("aria-keyshortcuts","Control+K");
+  commandBtn.addEventListener("click",openCommandPalette);closePalette.addEventListener("click",closeCommandPalette);palette.addEventListener("click",event=>{if(event.target===palette)closeCommandPalette()});paletteInput.addEventListener("input",paintCommands);
+  palette.addEventListener("keydown",event=>{
+    if(event.key==="ArrowDown"||event.key==="ArrowUp"){const buttons=[...paletteOptions.querySelectorAll("[data-command]")];if(!buttons.length)return;event.preventDefault();const current=buttons.indexOf(document.activeElement);const next=current<0?(event.key==="ArrowDown"?0:buttons.length-1):(current+(event.key==="ArrowDown"?1:-1)+buttons.length)%buttons.length;buttons[next].focus()}
+    if(event.key==="Enter"&&document.activeElement===paletteInput){event.preventDefault();paletteOptions.querySelector("[data-command]")?.click()}
+    if(event.key==="Tab"){const focusable=[closePalette,paletteInput,...paletteOptions.querySelectorAll("[data-command]")];if(event.shiftKey&&document.activeElement===focusable[0]){event.preventDefault();focusable.at(-1).focus()}else if(!event.shiftKey&&document.activeElement===focusable.at(-1)){event.preventDefault();focusable[0].focus()}}
+  });
+  document.addEventListener("keydown",event=>{
+    const typing=event.target.closest?.("input,textarea,select,[contenteditable=true]");
+    if(event.key==="Escape"&&!palette.classList.contains("hidden")){event.preventDefault();closeCommandPalette();return}
+    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="k"){event.preventDefault();openCommandPalette();return}
+    if(!typing&&event.key==="?"){event.preventDefault();openCommandPalette();return}
+    if(!typing&&(event.key==="Escape")){navigate("inicio");return}
+    if(typing||event.ctrlKey||event.metaKey||event.altKey||!palette.classList.contains("hidden"))return;
+    const numeric={"1":"inicio","2":"temporada","3":"digidex","4":"equipo","5":"incubadora","6":"ajustes"}[event.key];
+    if(numeric){navigate(numeric);return}
+    if(event.key.toLowerCase()==="g")location.href="digiego.html";
+  });
   const dexCards = [...document.querySelectorAll("#view-digidex .digi-card")];
   const dexSearch = document.getElementById("dexSearch");
   const dexFilter = document.getElementById("dexFilter");
