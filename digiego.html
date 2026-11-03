@@ -102,7 +102,7 @@ function paint(){
  const id=document.querySelector('#dgPartner').value||'agumon';
  const lift=isPet&&busy?Math.abs(Math.sin(performance.now()/170))*2:0;
  if(isPet&&id==='agumon'&&objTriangles.length){
-  const turn=heading+Math.PI+Math.sin(phase)*.035,scale=5.2;
+  const turn=heading+Math.PI+Math.sin(phase)*.035,scale=6.5;
   for(const tri of objTriangles){
    const points=tri.p.map(([a,h,b])=>project(x+a*scale*Math.cos(turn)+b*scale*Math.sin(turn),h*scale+lift,z+b*scale*Math.cos(turn)-a*scale*Math.sin(turn)));
    faces.push({depth:points.reduce((n,p)=>n+p[2],0)/3,render:()=>texturedTriangle(points,tri.uv,objTextures[tri.m])});
