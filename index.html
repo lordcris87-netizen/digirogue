@@ -891,6 +891,41 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   #view-inicio .brand-title,#view-inicio .brand-title span,#view-inicio .brand-title em{-webkit-text-stroke:2px #072554!important}
 }
 
+
+/* Scale Digimon artwork to classic small Card List icon size. */
+#view-digidex .digimon-grid{
+  width:min(690px,100%);max-width:690px;
+  grid-template-columns:repeat(4,minmax(52px,1fr));gap:13px;padding:48px 24px 42px
+}
+#view-digidex .digi-card{
+  width:100%;max-width:76px;min-height:78px;justify-self:center;
+  gap:5px;padding:5px 4px 4px
+}
+#view-digidex .digi-art{
+  width:42px;height:42px;border-width:1px;
+  background:#46515a!important;
+  box-shadow:inset 1px 1px 0 #eff4e933,inset -2px -2px 0 #252d34!important
+}
+#view-digidex .digi-art img{
+  width:36px;height:36px;object-fit:contain;image-rendering:pixelated;
+  filter:drop-shadow(1px 1px 0 #10151b)!important
+}
+#view-digidex .digi-card h3{font-size:7px;white-space:nowrap}
+#view-digidex .digi-number{top:2px;right:3px;font-size:6px}
+@media(max-width:700px){
+  #view-digidex .digimon-grid{grid-template-columns:repeat(4,minmax(48px,1fr));gap:8px;padding:44px 14px 38px}
+  #view-digidex .digi-card{max-width:70px;min-height:74px}
+  #view-digidex .digi-art{width:38px;height:38px}
+  #view-digidex .digi-art img{width:32px;height:32px}
+}
+@media(max-width:430px){
+  #view-digidex .digimon-grid{grid-template-columns:repeat(4,minmax(45px,1fr));gap:6px;padding:44px 9px 38px}
+  #view-digidex .digi-card{max-width:64px;min-height:68px}
+  #view-digidex .digi-art{width:34px;height:34px}
+  #view-digidex .digi-art img{width:29px;height:29px}
+  #view-digidex .digi-card h3{font-size:6px}
+}
+
 </style>
 </head>
 <body>
