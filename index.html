@@ -824,6 +824,60 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   #view-digidex .digimon-grid::before{font-size:13px}
 }
 
+
+/* DigiRogue wordmark inspired by the bright, beveled Digimon World title lockup. */
+#view-inicio .brand-title{
+  position:relative;isolation:isolate;display:block!important;
+  width:max-content;max-width:100%;
+  margin:25px 0 17px!important;padding:13px 21px 15px 8px;
+  color:#ffd941!important;
+  background:linear-gradient(180deg,#fff69b 0%,#ffe347 30%,#ffbf18 65%,#e98413 100%);
+  -webkit-background-clip:text!important;background-clip:text;
+  -webkit-text-fill-color:transparent!important;
+  -webkit-text-stroke:3px #062859;paint-order:stroke fill;
+  font-family:Impact,"Arial Black","Bahnschrift SemiCondensed",sans-serif!important;
+  font-size:clamp(62px,8vw,112px)!important;font-style:italic;font-weight:1000!important;
+  letter-spacing:-.065em!important;line-height:.88!important;text-transform:uppercase;
+  filter:drop-shadow(0 1px 0 #fff6b2) drop-shadow(0 4px 0 #06377c) drop-shadow(0 7px 0 #06132e) drop-shadow(0 12px 15px #000b);
+  transform:skew(-7deg) rotate(-1deg);white-space:nowrap
+}
+#view-inicio .brand-title::before{
+  content:"";position:absolute;z-index:-1;inset:9% 2% 2% -1%;
+  background:linear-gradient(180deg,#fff17d 0%,#2363bb 18%,#092d68 42%,#061b43 70%,#f1bb35 73%,#1453a0 100%);
+  clip-path:polygon(0 27%,8% 19%,27% 17%,35% 4%,49% 0,63% 5%,71% 17%,92% 19%,100% 27%,96% 78%,73% 80%,66% 94%,50% 100%,34% 94%,27% 81%,4% 78%);
+  filter:drop-shadow(0 0 5px #44d9ffb3)
+}
+#view-inicio .brand-title::after{
+  content:"";position:absolute;z-index:-2;inset:-24% -9% -11%;
+  background:repeating-conic-gradient(from 0deg at 52% 55%,#53d9ff26 0deg 5deg,transparent 5deg 16deg);
+  opacity:.8;filter:blur(2px);pointer-events:none
+}
+#view-inicio .brand-title span,#view-inicio .brand-title em{
+  color:#ffd941!important;
+  background:linear-gradient(180deg,#fff69b 0%,#ffe347 31%,#ffc51b 66%,#e98413 100%);
+  -webkit-background-clip:text!important;background-clip:text;
+  -webkit-text-fill-color:transparent!important;-webkit-text-stroke:3px #062859;paint-order:stroke fill;
+  text-shadow:1px 1px 0 #fff0a0,2px 3px 0 #1252a1,3px 5px 0 #061b42
+}
+#view-inicio .brand-title small{
+  position:absolute;z-index:2;top:auto;right:11px;bottom:-7px;
+  display:block;padding:4px 10px 3px;
+  color:#ffed9a!important;-webkit-text-fill-color:#ffed9a!important;
+  background:linear-gradient(180deg,#123d80,#081d49);
+  border:2px solid #f2ca46;box-shadow:0 2px 0 #07132c;
+  font:900 clamp(8px,.9vw,11px) Impact,"Arial Black",sans-serif;
+  font-style:italic;letter-spacing:1.7px;text-shadow:1px 1px 0 #03102a;
+  transform:skew(-4deg)
+}
+@media(max-width:700px){
+  #view-inicio .brand-title{font-size:clamp(57px,14vw,88px)!important;padding:10px 15px 12px 6px;margin:20px 0 16px!important;-webkit-text-stroke:2px #062859}
+  #view-inicio .brand-title span,#view-inicio .brand-title em{-webkit-text-stroke:2px #062859}
+  #view-inicio .brand-title small{bottom:-9px;right:6px;font-size:8px;letter-spacing:1px}
+}
+@media(max-width:390px){
+  #view-inicio .brand-title{font-size:clamp(47px,13.5vw,59px)!important;letter-spacing:-.07em!important}
+}
+
 </style>
 </head>
 <body>
