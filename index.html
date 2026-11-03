@@ -762,6 +762,68 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 
 
 #view-digidex .digi-card.is-locked .digi-art img{filter:brightness(0) saturate(0) contrast(1.8)!important;opacity:.95!important}
+
+/* Digidex como la pantalla de selección "Card List" de Digimon World para PS1. */
+#view-digidex .digimon-grid{
+  position:relative;grid-template-columns:repeat(4,minmax(110px,1fr));gap:10px;
+  width:min(860px,100%);max-width:860px;padding:47px 20px 42px;
+  border:3px solid #7de18a;
+  background:linear-gradient(180deg,#313b44 0%,#29343d 100%);
+  box-shadow:0 0 0 5px #173521,0 0 0 7px #a0e893,inset 0 0 0 2px #111820,0 12px 35px #0008;
+}
+#view-digidex .digimon-grid::before{
+  content:"CARD LIST";position:absolute;top:11px;left:0;right:0;text-align:center;
+  color:#f3e99b;font:400 15px "Silkscreen","Courier New",monospace;letter-spacing:3px;
+  text-shadow:1px 1px 0 #101722
+}
+#view-digidex .digimon-grid::after{
+  content:"DIGITAL MONSTER ARCHIVE";position:absolute;bottom:11px;left:0;right:0;text-align:center;
+  color:#b8c4cd;font:400 8px "Silkscreen","Courier New",monospace;letter-spacing:1.8px
+}
+#view-digidex .digi-card{
+  min-height:126px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:7px;padding:9px 7px 8px;text-align:center;
+  border:1px solid #abb3b5!important;border-radius:0!important;
+  background:#37424b!important;
+  box-shadow:inset 1px 1px 0 #f1f3e940,inset -2px -2px 0 #1a222a,2px 2px 0 #111820!important;
+  transition:transform .14s, border-color .14s, filter .14s
+}
+#view-digidex .digi-card::before{display:none}
+#view-digidex .digi-card::after{display:none}
+#view-digidex .digi-card:hover{transform:translateY(-2px);border-color:#e7df9a!important;filter:brightness(1.12)}
+#view-digidex .digi-art{
+  width:72px;height:67px;flex:none;display:grid;place-items:center;overflow:hidden;
+  border:1px solid #aeb5b4;border-radius:0!important;
+  background:#46515a!important;
+  box-shadow:inset 1px 1px 0 #eff4e933,inset -2px -2px 0 #252d34!important;
+}
+#view-digidex .digi-art::after{display:none}
+#view-digidex .digi-art img{width:94%;height:94%;image-rendering:pixelated;filter:drop-shadow(1px 1px 0 #10151b)!important}
+#view-digidex .digi-card>div:nth-child(2){display:contents}
+#view-digidex .digi-card small,#view-digidex .digi-card p{display:none}
+#view-digidex .digi-card h3{
+  order:2;margin:0;color:#f2eaa6;font:700 9px "Silkscreen","Courier New",monospace;
+  letter-spacing:.4px;text-shadow:1px 1px 0 #131a21
+}
+#view-digidex .digi-number{
+  position:absolute;top:4px;right:5px;color:#c7ced2;font:400 7px "Silkscreen","Courier New",monospace
+}
+#view-digidex .digi-card.is-locked{border-color:#858e92!important;background:#303941!important}
+#view-digidex .digi-card.is-locked .digi-art{border-color:#858e92;background:#424b52!important}
+#view-digidex .digi-card.is-locked .digi-card h3{color:#aeb9c0}
+#view-digidex .digi-card.is-locked .digi-number{color:#929ca2}
+@media(max-width:700px){
+  #view-digidex .digimon-grid{grid-template-columns:repeat(4,minmax(68px,1fr));gap:8px;padding:44px 12px 38px}
+  #view-digidex .digi-card{min-height:112px;padding:7px 4px}
+  #view-digidex .digi-art{width:60px;height:57px}
+}
+@media(max-width:430px){
+  #view-digidex .digimon-grid{grid-template-columns:repeat(2,minmax(100px,1fr));gap:9px;padding:43px 12px 38px}
+  #view-digidex .digi-card{min-height:115px}
+  #view-digidex .digi-art{width:66px;height:62px}
+  #view-digidex .digimon-grid::before{font-size:13px}
+}
+
 </style>
 </head>
 <body>
