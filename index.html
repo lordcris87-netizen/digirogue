@@ -1570,27 +1570,45 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   });
   let audio;
   let last=0;
-  function playSelect(){
-    const nowMs=performance.now();
-    if(nowMs-last<85)return;
-    last=nowMs;
-    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  function unlockAudio(){
     if(!AudioContextClass)return;
     try{
       audio ||= new AudioContextClass();
       if(audio.state==="suspended")audio.resume().catch(()=>{});
-      const t=audio.currentTime,osc=audio.createOscillator(),gain=audio.createGain();
-      osc.type="square";
-      osc.frequency.setValueAtTime(960,t);
-      osc.frequency.exponentialRampToValueAtTime(640,t+.045);
-      gain.gain.setValueAtTime(.0001,t);
-      gain.gain.exponentialRampToValueAtTime(.032,t+.006);
-      gain.gain.exponentialRampToValueAtTime(.0001,t+.055);
-      osc.connect(gain);gain.connect(audio.destination);
-      osc.start(t);osc.stop(t+.06);
     }catch(_){}
   }
-  cards.forEach(card=>card.addEventListener("pointerenter",playSelect));
+  function playSelect(){
+    const nowMs=performance.now();
+    if(nowMs-last<110)return;
+    last=nowMs;
+    if(!AudioContextClass)return;
+    try{
+      unlockAudio();
+      if(!audio||audio.state!=="running")return;
+      const t=audio.currentTime;
+      const note=(frequency,when,duration,volume)=>{
+        const osc=audio.createOscillator(),gain=audio.createGain();
+        osc.type="triangle";
+        osc.frequency.setValueAtTime(frequency,when);
+        gain.gain.setValueAtTime(.0001,when);
+        gain.gain.exponentialRampToValueAtTime(volume,when+.012);
+        gain.gain.exponentialRampToValueAtTime(.0001,when+duration);
+        osc.connect(gain);gain.connect(audio.destination);
+        osc.start(when);osc.stop(when+duration+.01);
+      };
+      // Dos notas ascendentes, redondas y cortas: sonido de selección retro.
+      note(587.33,t,.13,.045);
+      note(783.99,t+.065,.16,.052);
+    }catch(_){}
+  }
+  document.addEventListener("pointerdown",unlockAudio,{once:true,capture:true});
+  document.addEventListener("keydown",unlockAudio,{once:true,capture:true});
+  cards.forEach(card=>{
+    card.addEventListener("pointerenter",playSelect);
+    card.addEventListener("click",playSelect);
+    card.addEventListener("focus",playSelect);
+  });
 })();
 </script>
 
