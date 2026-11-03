@@ -33,7 +33,7 @@
       hinted:'Hay algo moviéndose más allá del bosque… pronto sabremos qué es.',giftLine:'Te guardé un pequeño regalo de nuestro paseo.',scoldLine:'No me ha gustado mucho eso… pero sé que podemos volver a empezar.',
       talkLine:'Me gusta cuando nos quedamos un rato juntos.',praiseLine:'¿De verdad piensas eso de mí? ¡Ahora quiero esforzarme aún más!',petLine:'Mmm… así está bien. No pares todavía.',
       before:'Antes de encontrarte, soñaba con un lugar donde nadie tuviera que estar solo.',
-      language:'IDIOMA DE LOS DIÁLOGOS',enabled:'DigiEgo activo',disabled:'DigiEgo apagado',english:'ENGLISH',spanish:'ESPAÑOL',off:'APAGAR',
+      language:'IDIOMA DE LOS DIÁLOGOS',enabled:'DigiEgo activo',disabled:'DigiEgo apagado',english:'ENGLISH',spanish:'ESPAÑOL',off:'APAGAR',on:'ENCENDER',
       stored:'Los recuerdos se guardan en este navegador, separados de tus estadísticas y partidas.',hearts:'corazones',recorded:'Recuerdo guardado',newBuddy:'Elige un compañero que hayas descubierto en la Digidex.',
       sceneDone:'Momento vivido',hintLabel:'PISTA',pick:'Elige un momento para compartirlo.'
     },
@@ -47,7 +47,7 @@
       hinted:'Something is moving beyond the forest… soon we will find out.',giftLine:'I saved a little gift from our walk for you.',scoldLine:'I did not love that… but we can always start again.',
       talkLine:'I like it when we take a little time to be together.',praiseLine:'You really think that? Now I want to try even harder!',petLine:'Mmm… that feels nice. Do not stop yet.',
       before:'Before I met you, I dreamed of a place where nobody had to be alone.',
-      language:'DIALOGUE LANGUAGE',enabled:'DigiEgo is on',disabled:'DigiEgo is off',english:'ENGLISH',spanish:'ESPAÑOL',off:'TURN OFF',
+      language:'DIALOGUE LANGUAGE',enabled:'DigiEgo is on',disabled:'DigiEgo is off',english:'ENGLISH',spanish:'ESPAÑOL',off:'TURN OFF',on:'TURN ON',
       stored:'Memories stay in this browser, separate from your game stats and runs.',hearts:'hearts',recorded:'Memory saved',newBuddy:'Choose a partner you have discovered in the Digidex.',
       sceneDone:'Moment shared',hintLabel:'A HUNCH',pick:'Choose a moment to share.'
     }
@@ -107,7 +107,7 @@
     section.querySelectorAll('[data-dg-action]').forEach(button=>button.disabled=!data.enabled);
     const languageButtons=section.querySelectorAll('[data-dg-language]');
     languageButtons.forEach(button=>button.classList.toggle('active',button.dataset.dgLanguage===data.language));
-    const off=el('dgOff');if(off)off.classList.toggle('active',!data.enabled);
+    const off=el('dgOff');if(off){off.classList.toggle('active',!data.enabled);off.textContent=data.enabled?t('off'):t('on');}
     write(data);
   }
   function escapeHtml(value){return String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));}
