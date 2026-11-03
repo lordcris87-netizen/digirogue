@@ -3,6 +3,7 @@
   'use strict';
   const KEY = 'digirogue-digiego-v1';
   const BUDDIES_KEY = 'digirogue-buddies';
+  const looks = {sky:{skin:'#d7a574',hair:'#382a42',shirt:'#3aa6be',trim:'#f6d565'},sun:{skin:'#f0c08a',hair:'#70402e',shirt:'#e5a943',trim:'#e65b52'},forest:{skin:'#c98965',hair:'#272d3b',shirt:'#53a96b',trim:'#f5da72'},flame:{skin:'#edb188',hair:'#a43d43',shirt:'#da554e',trim:'#f2c35d'},tide:{skin:'#d99c79',hair:'#3c3155',shirt:'#386ac4',trim:'#61d5cf'},moon:{skin:'#e6bd96',hair:'#292c4b',shirt:'#794fb4',trim:'#f190b7'}};
   const species = [
     {id:'agumon',name:'Agumon',stage:'Rookie',trait:{es:'valiente, curioso e impulsivo',en:'brave, curious and impulsive'},quip:{es:'Si hay algo nuevo, quiero verlo primero.',en:'If something is new, I want to see it first.'},asset:'assets/launcher/digimon/agumon.png'},
     {id:'gabumon',name:'Gabumon',stage:'Rookie',trait:{es:'reservado, leal y atento',en:'quiet, loyal and observant'},quip:{es:'No hace falta decir mucho cuando estás aquí.',en:'We do not need many words when you are here.'},asset:'assets/launcher/digimon/gabumon.png'},
@@ -25,7 +26,7 @@
   const copy = {
     es:{
       title:'DigiEgo: tu compañero tiene vida propia',subtitle:'Un minijuego de compañía, recuerdos y vínculo. Todo ocurre aquí, sin conexión.',
-      badge:'MINIJUEGO OFFLINE',partner:'COMPAÑERO',trait:'CARÁCTER',bond:'VÍNCULO',gift:'A partir de tres corazones empieza a traerte pequeños regalos.',carry:'Al completar el vínculo, un corazón quedará para el próximo huevo.',
+      badge:'MINIJUEGO OFFLINE',tamerTitle:'CREA TU TAMER',tamerName:'NOMBRE DEL TAMER',tamerLook:'ELIGE TU ASPECTO',createTamer:'CREAR TAMER',editTamer:'CAMBIAR',tamerHelp:'Tu tamer y DigiEgo se guardan en este navegador, aparte de las partidas.',tamerReady:'TAMER CREADO',createTamerFirst:'Crea tu tamer para empezar.',lookSky:'CIELO',lookSun:'SOL',lookForest:'BOSQUE',lookFlame:'FUEGO',lookTide:'MAREA',lookMoon:'LUNA',partner:'COMPAÑERO',trait:'CARÁCTER',bond:'VÍNCULO',gift:'A partir de tres corazones empieza a traerte pequeños regalos.',carry:'Al completar el vínculo, un corazón quedará para el próximo huevo.',
       talk:'Hablar',praise:'Elogiar',scold:'Regañar',pet:'Acariciar',greet:'¡Hola! ¿Qué hacemos juntos?',
       memory:'MEMORIAS COMPARTIDAS',life:'Una vida antes de conocerte',empty:'Aún no hay recuerdos. Elige un momento para empezar vuestra historia.',
       moments:'MOMENTOS',cold:'Freezeland · con frío',race:'Una carrera hasta la palmera',win:'Después de ganar',farewell:'La despedida',
@@ -39,7 +40,7 @@
     },
     en:{
       title:'DigiEgo: your partner has a life of its own',subtitle:'A little companion game about memories and bond. It all happens here, offline.',
-      badge:'OFFLINE MINIGAME',partner:'PARTNER',trait:'PERSONALITY',bond:'BOND',gift:'At three hearts, your partner starts bringing little gifts.',carry:'Complete the bond and one heart will carry to the next egg.',
+      badge:'OFFLINE MINIGAME',tamerTitle:'CREATE YOUR TAMER',tamerName:'TAMER NAME',tamerLook:'CHOOSE YOUR LOOK',createTamer:'CREATE TAMER',editTamer:'EDIT',tamerHelp:'Your tamer and DigiEgo are saved in this browser, separately from game runs.',tamerReady:'TAMER CREATED',createTamerFirst:'Create your tamer to begin.',lookSky:'SKY',lookSun:'SUN',lookForest:'FOREST',lookFlame:'FIRE',lookTide:'TIDE',lookMoon:'MOON',partner:'PARTNER',trait:'PERSONALITY',bond:'BOND',gift:'At three hearts, your partner starts bringing little gifts.',carry:'Complete the bond and one heart will carry to the next egg.',
       talk:'Talk',praise:'Praise',scold:'Scold',pet:'Pet',greet:'Hey! What should we do together?',
       memory:'SHARED MEMORIES',life:'A life before you met',empty:'No memories yet. Pick a moment to begin your story.',
       moments:'MOMENTS',cold:'Freezeland · feeling chilly',race:'A race to the palm tree',win:'After a victory',farewell:'The farewell',
@@ -57,6 +58,9 @@
   const defaultData = () => ({version:1,language:'en',enabled:true,selected:'agumon',carryover:0,partners:{},interactions:0});
   let data = Object.assign(defaultData(), read(KEY,{}));
   data.partners = data.partners && typeof data.partners==='object' ? data.partners : {};
+  data.tamer = data.tamer && typeof data.tamer==='object' ? data.tamer : null;
+  let draftLook = data.tamer?.look || 'sky';
+  let draftName = data.tamer?.name || '';
   const byId = id => species.find(item=>item.id===id) || species[0];
   function discovered(){
     const found = new Set(['agumon']);
@@ -76,9 +80,30 @@
   function el(id){return document.getElementById(id);}
   function setText(id,value){const node=el(id);if(node)node.textContent=value;}
   function safeDate(stamp){try{return new Intl.DateTimeFormat(lang()==='es'?'es-ES':'en-US',{day:'2-digit',month:'short'}).format(new Date(stamp));}catch(_){return '';}}
+  function tamerSprite(look){
+    const p=looks[look]||looks.sky;
+    return '<svg viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true"><rect x="5" y="2" width="6" height="2" fill="'+p.hair+'"/><rect x="4" y="4" width="8" height="5" fill="'+p.skin+'"/><rect x="3" y="3" width="2" height="4" fill="'+p.hair+'"/><rect x="11" y="3" width="2" height="4" fill="'+p.hair+'"/><rect x="6" y="6" width="1" height="1" fill="#172238"/><rect x="9" y="6" width="1" height="1" fill="#172238"/><rect x="7" y="9" width="2" height="1" fill="'+p.skin+'"/><rect x="7" y="10" width="2" height="2" fill="'+p.trim+'"/><rect x="5" y="11" width="6" height="4" fill="'+p.shirt+'"/><rect x="3" y="11" width="2" height="4" fill="'+p.skin+'"/><rect x="11" y="11" width="2" height="4" fill="'+p.skin+'"/><rect x="5" y="15" width="3" height="3" fill="#32415a"/><rect x="8" y="15" width="3" height="3" fill="#32415a"/><rect x="4" y="18" width="4" height="1" fill="#f3e3bc"/><rect x="8" y="18" width="4" height="1" fill="#f3e3bc"/></svg>';
+  }
+  function renderTamer(){
+    const form=el('dgTamerForm'),summary=el('dgTamerSummary'),input=el('dgTamerName');
+    if(!form||!summary)return;
+    const ready=!!data.tamer,editing=data.editingTamer===true;
+    form.hidden=ready&&!editing;summary.hidden=!ready||editing;
+    if(input&&document.activeElement!==input)input.value=draftName;
+    setText('dgTamerStatus',ready?t('tamerReady'):t('createTamerFirst'));
+    const name=el('dgTamerSummaryName');if(name)name.textContent=data.tamer?.name||'';
+    const art=el('dgTamerSummaryArt');if(art)art.innerHTML=tamerSprite(data.tamer?.look||'sky');
+    document.querySelectorAll('[data-tamer-look]').forEach(button=>{
+      const look=button.dataset.tamerLook,spot=button.querySelector('span');
+      if(spot)spot.innerHTML=tamerSprite(look);
+      button.classList.toggle('active',look===draftLook);
+      button.setAttribute('aria-pressed',String(look===draftLook));
+    });
+  }
   function render(){
     const section=el('view-digiego'); if(!section)return;
     const l=lang(),partner=byId(data.selected),saved=partnerState(partner.id),unlocked=discovered();
+    renderTamer();
     if(!unlocked.some(item=>item.id===partner.id)){data.selected='agumon';return render();}
     section.querySelectorAll('[data-dg]').forEach(node=>{const key=node.dataset.dg;if(key==='title')node.textContent=t('title');else if(key==='subtitle')node.textContent=t('subtitle');else if(key==='badge')node.textContent=t('badge');else if(copy[l][key])node.textContent=t(key);});
     const select=el('dgPartner');
@@ -102,9 +127,10 @@
       const items=saved.memories.slice(0,8);
       memories.innerHTML=(items.length?items.map(item=>'<article class="dg-memory"><small>'+safeDate(item.when)+' · '+(item.label||'DigiEgo')+'</small><p>'+escapeHtml(item.text)+'</p></article>').join(''):'<p class="dg-empty">'+t('empty')+'</p>');
     }
-    setText('dgStatus',data.enabled?t('enabled'):t('disabled'));
+    setText('dgStatus',!data.tamer?t('createTamerFirst'):data.enabled?t('enabled'):t('disabled'));
     section.classList.toggle('dg-ego-off',!data.enabled);
-    section.querySelectorAll('[data-dg-action]').forEach(button=>button.disabled=!data.enabled);
+    section.querySelectorAll('[data-dg-action]').forEach(button=>button.disabled=!data.enabled||!data.tamer);
+    const partnerSelect=el('dgPartner');if(partnerSelect)partnerSelect.disabled=!data.tamer;
     const languageButtons=section.querySelectorAll('[data-dg-language]');
     languageButtons.forEach(button=>button.classList.toggle('active',button.dataset.dgLanguage===data.language));
     const off=el('dgOff');if(off){off.classList.toggle('active',!data.enabled);off.textContent=data.enabled?t('off'):t('on');}
@@ -141,7 +167,22 @@
     bubble.textContent=text;bubble.classList.remove('dg-pop');void bubble.offsetWidth;bubble.classList.add('dg-pop');
   }
   const actionPoints={talk:4,praise:5,scold:-2,pet:6,cold:10,race:12,win:12,farewell:8};
+  document.addEventListener('submit',event=>{
+    if(event.target.id==='dgTamerForm'){
+      event.preventDefault();
+      const input=el('dgTamerName'),name=(input?.value||'').trim().replace(/\s+/g,' ');
+      if(name.length<2||name.length>16){input?.reportValidity();return;}
+      draftName=name;
+      data.tamer={name,look:looks[draftLook]?draftLook:'sky',createdAt:data.tamer?.createdAt||Date.now()};
+      data.editingTamer=false;write(data);render();
+      showDialogue(t('greet'));
+    }
+  });
+  document.addEventListener('input',event=>{if(event.target.id==='dgTamerName')draftName=event.target.value;});
   document.addEventListener('click',event=>{
+    const lookButton=event.target.closest('[data-tamer-look]');
+    if(lookButton){draftLook=lookButton.dataset.tamerLook;renderTamer();return;}
+    if(event.target.closest('#dgTamerEdit')){data.editingTamer=true;draftName=data.tamer?.name||'';draftLook=data.tamer?.look||'sky';renderTamer();return;}
     const langButton=event.target.closest('[data-dg-language]');
     if(langButton){data.language=langButton.dataset.dgLanguage;data.enabled=true;write(data);render();return;}
     if(event.target.closest('#dgOff')){data.enabled=!data.enabled;write(data);render();return;}
