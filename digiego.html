@@ -25,9 +25,10 @@ canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-act
 island.style.display='none';
 const ctx=canvas.getContext('2d');const objTextures={body:new Image(),mouth:new Image(),claw:new Image()};
 const texFiles={body:'agumon-body.svg',mouth:'agumon-mouth.svg',claw:'agumon-claw.svg'};
-for(const key of Object.keys(objTextures)){objTextures[key].src='assets/launcher/digiego/'+texFiles[key];objTextures[key].onload=()=>paint()}
+for(const key of Object.keys(objTextures)){objTextures[key].onload=()=>{canvas.dataset['tex'+key]=String(objTextures[key].naturalWidth);paint()};objTextures[key].onerror=()=>{canvas.dataset['tex'+key]='error'};objTextures[key].src='assets/launcher/digiego/'+texFiles[key]}
 let objTriangles=[];
-fetch('assets/launcher/digiego/agumon-world-ps1.obj').then(r=>r.text()).then(source=>{
+canvas.dataset.objStatus='loading';
+fetch('/assets/launcher/digiego/agumon-world-ps1.obj').then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.text()}).then(source=>{
  const vertices=[],uvs=[];let material='body';
  for(const line of source.split(String.fromCharCode(10))){
   const q=line.trim().split(/\s+/);
@@ -39,8 +40,9 @@ fetch('assets/launcher/digiego/agumon-world-ps1.obj').then(r=>r.text()).then(sou
    for(let i=1;i<corners.length-1;i++){const tri=[corners[0],corners[i],corners[i+1]];objTriangles.push({p:tri.map(v=>vertices[v[0]-1]),uv:tri.map(v=>uvs[v[1]-1]),m:material})}
   }
  }
+ canvas.dataset.objStatus=String(objTriangles.length);
  paint();
-}).catch(()=>{});
+}).catch(error=>{canvas.dataset.objStatus='error '+String(error.message||error)});
 function texturedTriangle(points,uv,image){
  if(!image.complete||!image.naturalWidth)return;
  const source=uv.map(v=>[v[0]*image.naturalWidth,(1-v[1])*image.naturalHeight]),d=points;
