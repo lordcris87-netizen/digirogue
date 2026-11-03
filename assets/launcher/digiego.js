@@ -5,10 +5,10 @@
   const BUDDIES_KEY = 'digirogue-buddies';
   const looks = {sky:{skin:'#d7a574',hair:'#382a42',shirt:'#3aa6be',trim:'#f6d565'},sun:{skin:'#f0c08a',hair:'#70402e',shirt:'#e5a943',trim:'#e65b52'},forest:{skin:'#c98965',hair:'#272d3b',shirt:'#53a96b',trim:'#f5da72'},flame:{skin:'#edb188',hair:'#a43d43',shirt:'#da554e',trim:'#f2c35d'},tide:{skin:'#d99c79',hair:'#3c3155',shirt:'#386ac4',trim:'#61d5cf'},moon:{skin:'#e6bd96',hair:'#292c4b',shirt:'#794fb4',trim:'#f190b7'}};
   const species = [
-    {id:'agumon',name:'Agumon',stage:'Rookie',trait:{es:'valiente, curioso e impulsivo',en:'brave, curious and impulsive'},quip:{es:'Si hay algo nuevo, quiero verlo primero.',en:'If something is new, I want to see it first.'},asset:'assets/launcher/digimon/agumon.png'},
-    {id:'gabumon',name:'Gabumon',stage:'Rookie',trait:{es:'reservado, leal y atento',en:'quiet, loyal and observant'},quip:{es:'No hace falta decir mucho cuando estás aquí.',en:'We do not need many words when you are here.'},asset:'assets/launcher/digimon/gabumon.png'},
-    {id:'patamon',name:'Patamon',stage:'Rookie',trait:{es:'optimista, juguetón y cariñoso',en:'optimistic, playful and affectionate'},quip:{es:'¡Vamos a descubrir algo bonito!',en:'Let us go find something lovely!'},asset:'assets/launcher/digimon/patamon.png'},
-    {id:'koromon',name:'Koromon',stage:'In-Training',trait:{es:'mimoso, inquieto y muy curioso',en:'cuddly, restless and very curious'},quip:{es:'¿Y eso? ¿Y aquello? ¡Quiero verlo todo!',en:'What is that? And that? I want to see it all!'},asset:'assets/launcher/digimon/koromon.png'},
+    {id:'agumon',name:'Agumon',stage:'Rookie',trait:{es:'valiente, curioso e impulsivo',en:'brave, curious and impulsive'},quip:{es:'Si hay algo nuevo, quiero verlo primero.',en:'If something is new, I want to see it first.'},asset:'assets/launcher/digiego/agumon-ps1.svg'},
+    {id:'gabumon',name:'Gabumon',stage:'Rookie',trait:{es:'reservado, leal y atento',en:'quiet, loyal and observant'},quip:{es:'No hace falta decir mucho cuando estás aquí.',en:'We do not need many words when you are here.'},asset:'assets/launcher/digiego/gabumon-ps1.svg'},
+    {id:'patamon',name:'Patamon',stage:'Rookie',trait:{es:'optimista, juguetón y cariñoso',en:'optimistic, playful and affectionate'},quip:{es:'¡Vamos a descubrir algo bonito!',en:'Let us go find something lovely!'},asset:'assets/launcher/digiego/patamon-ps1.svg'},
+    {id:'koromon',name:'Koromon',stage:'In-Training',trait:{es:'mimoso, inquieto y muy curioso',en:'cuddly, restless and very curious'},quip:{es:'¿Y eso? ¿Y aquello? ¡Quiero verlo todo!',en:'What is that? And that? I want to see it all!'},asset:'assets/launcher/digiego/koromon-ps1.svg'},
     {id:'greymon',name:'Greymon',stage:'Champion',trait:{es:'orgulloso, protector y noble',en:'proud, protective and noble'}},
     {id:'garurumon',name:'Garurumon',stage:'Champion',trait:{es:'sereno, independiente y vigilante',en:'calm, independent and watchful'}},
     {id:'angemon',name:'Angemon',stage:'Champion',trait:{es:'compasivo, paciente y solemne',en:'compassionate, patient and solemn'}},
@@ -81,8 +81,8 @@
   function setText(id,value){const node=el(id);if(node)node.textContent=value;}
   function safeDate(stamp){try{return new Intl.DateTimeFormat(lang()==='es'?'es-ES':'en-US',{day:'2-digit',month:'short'}).format(new Date(stamp));}catch(_){return '';}}
   function tamerSprite(look){
-    const p=looks[look]||looks.sky;
-    return '<svg viewBox="0 0 16 20" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges" aria-hidden="true"><rect x="5" y="2" width="6" height="2" fill="'+p.hair+'"/><rect x="4" y="4" width="8" height="5" fill="'+p.skin+'"/><rect x="3" y="3" width="2" height="4" fill="'+p.hair+'"/><rect x="11" y="3" width="2" height="4" fill="'+p.hair+'"/><rect x="6" y="6" width="1" height="1" fill="#172238"/><rect x="9" y="6" width="1" height="1" fill="#172238"/><rect x="7" y="9" width="2" height="1" fill="'+p.skin+'"/><rect x="7" y="10" width="2" height="2" fill="'+p.trim+'"/><rect x="5" y="11" width="6" height="4" fill="'+p.shirt+'"/><rect x="3" y="11" width="2" height="4" fill="'+p.skin+'"/><rect x="11" y="11" width="2" height="4" fill="'+p.skin+'"/><rect x="5" y="15" width="3" height="3" fill="#32415a"/><rect x="8" y="15" width="3" height="3" fill="#32415a"/><rect x="4" y="18" width="4" height="1" fill="#f3e3bc"/><rect x="8" y="18" width="4" height="1" fill="#f3e3bc"/></svg>';
+    const selected=looks[look]?look:'sky';
+    return '<img class="tamer-mini look-'+selected+'" src="assets/launcher/digiego/tamer-ps1.svg" alt="">';
   }
   function renderTamer(){
     const form=el('dgTamerForm'),summary=el('dgTamerSummary'),input=el('dgTamerName');
@@ -92,7 +92,7 @@
     if(input&&document.activeElement!==input)input.value=draftName;
     setText('dgTamerStatus',ready?t('tamerReady'):t('createTamerFirst'));
     const name=el('dgTamerSummaryName');if(name)name.textContent=data.tamer?.name||'';
-    const art=el('dgTamerSummaryArt');if(art)art.innerHTML=tamerSprite(data.tamer?.look||'sky');
+    const selectedLook=data.tamer?.look||'sky';const art=el('dgTamerSummaryArt');if(art)art.innerHTML=tamerSprite(selectedLook);const stageTamer=el('dgTamerModel');if(stageTamer){stageTamer.src='assets/launcher/digiego/tamer-ps1.svg';stageTamer.alt=data.tamer?.name||'Tamer';stageTamer.className='look-'+selectedLook;}
     document.querySelectorAll('[data-tamer-look]').forEach(button=>{
       const look=button.dataset.tamerLook,spot=button.querySelector('span');
       if(spot)spot.innerHTML=tamerSprite(look);
@@ -111,7 +111,7 @@
       select.innerHTML=unlocked.map(item=>'<option value="'+item.id+'">'+item.name+' · '+item.stage+'</option>').join('');
       select.value=data.selected;
     }
-    const art=el('dgPartnerArt');if(art){art.src=partner.asset||'assets/launcher/digimon/agumon.png';art.alt=partner.name;art.classList.toggle('dg-placeholder',!partner.asset);}
+    const art=el('dgPartnerArt');if(art){art.src=partner.asset||'assets/launcher/digimon/'+partner.id+'.png';art.alt=partner.name;art.classList.toggle('dg-placeholder',!partner.asset);const screen=art.closest('.screen');if(screen)screen.dataset.partner=partner.id;}
     setText('dgPartnerName',partner.name);setText('dgPartnerStage',partner.stage.toUpperCase());
     setText('dgTrait',partner.trait[l]);
     setText('dgQuip',partner.quip?.[l]||partner.trait[l]+'.');
@@ -166,6 +166,8 @@
   function showDialogue(text){
     const bubble=el('dgDialogue');if(!bubble)return;
     bubble.textContent=text;bubble.classList.remove('dg-pop');void bubble.offsetWidth;bubble.classList.add('dg-pop');
+    const tamer=el('dgTamerModel'),partner=el('dgPartnerArt');
+    [tamer,partner].forEach(node=>{if(!node)return;node.classList.remove('dg-gesture');void node.offsetWidth;node.classList.add('dg-gesture');window.setTimeout(()=>node.classList.remove('dg-gesture'),900);});
   }
   const actionPoints={talk:4,praise:5,scold:-2,pet:6,cold:10,race:12,win:12,farewell:8};
   document.addEventListener('submit',event=>{
