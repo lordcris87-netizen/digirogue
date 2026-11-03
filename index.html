@@ -1568,37 +1568,49 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     card.setAttribute("aria-label","Seleccionar "+name);
   });
   const selectable='button, a[href], [role="button"], .digi-card, .launch-card, .feature-card, .settings-card, .rank-row, select, input[type="button"], input[type="submit"]';
-  let audio,last=0;
   const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+  let audio,unlocking,pending=false,lastPlayed=0;
+  function prepareAudio(){
+    if(!AudioContextClass)return null;
+    try{audio ||= new AudioContextClass()}catch(_){}
+    return audio||null;
+  }
+  prepareAudio();
   function unlockAudio(){
-    if(!AudioContextClass)return;
+    const ctx=prepareAudio();
+    if(!ctx)return Promise.resolve(false);
+    if(ctx.state==="running")return Promise.resolve(true);
+    if(unlocking)return unlocking;
     try{
-      audio ||= new AudioContextClass();
-      if(audio.state==="suspended")audio.resume().catch(()=>{});
-    }catch(_){}
+      unlocking=ctx.resume().then(()=>ctx.state==="running").catch(()=>false).finally(()=>{unlocking=null});
+      return unlocking;
+    }catch(_){unlocking=null;return Promise.resolve(false)}
+  }
+  function playTone(){
+    const ctx=audio;
+    const t=ctx.currentTime+.004;
+    const note=(frequency,when,duration,volume)=>{
+      const osc=ctx.createOscillator(),gain=ctx.createGain();
+      osc.type="triangle";
+      osc.frequency.setValueAtTime(frequency,when);
+      gain.gain.setValueAtTime(.0001,when);
+      gain.gain.exponentialRampToValueAtTime(volume,when+.008);
+      gain.gain.exponentialRampToValueAtTime(.0001,when+duration);
+      osc.connect(gain);gain.connect(ctx.destination);
+      osc.start(when);osc.stop(when+duration+.008);
+    };
+    note(587.33,t,.11,.045);
+    note(783.99,t+.055,.14,.052);
   }
   function playSelect(){
-    const nowMs=performance.now();
-    if(nowMs-last<110)return;
-    last=nowMs;
-    if(!AudioContextClass)return;
-    try{
-      unlockAudio();
-      if(!audio||audio.state!=="running")return;
-      const t=audio.currentTime;
-      const note=(frequency,when,duration,volume)=>{
-        const osc=audio.createOscillator(),gain=audio.createGain();
-        osc.type="triangle";
-        osc.frequency.setValueAtTime(frequency,when);
-        gain.gain.setValueAtTime(.0001,when);
-        gain.gain.exponentialRampToValueAtTime(volume,when+.012);
-        gain.gain.exponentialRampToValueAtTime(.0001,when+duration);
-        osc.connect(gain);gain.connect(audio.destination);
-        osc.start(when);osc.stop(when+duration+.01);
-      };
-      note(587.33,t,.13,.045);
-      note(783.99,t+.065,.16,.052);
-    }catch(_){}
+    if(pending||performance.now()-lastPlayed<70)return;
+    pending=true;
+    unlockAudio().then(ready=>{
+      pending=false;
+      if(!ready||performance.now()-lastPlayed<70)return;
+      lastPlayed=performance.now();
+      try{playTone()}catch(_){}
+    });
   }
   document.addEventListener("pointerdown",unlockAudio,{once:true,capture:true});
   document.addEventListener("keydown",unlockAudio,{once:true,capture:true});
