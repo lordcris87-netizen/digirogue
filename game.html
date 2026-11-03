@@ -1362,8 +1362,8 @@ requestAnimationFrame(loop);
   if(fraction<.35)status.textContent='Descargando datos del Mundo Digital…';
   else if(fraction<.72)status.textContent='Preparando a tus compañeros…';
   else status.textContent='Abriendo el portal al bosque…';
-  if(ready&&typeof frame!=='undefined'&&frame>0)painted=true;
-  if(ready&&painted&&now-started>=1000)target=100;
+  if(typeof frame!=='undefined'&&frame>0)painted=true;
+  if(painted&&(ready||now-started>=7000)){target=100;status.textContent='¡Agumon te espera!';}
   shown+=(target-shown)*.18;
   if(target===100&&shown>99.2)shown=100;
   const shownInt=Math.floor(shown);
