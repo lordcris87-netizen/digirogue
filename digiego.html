@@ -189,9 +189,12 @@ function action(name){
   else say('Está cansado. Llévalo a casa.');
   draw();save();
 }
+let wasActive=false,lastDraw=0;
 function start(){if(!frame){last=performance.now();frame=requestAnimationFrame(move)}}
 function move(now){
-  frame=0;const dt=Math.min(.05,(now-last)/1000);last=now;
+  frame=0;
+  if(now-lastDraw<48){frame=requestAnimationFrame(move);return}
+  lastDraw=now;const dt=Math.min(.05,(now-last)/1000);last=now;
   let dx=0,dy=0;
   for(const key of keys){dx+=directions[key][0];dy+=directions[key][1]}
   if(target){dx=target[0]-state.x;dy=target[1]-state.y;if(Math.hypot(dx,dy)<1){target=null;dx=dy=0}}
@@ -202,7 +205,10 @@ function move(now){
   [dist&&!busy,gap>5.1].forEach((walking,i)=>actors[i].style.translate=walking?'0 '+(-Math.abs(Math.sin(phase+i))*3)+'px':'');
   draw();
   if(!target&&pending&&gap<6){const n=pending;pending='';action(n)}
-  if(keys.size||target||gap>5.1||pending)frame=requestAnimationFrame(move);else save();
+  const active=!!(keys.size||target||gap>5.1||pending);
+  if(!active&&wasActive)save();
+  wasActive=active;
+  frame=requestAnimationFrame(move);
 }
 screen.tabIndex=0;
 screen.setAttribute('aria-label','Mundo DigiEgo. Mueve al Tamer con WASD o flechas. E para interactuar.');
