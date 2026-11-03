@@ -25,6 +25,7 @@ canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-act
 island.style.display='none';
 const ctx=canvas.getContext('2d');const objTextures={body:new Image(),mouth:new Image(),claw:new Image()};
 const texFiles={body:'agumon-body.svg',mouth:'agumon-mouth.svg',claw:'agumon-claw.svg'};
+const tamerSprite=new Image();tamerSprite.onload=()=>paint();tamerSprite.src='/assets/launcher/digiego/tamer-ps1.svg';
 for(const key of Object.keys(objTextures)){objTextures[key].onload=()=>{canvas.dataset['tex'+key]=String(objTextures[key].naturalWidth);paint()};objTextures[key].onerror=()=>{canvas.dataset['tex'+key]='error'};objTextures[key].src='assets/launcher/digiego/'+texFiles[key]}
 let objTriangles=[];
 canvas.dataset.objStatus='loading';
@@ -106,6 +107,17 @@ function paint(){
  const gait=isWalking?Math.abs(Math.sin(phase*1.5))*.38:Math.sin(now*2.1)*.1;
  const pitch=isWalking?Math.sin(phase)*.055:Math.sin(now*1.3)*.012;
  const lift=isPet?(isWalking?gait:.12+gait)+(busy?Math.abs(Math.sin(now*9))*.2:0):0;
+ if(!isPet&&tamerSprite.complete&&tamerSprite.naturalWidth){
+  const foot=project(x,0,z),height=126,width=height*tamerSprite.naturalWidth/tamerSprite.naturalHeight;
+  faces.push({depth:foot[2]+.05,render:()=>{
+   ctx.save();ctx.imageSmoothingEnabled=false;
+   const faceLeft=Math.cos(heading)<-.15;
+   if(faceLeft){ctx.translate(foot[0]*2,0);ctx.scale(-1,1)}
+   ctx.drawImage(tamerSprite,foot[0]-width/2,foot[1]-height,width,height);
+   ctx.restore();
+  }});
+  return;
+ }
  if(isPet&&id==='agumon'&&objTriangles.length){
   const turn=heading+Math.sin(phase)*.025,scale=3.3,cs=Math.cos(turn),sn=Math.sin(turn);
   for(const tri of objTriangles){
