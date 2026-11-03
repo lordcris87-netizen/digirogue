@@ -129,6 +129,18 @@ function paint(){
  for(let i=0;i<10;i++)for(let j=0;j<10;j++){let x=i*10,z=j*10,tint=(i*7+j*3)%3;face([[x,0,z],[x+10,0,z],[x+10,0,z+10],[x,0,z+10]],['#789d68','#7da36c','#769765'][tint],'grass')}
  for(const [endX,endZ] of [[24,33],[74,33]])for(let i=0;i<8;i++){const t=(i+.5)/8,x=50+(endX-50)*t,z=50+(endZ-50)*t,w=2.4+(i%3)*.45,d=2.1+(i%2)*.55,c=['#a7885e','#94734f','#b09568'][i%3];face([[x-w,0.1,z-d],[x+w,0.1,z-d],[x+w,0.1,z+d],[x-w,0.1,z+d]],c,'dirt')}
  for(const layer of faces)layer.depth-=500;
+ let decoSeed=0x44d1a7;const decoRand=()=>{decoSeed=(decoSeed*1664525+1013904223)>>>0;return decoSeed/4294967296};
+ const blocked=[[24,33,17],[74,33,17],[16,71,9],[82,72,10],[50,85,8],[6,10,8],[14,7,8],[49,8,8],[94,22,8],[92,8,8],[4,36,8]];
+ let pixelAccents=0;
+ while(pixelAccents<200){const x=4+decoRand()*92,z=5+decoRand()*88;if(blocked.some(([bx,bz,r])=>(x-bx)**2+(z-bz)**2<r*r))continue;pixelAccents++;
+  const kind=pixelAccents%10,base=[x,.12,z],hue=pixelAccents%4;
+  if(kind<5){const c=['#3f6746','#4d7849','#61884b','#426d48'][hue];face([[x-.55,.12,z-.45],[x-.15,.12,z-.45],[x-.15,.48,z-.45],[x-.55,.48,z-.45]],c,'grass');face([[x+.12,.12,z-.12],[x+.45,.12,z-.12],[x+.45,.38,z-.12],[x+.12,.38,z-.12]],'#b0c783','grass')}
+  else if(kind<7){const petal=['#f4d65f','#ed8d9e','#f6ead0','#a9d9d0'][hue];face([[x-.12,.12,z-.12],[x+.12,.12,z-.12],[x+.12,.72,z-.12],[x-.12,.72,z-.12]],'#62854d','grass');face([[x-.5,.75,z-.5],[x+.5,.75,z-.5],[x+.5,1.15,z-.5],[x-.5,1.15,z-.5]],petal,'creature');face([[x-.22,.76,z-.22],[x+.22,.76,z-.22],[x+.22,1.2,z-.22],[x-.22,1.2,z-.22]],'#ffefae','creature')}
+  else if(kind===7){box(x,z,1.6,1.15,.7,['#d4cdb2','#888b7d','#676e66'],.12,'stone')}
+  else if(kind===8){box(x,z,.8,.8,1.5,['#f3d58a','#8b5b4c','#bd7b56'],.12,'wood');face([[x-.9,1.5,z-.2],[x+.9,1.5,z-.2],[x+.9,2.1,z-.2],[x-.9,2.1,z-.2]],['#e98773','#f3cb7b','#e2b4c9','#83c5ad'][hue],'creature')}
+  else{box(x,z,1.2,1,.8,['#b9c4cc','#596a79','#718491'],.12,'stone');face([[x-.2,1,z-.2],[x+.2,1,z-.2],[x+.2,1.75,z-.2],[x-.2,1.75,z-.2]],'#f7e886','creature')}
+ }
+ for(const layer of faces)layer.depth-=500;
  for(const [x,z] of [[6,10],[14,7],[49,8],[94,22],[92,8],[4,36]]){groundShadow(x,z,5,3);treeTrunk(x,z,1.35,10);treeCrown(x,z,4.7,4.1,13,5,['#557d4c','#6f9253','#86a860','#456c45']);treeCrown(x-1.7,z+.8,3.1,2.8,9,9,['#52764a','#789956','#94aa63'])}
  for(const [x,z,col] of [[24,33,'#a34f3d'],[74,33,'#3d547a']]){
  groundShadow(x,z,15,9);box(x,z,20,18,12,['#d2bb8d','#b69a72','#a38764'],0,'stucco');const l=x-12,r=x+12,n=z-11,f=z+11;
@@ -244,7 +256,7 @@ function paint(){
  if(wolf){mesh(0,11,0,.67,2.15,.65,'e7cb7e',true);for(const s of [-1,1]){mesh(s*2.1,10,-.4,.82,1.6,.82,pelt,true);mesh(s*1.9,8.95,-.95,.9,.45,1.4,'515f98')}mesh(0,5,-1.35,2.35,2.8,1.45,pelt)}
  }
  figure(state.x,state.y,false);figure(pet.x,pet.y,true);
- ctx.fillStyle='#adcfd1';ctx.fillRect(0,0,800,560);faces.sort((a,b)=>a.depth-b.depth);
+ ctx.fillStyle='#93c9e7';ctx.fillRect(0,0,800,560);ctx.fillStyle='#b9e0eb';for(let y=0;y<165;y+=18)ctx.fillRect(0,y,800,6);ctx.fillStyle='#77a8a8';for(let i=0;i<10;i++){const x=i*96-22,top=185+(i%3)*18;ctx.fillRect(x,top+24,128,42);ctx.fillRect(x+22,top+8,72,16);ctx.fillRect(x+42,top-4,32,12)}ctx.fillStyle='#f8e6a4';ctx.fillRect(650,54,34,34);ctx.fillRect(642,62,50,18);const cloudShift=(performance.now()/95)%980;for(let i=0;i<4;i++){const x=((i*237+cloudShift)%980)-90,y=45+(i%3)*38;ctx.fillStyle='#eff8e8';ctx.fillRect(x,y+8,66,18);ctx.fillRect(x+14,y,36,12);ctx.fillRect(x+4,y+26,56,6);ctx.fillStyle='#d0e8da';ctx.fillRect(x+8,y+24,48,4)}faces.sort((a,b)=>a.depth-b.depth);
  for(const f of faces){if(f.render){f.render();continue}ctx.beginPath();f.vertices.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=f.color;ctx.fill();const pattern=materialPatterns[f.material||'stone'];if(pattern){ctx.save();ctx.beginPath();f.vertices.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.clip();ctx.globalAlpha=f.material==='grass'||f.material==='foliage'?.58:.46;ctx.fillStyle=pattern;ctx.fillRect(0,0,800,560);ctx.restore()}}
  const hour=new Date().getHours();
  if(hour>=20||hour<6){ctx.fillStyle='rgba(7,15,40,.25)';ctx.fillRect(0,0,800,560);for(let i=0;i<34;i++){const x=(i*137+41)%800,y=18+(i*47)%165;ctx.fillStyle=i%4?'#c9ecff':'#ffe59b';ctx.fillRect(x,y,2,2)}}
