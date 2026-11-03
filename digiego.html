@@ -25,8 +25,23 @@ canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-act
 island.style.display='none';
 const ctx=canvas.getContext('2d');
 const spots=[];
+let yaw=-.32,tilt=.63;
+const camera=document.createElement('div');
+camera.className='world-controls';
+for(const [label,turn,pitch] of [['↶ Girar',-.35,0],['Girar ↷',.35,0],['Subir vista',0,.12],['Bajar vista',0,-.12]]){
+ const button=document.createElement('button');
+ button.textContent=label;
+ button.onclick=()=>{yaw+=turn;tilt=clamp(tilt+pitch,.32,1.12);paint()};
+ camera.append(button);
+}
+bar.after(camera);
+let drag=null,suppressClick=false;
+canvas.style.touchAction='none';
+canvas.onpointerdown=e=>{suppressClick=false;drag={x:e.clientX,y:e.clientY,yaw,tilt};canvas.setPointerCapture(e.pointerId)};
+canvas.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)suppressClick=true;if(suppressClick){yaw=drag.yaw+dx*.009;tilt=clamp(drag.tilt+dy*.005,.32,1.12);paint()}};
+canvas.onpointerup=canvas.onpointercancel=()=>{drag=null};
 function paint(){
- const yaw=-.32,tilt=.63, faces=[];
+ const faces=[];
  function project(x,y,z){
    x-=50;z-=58;
    const u=x*Math.cos(yaw)-z*Math.sin(yaw),v=x*Math.sin(yaw)+z*Math.cos(yaw);
@@ -40,10 +55,15 @@ function paint(){
  face([a,b,B,A],colors[1]);face([b,c,C,B],colors[2]);face([c,e,E,C],colors[1]);face([e,a,A,E],colors[2]);face([A,B,C,E],colors[0]);
  }
  const wood=['#dfaf69','#98603e','#704637'],leaf=['#81b965','#44815d','#376e54'];
+ box(50,50,100,100,4,['#88ad65','#996f4e','#78533d'],-4);
  for(let i=0;i<10;i++)for(let j=0;j<10;j++){let x=i*10,z=j*10;face([[x,0,z],[x+10,0,z],[x+10,0,z+10],[x,0,z+10]],(i+j)%2?'#91bb75':'#94bf78')}
  for(const [x,z] of [[6,10],[14,7],[49,8],[94,22],[92,8],[4,36]]){box(x,z,2,2,9,wood);box(x,z,8,8,8,leaf,6);box(x,z,5,5,5,leaf,14)}
  for(const [x,z,col] of [[24,33,'#b85640'],[74,33,'#476898']]){
- box(x,z,20,18,12,['#ecd5a3','#d7ba86','#b59668']);box(x,z,23,21,3,[col,col,'#64444b'],12);box(x,z+9.4,5,1,8,wood);
+ box(x,z,20,18,12,['#ecd5a3','#d7ba86','#b59668']);const l=x-12,r=x+12,n=z-11,f=z+11;
+ face([[l,12,n],[l,12,f],[x,22,f],[x,22,n]],col);
+ face([[x,22,n],[x,22,f],[r,12,f],[r,12,n]],col);
+ face([[l,12,f],[r,12,f],[x,22,f]],'#ba9369');
+ face([[l,12,n],[r,12,n],[x,22,n]],'#ac825d');box(x,z+9.4,5,1,8,wood);
  }
  box(16,71,9,6,4,wood);box(16,71,4,3,2,['#ffae4f','#ef8041','#be5e34'],4);
  box(82,72,12,9,2,['#68cfd6','#609da7','#437e8d']);box(50,85,3,3,3,['#f7d654','#dd9f36','#d57435']);
@@ -57,7 +77,7 @@ function paint(){
  spots.length=0;
  for(const [name,pos] of Object.entries({...stations,...(state.dirt?{Limpiar:state.dirt}:{})})){const p=project(pos[0],1,pos[1]);spots.push([name,p]);ctx.font='bold 16px monospace';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#172f30';ctx.strokeText(name,p[0],p[1]+14);ctx.fillStyle='white';ctx.fillText(name,p[0],p[1]+14)}
 }
-canvas.onclick=e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*800/r.width,y=(e.clientY-r.top)*560/r.height;const spot=spots.find(([,p])=>Math.hypot(x-p[0],y-p[1]-10)<36);if(spot)action(spot[0]);canvas.focus()};
+canvas.onclick=e=>{if(suppressClick)return;const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*800/r.width,y=(e.clientY-r.top)*560/r.height;const spot=spots.find(([,p])=>Math.hypot(x-p[0],y-p[1]-10)<36);if(spot)action(spot[0]);canvas.focus()};
 actors.forEach(a=>a.querySelector('img').addEventListener('load',paint));
 
 function draw(){
@@ -94,7 +114,7 @@ function move(now){
 }
 screen.tabIndex=0;
 screen.setAttribute('aria-label','Mundo DigiEgo. Mueve al Tamer con WASD o flechas. E para interactuar.');
-const hint=document.createElement('small');hint.textContent='WASD / flechas para caminar · E para interactuar · Toca el nombre de un lugar para visitarlo.';bar.append(hint);
+const hint=document.createElement('small');hint.textContent='WASD / flechas para caminar · E para interactuar · Arrastra para girar la cámara. Toca un lugar para visitarlo.';bar.append(hint);
 const meter=document.createElement('span');bar.append(meter);
 function interact(){const nearby=[...Object.entries(stations),['Limpiar',state.dirt]].find(([,p])=>p&&Math.hypot(state.x-p[0],state.y-p[1])<9);if(nearby)action(nearby[0]);else say('Acércate a una puerta o a lo que quieras recoger.')}
 document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable=true]'))return;const k=e.key.toLowerCase();if(directions[k]){e.preventDefault();target=null;pending='';keys.add(k);start()}else if(k==='e'&&!e.repeat)interact()});
