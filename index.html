@@ -675,6 +675,32 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
  #view-inicio .tamer-stat small{font-size:4.8px!important}
 }
 </style>
+<style id="digimon-launcher-polish">
+/* DigiRogue launcher: DigiVice-like action cards, clearer hierarchy, and restrained data glow. */
+.home-launch-grid{gap:12px!important;margin-top:23px!important}
+.launch-card{min-height:132px!important;padding:15px 14px!important;border:2px solid #ffffff78!important;border-radius:4px!important;box-shadow:0 10px 26px #030b16a8,inset 0 0 0 2px #06122288,0 0 0 1px #67e9e944!important;background-size:cover!important}
+.launch-card:before{content:"";position:absolute;z-index:0;inset:5px;border:1px solid #ffffff30;background:linear-gradient(108deg,transparent 35%,#ffffff20 49%,transparent 63%);transform:translateX(-120%);animation:digimonCardScan 7.2s ease-in-out infinite;pointer-events:none}
+.launch-card:after{width:40px!important;height:40px!important;right:13px!important;bottom:12px!important;border-radius:0!important;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);background:#ffffff30!important;filter:none!important}
+.launch-main{background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 6px),linear-gradient(135deg,#ff8054,#d73b5c 58%,#743b9c)!important;border-color:#ffe08b!important}
+.launch-season{background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 6px),linear-gradient(135deg,#2999df,#4562cf 56%,#44328a)!important}
+.launch-team{background:repeating-linear-gradient(0deg,#ffffff08 0 1px,transparent 1px 6px),linear-gradient(135deg,#38c69b,#218a8c 55%,#205878)!important}
+.launch-icon{width:34px!important;height:34px!important;border:1px solid #ffffff70!important;border-radius:3px!important;background:#07172565!important;box-shadow:inset 1px 1px #ffffff38,2px 2px 0 #06101c!important;font-size:18px!important}
+.launch-copy small{font-size:8px!important;letter-spacing:1.15px!important;text-shadow:0 1px 4px #001!important}
+.launch-copy b{font-size:16px!important;line-height:1.12!important;text-shadow:0 2px 5px #06121caa}
+.launch-copy i{font-size:9px!important}
+.launch-card>strong{top:14px!important;right:14px!important;text-shadow:0 1px 6px #071522}
+.launch-main:before{animation-delay:-1.8s}
+.launch-team:before{animation-delay:-3.6s}
+.launch-card:hover{transform:translateY(-4px)!important;filter:brightness(1.13)!important;box-shadow:0 14px 32px #020812c4,inset 0 0 0 2px #06122288,0 0 15px #70e8ff7a!important}
+.launch-card:focus-visible,.quick-nav button:focus-visible{outline:3px solid #ffe27b;outline-offset:3px}
+.quick-nav{gap:8px!important;margin-top:14px!important}
+.quick-nav button{min-height:36px;border:1px solid #48d9e879!important;border-radius:3px!important;background:linear-gradient(135deg,#071c2ff2,#142d45ed)!important;box-shadow:inset 1px 1px #ffffff1b,2px 2px 0 #030b14!important;padding:8px 11px!important;font-size:9px!important;letter-spacing:.65px!important}
+.quick-nav button:hover{transform:translateY(-2px);border-color:#ffe18b!important;color:#ffe6a6!important;box-shadow:0 5px 13px #050b17aa,inset 1px 1px #ffffff26!important}
+.quick-nav button span{font-size:15px!important;color:#a4f1ec!important;text-shadow:0 0 9px #65e7e088}
+@keyframes digimonCardScan{0%,10%{transform:translateX(-120%)}45%,100%{transform:translateX(120%)}}
+@media(prefers-reduced-motion:reduce){.launch-card:before{animation:none!important}}
+@media(max-width:680px){.launch-card{min-height:118px!important;padding:12px 10px!important}.launch-copy small{font-size:7px!important}.launch-copy b{font-size:14px!important}}
+</style>
 </head>
 <body>
 <main id="launcher">
