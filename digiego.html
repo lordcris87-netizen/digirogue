@@ -14,17 +14,64 @@ const directions = {arrowleft:[-1,0],a:[-1,0],arrowright:[1,0],d:[1,0],arrowup:[
 const home = [24,49], gym = [74,49];
 let target=null, pending='', busy=false, last=0, frame=0, phase=0;
 const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+
+const stations={Casa:home,Gimnasio:gym,Comer:[16,73],Bañar:[82,72],Jugar:[50,85]};
+Object.assign(state,{food:state.food??75,clean:state.clean??85,joy:state.joy??75,clock:state.clock??Date.now()});
+const canvas=document.createElement('canvas');
+canvas.width=800;canvas.height=560;canvas.tabIndex=0;
+canvas.setAttribute('aria-label','Hábitat de tu Digimon');
+screen.insertBefore(canvas,screen.firstChild);
+canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:manipulation';
+island.style.display='none';
+const ctx=canvas.getContext('2d');
+const spots=[];
+function paint(){
+ const yaw=-.32,tilt=.63, faces=[];
+ function project(x,y,z){
+   x-=50;z-=58;
+   const u=x*Math.cos(yaw)-z*Math.sin(yaw),v=x*Math.sin(yaw)+z*Math.cos(yaw);
+   const depth=v*Math.cos(tilt)+y*Math.sin(tilt),k=870/(170-depth);
+   return [400+u*k,320+(v*Math.sin(tilt)-y*Math.cos(tilt))*k,depth];
+ }
+ function face(points,color){const vertices=points.map(p=>project(...p));faces.push({vertices,color,depth:vertices.reduce((n,p)=>n+p[2],0)/vertices.length})}
+ function box(x,z,w,d,h,colors,base=0){
+ const a=[x-w/2,base,z-d/2],b=[x+w/2,base,z-d/2],c=[x+w/2,base,z+d/2],e=[x-w/2,base,z+d/2];
+ const [A,B,C,E]=[a,b,c,e].map(([i,j,k])=>[i,j+h,k]);
+ face([a,b,B,A],colors[1]);face([b,c,C,B],colors[2]);face([c,e,E,C],colors[1]);face([e,a,A,E],colors[2]);face([A,B,C,E],colors[0]);
+ }
+ const wood=['#dfaf69','#98603e','#704637'],leaf=['#81b965','#44815d','#376e54'];
+ for(let i=0;i<10;i++)for(let j=0;j<10;j++){let x=i*10,z=j*10;face([[x,0,z],[x+10,0,z],[x+10,0,z+10],[x,0,z+10]],(i+j)%2?'#91bb75':'#94bf78')}
+ for(const [x,z] of [[6,10],[14,7],[49,8],[94,22],[92,8],[4,36]]){box(x,z,2,2,9,wood);box(x,z,8,8,8,leaf,6);box(x,z,5,5,5,leaf,14)}
+ for(const [x,z,col] of [[24,33,'#b85640'],[74,33,'#476898']]){
+ box(x,z,20,18,12,['#ecd5a3','#d7ba86','#b59668']);box(x,z,23,21,3,[col,col,'#64444b'],12);box(x,z+9.4,5,1,8,wood);
+ }
+ box(16,71,9,6,4,wood);box(16,71,4,3,2,['#ffae4f','#ef8041','#be5e34'],4);
+ box(82,72,12,9,2,['#68cfd6','#609da7','#437e8d']);box(50,85,3,3,3,['#f7d654','#dd9f36','#d57435']);
+ if(state.dirt)box(...state.dirt,2.4,2,1.7,['#8b6243','#65402c','#553725']);
+ function figure(x,z,isPet){
+ const p=project(x,0,z),img=actors[isPet?1:0].querySelector('img');faces.push({depth:p[2],render(){if(!img.complete||!img.naturalWidth)return;const h=(isPet?60:92)*170/(170-p[2]),w=h*img.naturalWidth/img.naturalHeight;ctx.drawImage(img,p[0]-w/2,p[1]-h-(busy&&isPet?Math.abs(Math.sin(performance.now()/160))*9:0),w,h)}});
+ }
+ figure(state.x,state.y,false);figure(pet.x,pet.y,true);
+ ctx.fillStyle='#adcfd1';ctx.fillRect(0,0,800,560);faces.sort((a,b)=>a.depth-b.depth);
+ for(const f of faces){if(f.render){f.render();continue}ctx.beginPath();f.vertices.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=f.color;ctx.fill()}
+ spots.length=0;
+ for(const [name,pos] of Object.entries({...stations,...(state.dirt?{Limpiar:state.dirt}:{})})){const p=project(pos[0],1,pos[1]);spots.push([name,p]);ctx.font='bold 16px monospace';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#172f30';ctx.strokeText(name,p[0],p[1]+14);ctx.fillStyle='white';ctx.fillText(name,p[0],p[1]+14)}
+}
+canvas.onclick=e=>{const r=canvas.getBoundingClientRect(),x=(e.clientX-r.left)*800/r.width,y=(e.clientY-r.top)*560/r.height;const spot=spots.find(([,p])=>Math.hypot(x-p[0],y-p[1]-10)<36);if(spot)action(spot[0]);canvas.focus()};
+actors.forEach(a=>a.querySelector('img').addEventListener('load',paint));
+
 function draw(){
   [state,pet].forEach((p,i)=>{actors[i].style.left=p.x+'%';actors[i].style.top=p.y+'%';actors[i].style.transition='none'});
-  meter.textContent='Energía '+state.energy+'/3';
+  paint();meter.textContent='Comida '+state.food+' · Higiene '+state.clean+' · Alegría '+state.joy+' · Energía '+state.energy+'/3';
 }
 function action(name){
   if(busy)return;
   if(!JSON.parse(localStorage.getItem('digirogue-digiego-v1')||'{}').tamer)return say('Crea tu Tamer para empezar.');
-  const door=name==='Casa'?home:name==='Gimnasio'?gym:state.dirt;
+  const door=stations[name]||state.dirt;
   if(!door)return;
   if(Math.hypot(state.x-door[0],state.y-door[1])>5){target=door;pending=name;start();return}
   if(name==='Limpiar'){state.dirt=null;island.querySelector('.dropping')?.remove();state.due=Date.now()+90000;say('Has limpiado el terreno.')}
+  else if(['Comer','Bañar','Jugar'].includes(name)){const stat={Comer:'food',Bañar:'clean',Jugar:'joy'}[name];state[stat]=Math.min(100,state[stat]+25);say({Comer:'¡Qué rica está la comida!',Bañar:'¡Qué bien sienta el agua!',Jugar:'¡Otra vez con la pelota!'}[name]);}
   else if(name==='Casa'){state.energy=3;say('Tu compañero ha descansado en casa.')}
   else if(state.energy){busy=true;state.energy--;say('Tu compañero practica saltos.');actors[1].animate([{translate:'0 0'},{translate:'0 -20px'},{translate:'0 0'}],{duration:550,iterations:5}).finished.then(()=>{busy=false;say('¡Entrenamiento completado!')})}
   else say('Está cansado. Llévalo a casa.');
@@ -47,11 +94,11 @@ function move(now){
 }
 screen.tabIndex=0;
 screen.setAttribute('aria-label','Mundo DigiEgo. Mueve al Tamer con WASD o flechas. E para interactuar.');
-const hint=document.createElement('small');hint.textContent='WASD / flechas para caminar · E para interactuar · También puedes tocar el suelo.';bar.append(hint);
+const hint=document.createElement('small');hint.textContent='WASD / flechas para caminar · E para interactuar · Toca el nombre de un lugar para visitarlo.';bar.append(hint);
 const meter=document.createElement('span');bar.append(meter);
-function interact(){const nearby=[['Casa',home],['Gimnasio',gym],['Limpiar',state.dirt]].find(([,p])=>p&&Math.hypot(state.x-p[0],state.y-p[1])<9);if(nearby)action(nearby[0]);else say('Acércate a una puerta o a lo que quieras recoger.')}
+function interact(){const nearby=[...Object.entries(stations),['Limpiar',state.dirt]].find(([,p])=>p&&Math.hypot(state.x-p[0],state.y-p[1])<9);if(nearby)action(nearby[0]);else say('Acércate a una puerta o a lo que quieras recoger.')}
 document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select,[contenteditable=true]'))return;const k=e.key.toLowerCase();if(directions[k]){e.preventDefault();target=null;pending='';keys.add(k);start()}else if(k==='e'&&!e.repeat)interact()});
 window.addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));window.addEventListener('blur',()=>keys.clear());window.addEventListener('pagehide',save);
 island.querySelectorAll('.hut').forEach((el,i)=>el.onclick=()=>action(i?'Gimnasio':'Casa'));
 island.onclick=e=>{if(e.target===island){target=[clamp(100*e.offsetX/island.clientWidth,6,94),clamp(100*e.offsetY/island.clientHeight,44,94)];pending='';start()}};
-function tick(){if(!state.dirt&&Date.now()>=state.due){state.dirt=[clamp(pet.x,6,94),clamp(pet.y,44,94)];save()}if(state.dirt&&!island.querySelector('.dropping')){const b=document.createElement('button');b.className='dropping';b.textContent='💩';b.title='Limpiar';b.style.left=state.dirt[0]+'%';b.style.top=state.dirt[1]+'%';b.onclick=()=>action('Limpiar');island.append(b)}}draw();tick();setInterval(tick,2000)})();</script></body></html>
+function tick(){const steps=Math.floor((Date.now()-state.clock)/60000);if(steps>0){for(const k of ["food","clean","joy"])state[k]=Math.max(0,state[k]-Math.min(100,steps)*(k==="clean"&&state.dirt?2:1));state.clock+=steps*60000;save()}draw();if(!state.dirt&&Date.now()>=state.due){state.dirt=[clamp(pet.x,6,94),clamp(pet.y,44,94)];save()}if(state.dirt&&!island.querySelector('.dropping')){const b=document.createElement('button');b.className='dropping';b.textContent='💩';b.title='Limpiar';b.style.left=state.dirt[0]+'%';b.style.top=state.dirt[1]+'%';b.onclick=()=>action('Limpiar');island.append(b)}}draw();tick();setInterval(tick,2000)})();</script></body></html>
