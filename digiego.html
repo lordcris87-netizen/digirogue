@@ -18,10 +18,10 @@ const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
 const stations={Casa:home,Gimnasio:gym,Comer:[16,73],Bañar:[82,72],Jugar:[50,85]};
 Object.assign(state,{food:state.food??75,clean:state.clean??85,joy:state.joy??75,clock:state.clock??Date.now()});
 const canvas=document.createElement('canvas');
-canvas.width=800;canvas.height=560;canvas.tabIndex=0;
+canvas.width=320;canvas.height=224;canvas.tabIndex=0;
 canvas.setAttribute('aria-label','Hábitat de tu Digimon');
 screen.insertBefore(canvas,screen.firstChild);
-canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:manipulation';
+canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;touch-action:manipulation';
 island.style.display='none';
 const ctx=canvas.getContext('2d');
 const materialPatterns={};
@@ -103,6 +103,7 @@ canvas.onpointerdown=e=>{suppressClick=false;drag={x:e.clientX,y:e.clientY,yaw,t
 canvas.onpointermove=e=>{if(!drag)return;const dx=e.clientX-drag.x,dy=e.clientY-drag.y;if(Math.abs(dx)+Math.abs(dy)>4)suppressClick=true;if(suppressClick){yaw=drag.yaw+dx*.009;tilt=clamp(drag.tilt+dy*.005,.32,1.12);paint()}};
 canvas.onpointerup=canvas.onpointercancel=()=>{drag=null};
 function paint(){
+ ctx.setTransform(.4,0,0,.4,0,0);ctx.imageSmoothingEnabled=false;
  const faces=[];
  function project(x,y,z){
    x-=50;z-=58;
