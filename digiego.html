@@ -106,7 +106,7 @@ function paint(){
  const pitch=isWalking?Math.sin(phase)*.055:Math.sin(now*1.3)*.012;
  const lift=isPet?(isWalking?gait:.12+gait)+(busy?Math.abs(Math.sin(now*9))*.2:0):0;
  if(isPet&&id==='agumon'&&objTriangles.length){
-  const turn=heading+Math.sin(phase)*.025,scale=2.6,cs=Math.cos(turn),sn=Math.sin(turn);
+  const turn=heading+Math.sin(phase)*.025,scale=4.2,cs=Math.cos(turn),sn=Math.sin(turn);
   for(const tri of objTriangles){
    const points=tri.p.map(([a,h,b])=>{
     const py=h*Math.cos(pitch)-b*Math.sin(pitch);
