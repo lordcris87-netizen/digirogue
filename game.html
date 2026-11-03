@@ -62,6 +62,39 @@
  #panel.reward-mode{padding:7px}#panel.reward-mode h2{font-size:16px}
  #panel.reward-mode p{margin:2px 0 6px}#cards.reward-grid button{min-height:76px}
 }
+
+/* DigiRogue portal loader: mundo y compañeros activos mientras el bosque se prepara. */
+#gameLoading{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;overflow:hidden;isolation:isolate;background:#061626;color:#f4fbff;opacity:1;transition:opacity .42s ease;pointer-events:auto}
+#gameLoading::before,#gameLoading::after{content:"";position:absolute;inset:-4%;z-index:-2;background-image:linear-gradient(90deg,#061426e8 0%,#0b2445b8 36%,#09182ab3 70%,#071527e8 100%),url("assets/launcher/DigitalWorld_clearing.png");background-size:cover;background-position:center 55%;transform:scale(1.04);animation:portalWorld 18s ease-in-out infinite alternate}
+#gameLoading::after{z-index:-1;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 0%,#05142633 55%,#020913bb 100%),repeating-linear-gradient(0deg,#61e9ff08 0 1px,transparent 1px 5px);opacity:.82;animation:none}
+#gameLoading.is-done{opacity:0;pointer-events:none}
+@keyframes portalWorld{from{transform:scale(1.04) translate3d(-.5%,0,0);background-position:center 53%}to{transform:scale(1.09) translate3d(.5%,-.6%,0);background-position:center 58%}}
+#gameLoading .load-frame{position:relative;width:min(760px,92vw);min-height:270px;padding:32px 38px 28px;border:2px solid #56dceca6;background:linear-gradient(145deg,#081a30ed,#0c2745e8);box-shadow:0 0 0 5px #07172ad9,8px 8px 0 #020913,0 0 54px #30cce94a,inset 0 1px 0 #ffffff28;text-align:center;clip-path:polygon(0 0,calc(100% - 19px) 0,100% 19px,100% 100%,19px 100%,0 calc(100% - 19px))}
+#gameLoading .load-eyebrow{display:inline-flex;align-items:center;gap:9px;color:#79eff0;font:700 10px "Silkscreen",system-ui,sans-serif;letter-spacing:2px}
+#gameLoading .load-light{width:8px;height:8px;background:#75f2d0;box-shadow:0 0 12px #75f2d0;animation:loadBlink .8s steps(2,end) infinite}
+@keyframes loadBlink{50%{opacity:.22}}
+#gameLoading h1{margin:15px 0 6px;color:#fff;font:900 clamp(24px,5vw,42px) "Press Start 2P",monospace;letter-spacing:.05em;text-shadow:3px 3px 0 #071526,5px 5px 0 #06101d,0 0 20px #38d8ee88}
+#gameLoading .load-subtitle{margin:0;color:#ffdc78;font:700 clamp(10px,1.7vw,14px) "Silkscreen",system-ui,sans-serif;letter-spacing:2px}
+#gameLoading .load-status{margin:19px 0 11px;color:#e4f5ff;font:700 12px "Silkscreen",system-ui,sans-serif;letter-spacing:1px}
+#gameLoading .load-track{position:relative;width:min(530px,100%);height:20px;margin:0 auto;padding:4px;border:2px solid #75eaf0;background:#061225;box-shadow:3px 3px 0 #020913,inset 1px 1px 0 #ffffff16}
+#gameLoading .load-track>span{display:block;width:0;height:100%;background:repeating-linear-gradient(90deg,#ffe27a 0 18px,#ffc24a 18px 22px,#ffdf76 22px 28px);box-shadow:0 0 12px #ffda69aa;transition:width .16s linear}
+#gameLoading .load-meta{display:flex;justify-content:space-between;align-items:center;width:min(530px,100%);margin:9px auto 0;color:#a9d4e8;font:700 9px "Silkscreen",system-ui,sans-serif;letter-spacing:1px}
+#gameLoading .load-percent{color:#fff0a4;font:700 13px "Press Start 2P",monospace}
+#gameLoading .load-digimon{position:absolute;inset:auto 0 0;height:clamp(90px,17vh,155px);pointer-events:none;overflow:hidden}
+#gameLoading .load-digimon img{position:absolute;bottom:8px;width:clamp(60px,8vw,100px);height:clamp(60px,8vw,100px);object-fit:contain;image-rendering:pixelated;filter:drop-shadow(0 6px 8px #020913cc);animation:monHop 1.05s steps(2,end) infinite,monWalk 12s linear infinite}
+#gameLoading .load-digimon img:nth-child(1){left:9%;animation-delay:0s}
+#gameLoading .load-digimon img:nth-child(2){left:32%;width:clamp(52px,7vw,88px);height:clamp(52px,7vw,88px);animation-delay:-.27s, -4s}
+#gameLoading .load-digimon img:nth-child(3){left:59%;width:clamp(54px,7vw,92px);height:clamp(54px,7vw,92px);animation-delay:-.53s, -8s}
+#gameLoading .load-digimon img:nth-child(4){left:82%;width:clamp(47px,6vw,76px);height:clamp(47px,6vw,76px);animation-delay:-.18s, -2s}
+@keyframes monHop{0%,100%{translate:0 0;rotate:-3deg}50%{translate:0 -8px;rotate:3deg}}
+@keyframes monWalk{from{margin-left:-10px}to{margin-left:10px}}
+#gameLoading .load-circuit{position:absolute;width:80px;height:38px;border-top:2px solid #5ce3e866;border-right:2px solid #5ce3e866;right:16px;top:16px;opacity:.8}
+#gameLoading .load-circuit::before,#gameLoading .load-circuit::after{content:"";position:absolute;background:#72eff0;box-shadow:0 0 9px #72eff0}
+#gameLoading .load-circuit::before{width:6px;height:6px;right:-4px;top:-4px}
+#gameLoading .load-circuit::after{width:5px;height:5px;left:23px;top:-4px}
+#gameLoading .load-footer{position:absolute;left:0;right:0;bottom:13px;text-align:center;color:#d9eff4a8;font:700 8px "Silkscreen",system-ui,sans-serif;letter-spacing:2px}
+@media(max-width:600px){#gameLoading .load-frame{width:90vw;min-height:240px;padding:27px 18px 23px}#gameLoading .load-eyebrow{font-size:8px;letter-spacing:1px}#gameLoading h1{font-size:clamp(20px,6vw,30px)}#gameLoading .load-subtitle{font-size:9px;letter-spacing:1px}#gameLoading .load-status{font-size:10px}#gameLoading .load-meta{font-size:7px}#gameLoading .load-footer{font-size:6px;letter-spacing:1px}#gameLoading .load-digimon{height:110px}}
+@media(prefers-reduced-motion:reduce){#gameLoading::before,#gameLoading .load-light,#gameLoading .load-digimon img{animation:none!important}}
 </style></head><body><canvas id="game"></canvas><div id="hud"><div id="topLeft"><div id="portrait"><img alt="Agumon" style="width:32px;height:32px;object-fit:contain;image-rendering:pixelated" src="assets/integrados/sprite_46e8c8f73a.webp"></div><div><div id="name">Agumon · Nv. 1</div><div id="bars"><div class="bar"><div id="hpFill" class="hp" style="width:100%"></div></div><div class="bar"><div id="xpFill" class="xp" style="width:0%"></div></div></div></div></div><div id="timer">🌿 Bosque Digital · 00:00<small>Jefe en 10:00</small></div><div id="map"><canvas id="minimap" width="140" height="140"></canvas></div><button id="menuButton" aria-label="Pausa">Ⅱ</button><button id="bagButton" aria-label="Ver objetos recogidos">◇ 0</button><div id="pickupToast"></div><div id="shrineHud"><div id="shrineLabel">💎 Santuario raro · 0%</div><div class="progress"><span id="shrineFill"></span></div></div><div id="intro">BOSQUE DIGITAL<small>Explora · combate · encuentra los santuarios</small></div><div id="joystick"><div id="stick"></div></div><button class="btn run" id="run" aria-label="Correr">➤</button><div id="buttons"><div class="abilities"><button class="btn skill" id="skill0" aria-label="Fuego">🔥<span class="cool" id="cd0"></span></button><button class="btn skill" id="skill1" aria-label="Ataque especial">⚡<span class="cool" id="cd1"></span></button><button class="btn skill" id="skill2" aria-label="Defensa">🛡️<span class="cool" id="cd2"></span></button></div><button class="btn attack" id="attack" aria-label="Atacar">⚔️</button></div><div id="hint">WASD para mover · Arrastra para girar cámara · Espacio para atacar</div></div><div id="overlay"><div id="panel"><h2 id="panelTitle"></h2><p id="panelDescription"></p><div id="cards"></div><div id="extra"></div></div></div>
 <section id="spriteLab" aria-label="Laboratorio de sprites" role="dialog" aria-modal="true">
 <div class="labwrap">
@@ -1308,4 +1341,40 @@ window.addEventListener('blur',()=>{last=performance.now();releaseMobileControls
 requestAnimationFrame(loop);
 </script>
 <!-- Fuentes para ampliar sprites: Kunemon https://www.spriters-resource.com/ds_dsi/digimonworldds2/asset/40908/ ; Goburimon https://www.spriters-resource.com/ds_dsi/dgmnworldds/asset/48522/ ; DemiDevimon https://www.spriters-resource.com/ds_dsi/digimonworldds2/asset/41857/ ; Gabumon https://www.spriters-resource.com/ds_dsi/dgmnworldds/asset/41249/ . Los sprites incorporados en esta demo son arte provisional realizado para el prototipo, no sprites originales descargados de los juegos. -->
-</body></html>
+
+<div id="gameLoading" role="status" aria-live="polite" aria-label="Cargando el Bosque Digital">
+ <div class="load-frame"><span class="load-eyebrow"><i class="load-light"></i> PORTAL DEL MUNDO DIGITAL</span><div class="load-circuit" aria-hidden="true"></div><h1>DIGIROGUE</h1><p class="load-subtitle">BOSQUE DEL COMIENZO</p><p id="gameLoadStatus" class="load-status">Descargando datos del Mundo Digital…</p><div id="gameLoadTrack" class="load-track" role="progressbar" aria-label="Carga del juego" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="gameLoadFill"></span></div><div class="load-meta"><span>PREPARANDO A TUS COMPAÑEROS</span><b id="gameLoadPercent" class="load-percent">0%</b></div></div>
+ <div class="load-digimon" aria-hidden="true"><img src="assets/launcher/digimon/agumon.png" alt=""><img src="assets/launcher/digimon/gabumon.png" alt=""><img src="assets/launcher/digimon/patamon.png" alt=""><img src="assets/launcher/digimon/koromon.png" alt=""></div><div class="load-footer">UN NUEVO MUNDO · UN EQUIPO · UNA AVENTURA</div>
+</div>
+<script>
+(() => {
+ const overlay=document.getElementById('gameLoading'),fill=document.getElementById('gameLoadFill'),percent=document.getElementById('gameLoadPercent'),status=document.getElementById('gameLoadStatus'),track=document.getElementById('gameLoadTrack');
+ if(!overlay)return;
+ paused=true;
+ const started=performance.now(),assets=["assets/integrados/sprite_46e8c8f73a.webp","assets/integrados/sprite_05e5730307.webp","assets/integrados/sprite_48831646f2.webp","assets/integrados/sprite_2bab924b39.png","assets/integrados/sprite_e8e45b81b9.webp","assets/integrados/sprite_35ce3fa40e.webp","assets/integrados/sprite_46882a146b.webp","assets/integrados/sprite_7c26748429.webp","assets/integrados/sprite_e8488f13bb.webp","assets/integrados/sprite_fd17269858.webp","assets/integrados/sprite_185b39fe4c.webp","assets/integrados/sprite_4307d06ab8.webp","assets/integrados/sprite_daac361201.webp","assets/integrados/sprite_f9926592c9.webp","assets/integrados/sprite_bd2cdbc6ec.webp","assets/integrados/sprite_9e07a7e0bf.webp","assets/integrados/sprite_b525ec4007.webp","assets/integrados/sprite_0dcdfb8254.webp","assets/integrados/sprite_30ff2d475b.webp","assets/integrados/sprite_3e15a522d4.webp","assets/integrados/sprite_dc5009c443.webp","assets/integrados/sprite_d71a958cbc.webp","assets/integrados/sprite_8353bf9651.webp","assets/integrados/sprite_af1e1cb9ab.webp","assets/integrados/sprite_537722f0af.webp","assets/integrados/sprite_68377ad00c.png","assets/integrados/sprite_3aa815588f.webp","assets/integrados/sprite_2267a7b26b.webp","assets/integrados/sprite_e3488ea7d4.png","assets/integrados/sprite_07fae12cfb.webp","assets/integrados/sprite_02d8452bb4.webp","assets/integrados/sprite_feaf6c5074.webp","assets/integrados/sprite_2cf6fd00e7.webp","assets/integrados/sprite_320b7c26e8.webp","assets/integrados/sprite_7825dc128c.webp","assets/integrados/sprite_5d174f6608.webp","assets/integrados/sprite_211469d925.webp","assets/integrados/sprite_5c8bd197eb.webp","assets/integrados/sprite_5b8d85e272.webp","assets/integrados/sprite_231415e0f5.webp","assets/integrados/sprite_bd64c47c7c.webp","assets/integrados/sprite_db2e835b29.webp","assets/integrados/sprite_56976500ba.webp","assets/integrados/sprite_aadf14180f.webp","assets/integrados/sprite_0fc5662b12.webp","assets/integrados/sprite_f08d7f0703.webp","assets/integrados/sprite_a49b5695cd.webp","assets/launcher/DigitalWorld_clearing.png","assets/launcher/digimon/agumon.png","assets/launcher/digimon/gabumon.png","assets/launcher/digimon/patamon.png","assets/launcher/digimon/koromon.png"];
+ let done=0,ready=false,painted=false,shown=0,closed=false;
+ const mark=()=>{done++;};
+ const jobs=assets.map(src=>new Promise(resolve=>{const image=new Image();image.onload=()=>{mark();resolve()};image.onerror=()=>{mark();resolve()};image.src=src}));
+ Promise.all(jobs).then(()=>{ready=true});
+ function tick(now){
+  const fraction=done/assets.length;
+  let target=Math.min(94,Math.round(fraction*94));
+  if(fraction<.35)status.textContent='Descargando datos del Mundo Digital…';
+  else if(fraction<.72)status.textContent='Preparando a tus compañeros…';
+  else status.textContent='Abriendo el portal al bosque…';
+  if(ready&&typeof frame!=='undefined'&&frame>0)painted=true;
+  if(ready&&painted&&now-started>=1000)target=100;
+  shown+=(target-shown)*.18;
+  if(target===100&&shown>99.2)shown=100;
+  const shownInt=Math.floor(shown);
+  fill.style.width=shownInt+'%';percent.textContent=shownInt+'%';track.setAttribute('aria-valuenow',String(shownInt));
+  if(shownInt===100&&!closed){
+   closed=true;status.textContent='¡Agumon te espera!';
+   setTimeout(()=>{overlay.classList.add('is-done');paused=false;setTimeout(()=>overlay.remove(),460)},280);
+   return;
+  }
+  requestAnimationFrame(tick);
+ }
+ requestAnimationFrame(tick);
+})();
+</script></body></html>
