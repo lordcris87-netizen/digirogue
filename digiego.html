@@ -23,7 +23,8 @@ canvas.setAttribute('aria-label','Hábitat de tu Digimon');
 screen.insertBefore(canvas,screen.firstChild);
 canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:manipulation';
 island.style.display='none';
-const ctx=canvas.getContext('2d');const objTextures={body:new Image(),mouth:new Image(),claw:new Image()};
+const ctx=canvas.getContext('2d');
+const surfaceNoise=document.createElement('canvas');surfaceNoise.width=surfaceNoise.height=48;const noiseCtx=surfaceNoise.getContext('2d');let noiseSeed=18731;const noiseRandom=()=>{noiseSeed=(noiseSeed*1664525+1013904223)>>>0;return noiseSeed/4294967296};for(let i=0;i<260;i++){const light=noiseRandom()>.48;noiseCtx.fillStyle=light?'rgba(255,244,198,.20)':'rgba(24,30,22,.22)';const size=1+Math.floor(noiseRandom()*2);noiseCtx.fillRect(Math.floor(noiseRandom()*48),Math.floor(noiseRandom()*48),size,size)}const surfacePattern=ctx.createPattern(surfaceNoise,'repeat');const objTextures={body:new Image(),mouth:new Image(),claw:new Image()};
 const texFiles={body:'agumon-body.svg',mouth:'agumon-mouth.svg',claw:'agumon-claw.svg'};
 const tamerSprite=new Image();tamerSprite.onload=()=>paint();tamerSprite.src='/assets/launcher/digiego/tamer-ps1.svg';
 for(const key of Object.keys(objTextures)){objTextures[key].onload=()=>{canvas.dataset['tex'+key]=String(objTextures[key].naturalWidth);paint()};objTextures[key].onerror=()=>{canvas.dataset['tex'+key]='error'};objTextures[key].src='assets/launcher/digiego/'+texFiles[key]}
@@ -110,7 +111,10 @@ function paint(){
  }
  const wood=['#dfaf69','#98603e','#704637'],leaf=['#81b965','#44815d','#376e54'];
  box(50,50,100,100,4,['#88ad65','#996f4e','#78533d'],-4);
- for(let i=0;i<10;i++)for(let j=0;j<10;j++){let x=i*10,z=j*10;face([[x,0,z],[x+10,0,z],[x+10,0,z+10],[x,0,z+10]],(i+j)%2?'#91bb75':'#94bf78')}
+ for(let i=0;i<10;i++)for(let j=0;j<10;j++){let x=i*10,z=j*10;face([[x,0,z],[x+10,0,z],[x+10,0,z+10],[x,0,z+10]],(i+j)%2?'#789f66':'#82aa6b')}
+ let turfSeed=4417;const turfRandom=()=>{turfSeed=(turfSeed*1664525+1013904223)>>>0;return turfSeed/4294967296};
+ for(let i=0;i<62;i++){const x=4+turfRandom()*92,z=4+turfRandom()*92,w=.55+turfRandom()*.9,h=.5+turfRandom()*.85;for(let k=0;k<2;k++){const ox=(k-.5)*w*.8;face([[x+ox,0.08,z],[x+ox+w*.35,0.08,z-h],[x+ox+w*.8,0.08,z]],k?'#648f5c':'#a2bd75')}}
+ for(const [endX,endZ] of [[24,33],[74,33]])for(let i=0;i<8;i++){const t=(i+.5)/8,x=50+(endX-50)*t,z=50+(endZ-50)*t,w=2.4+(i%3)*.45,d=2.1+(i%2)*.55,c=['#a7885e','#94734f','#b09568'][i%3];face([[x-w,0.1,z-d],[x+w,0.1,z-d],[x+w,0.1,z+d],[x-w,0.1,z+d]],c)}
  for(const layer of faces)layer.depth-=500;
  for(const [x,z] of [[6,10],[14,7],[49,8],[94,22],[92,8],[4,36]]){box(x,z,2,2,9,wood);box(x,z,8,8,8,leaf,6);box(x,z,5,5,5,leaf,14)}
  for(const [x,z,col] of [[24,33,'#b85640'],[74,33,'#476898']]){
@@ -138,10 +142,10 @@ function paint(){
    const part=Number((tri.o.match(/#(\d+)/)||[])[1]);
    const points=tri.p.map(([a,rawY,b])=>{
     let h=rawY;
-    if([3,4,6,7].includes(part)){
-     const side=(part===3||part===4)?-1:1,pivotX=side*1.48,pivotY=.45,pivotZ=.52;
-     const swing=walking?Math.sin(phase*1.35)*side*.16:Math.sin(now*1.3)*side*.012;
-     const angle=-side*1.02+swing,dx=a-pivotX,dy=h-pivotY,ca=Math.cos(angle),sa=Math.sin(angle);
+    if([2,3,4,5,6,7].includes(part)){
+     const side=part<=4?-1:1,pivotX=side*1.1,pivotY=.4,pivotZ=.52;
+     const swing=walking?Math.sin(phase*1.35)*side*.09:Math.sin(now*1.3)*side*.018;
+     const angle=-side*1.48+swing,dx=a-pivotX,dy=h-pivotY,ca=Math.cos(angle),sa=Math.sin(angle);
      a=pivotX+dx*ca-dy*sa;h=pivotY+dx*sa+dy*ca;
     }else if([8,9,10,11,12,13].includes(part)){
      const side=[8,9,10].includes(part)?-1:1,pivotY=-1.08,pivotZ=.52;
@@ -228,7 +232,7 @@ function paint(){
  }
  figure(state.x,state.y,false);figure(pet.x,pet.y,true);
  ctx.fillStyle='#adcfd1';ctx.fillRect(0,0,800,560);faces.sort((a,b)=>a.depth-b.depth);
- for(const f of faces){if(f.render){f.render();continue}ctx.beginPath();f.vertices.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=f.color;ctx.fill()}
+ for(const f of faces){if(f.render){f.render();continue}ctx.beginPath();f.vertices.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fillStyle=f.color;ctx.fill();ctx.save();ctx.beginPath();f.vertices.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.clip();ctx.globalAlpha=.32;ctx.fillStyle=surfacePattern;ctx.fillRect(0,0,800,560);ctx.restore()}
  spots.length=0;
  for(const [name,pos] of Object.entries({...stations,...(state.dirt?{Limpiar:state.dirt}:{})})){const p=project(pos[0],1,pos[1]);spots.push([name,p]);ctx.font='bold 16px monospace';ctx.textAlign='center';ctx.lineWidth=3;ctx.strokeStyle='#172f30';ctx.strokeText(name,p[0],p[1]+14);ctx.fillStyle='white';ctx.fillText(name,p[0],p[1]+14)}
 }
