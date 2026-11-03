@@ -926,6 +926,41 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   #view-digidex .digi-card h3{font-size:6px}
 }
 
+
+/* Animated, pixel-rendered front sprites for the classic Digidex card selection. */
+#view-digidex .digi-art{position:relative;overflow:hidden}
+#view-digidex .digi-art img{position:absolute!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none}
+#view-digidex .digi-art::before{
+  content:"";position:absolute;inset:2px;display:block;
+  background-repeat:no-repeat;background-size:400% 400%;
+  background-position:0% 66.6667%;image-rendering:pixelated;
+  filter:saturate(1.18) contrast(1.04);
+  animation:digidexRetroStep .42s steps(1,end) infinite;
+  will-change:background-position,translate
+}
+#view-digidex .digi-art.orange::before{background-image:url("assets/launcher/digimon/walk/agumon_atlas.png")}
+#view-digidex .digi-art.blue::before{background-image:url("assets/launcher/digimon/walk/gabumon_atlas.png")}
+#view-digidex .digi-art.peach::before{background-image:url("assets/launcher/digimon/walk/patamon_atlas.png")}
+#view-digidex .digi-art.pink::before{background-image:url("assets/launcher/digimon/walk/koromon_atlas.png")}
+@keyframes digidexRetroStep{
+  0%,49%{background-position:0% 66.6667%;translate:0 0}
+  50%,100%{background-position:33.3333% 66.6667%;translate:0 -1px}
+}
+#view-digidex .digi-card{position:relative;cursor:pointer;transition:transform .12s ease,box-shadow .12s ease,border-color .12s ease,filter .12s ease}
+#view-digidex .digi-card:hover,#view-digidex .digi-card:focus-visible{
+  z-index:5;transform:translateY(-2px) scale(1.1);
+  border-color:#fff0a0!important;filter:brightness(1.16);
+  box-shadow:0 0 0 2px #f1dc7a,0 4px 0 #162127,0 0 14px #f4dc6680,inset 1px 1px 0 #fff7!important;
+  outline:none
+}
+#view-digidex .digi-card.is-locked .digi-art::before{
+  filter:brightness(0) saturate(0) contrast(1.8)!important;opacity:.98
+}
+@media(prefers-reduced-motion:reduce){
+  #view-digidex .digi-art::before{animation:none!important;translate:0 0!important;background-position:0% 66.6667%}
+  #view-digidex .digi-card{transition:none!important}
+}
+
 </style>
 </head>
 <body>
@@ -1523,6 +1558,42 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   });
 })();
 </script>
+
+<script>
+(()=> {
+  const cards=[...document.querySelectorAll("#view-digidex .digi-card")];
+  if(!cards.length)return;
+  cards.forEach(card=>{
+    card.tabIndex=0;
+    const name=card.querySelector("h3")?.textContent?.trim()||"Digimon";
+    card.setAttribute("aria-label","Seleccionar "+name);
+  });
+  let audio;
+  let last=0;
+  function playSelect(){
+    const nowMs=performance.now();
+    if(nowMs-last<85)return;
+    last=nowMs;
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextClass)return;
+    try{
+      audio ||= new AudioContextClass();
+      if(audio.state==="suspended")audio.resume().catch(()=>{});
+      const t=audio.currentTime,osc=audio.createOscillator(),gain=audio.createGain();
+      osc.type="square";
+      osc.frequency.setValueAtTime(960,t);
+      osc.frequency.exponentialRampToValueAtTime(640,t+.045);
+      gain.gain.setValueAtTime(.0001,t);
+      gain.gain.exponentialRampToValueAtTime(.032,t+.006);
+      gain.gain.exponentialRampToValueAtTime(.0001,t+.055);
+      osc.connect(gain);gain.connect(audio.destination);
+      osc.start(t);osc.stop(t+.06);
+    }catch(_){}
+  }
+  cards.forEach(card=>card.addEventListener("pointerenter",playSelect));
+})();
+</script>
+
 </body></html>
 
 
