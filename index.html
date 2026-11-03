@@ -961,6 +961,15 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   #view-digidex .digi-card{transition:none!important}
 }
 
+
+
+/* Filtros de Digidex y selección pixel art. */
+.dex-controls{display:flex;align-items:end;gap:10px;max-width:1050px;margin:18px 0 16px;padding:12px;border:2px solid #4e6685;background:linear-gradient(135deg,#101a2be8,#17233bdf);box-shadow:4px 4px 0 #030812,inset 2px 2px 0 #ffffff12}
+.dex-controls label{display:grid;gap:7px;color:#f1d38b;font-family:"Press Start 2P","Lucida Console",monospace;font-size:7px;letter-spacing:.04em}.dex-search{flex:1;min-width:180px}.dex-filter{width:min(180px,22%)}.dex-stage,.dex-element{width:min(150px,18%)}
+.dex-controls input,.dex-controls select{width:100%;min-height:39px;border:2px solid #6885a5;border-radius:0;background:#080f1c;color:#f7f3e9;padding:8px 10px;font:700 12px "Bahnschrift SemiCondensed","Arial Narrow",sans-serif;outline:none}.dex-controls input:focus,.dex-controls select:focus{border-color:#ffe07d;box-shadow:0 0 0 3px #ffd56d38}.dex-controls input::placeholder{color:#9aa9bd}
+#view-digidex .digi-card{position:relative;transform-origin:center;transition:transform .14s steps(3),border-color .14s,box-shadow .14s;cursor:pointer}#view-digidex .digi-card:hover,#view-digidex .digi-card:focus-visible,#view-digidex .digi-card.is-selected{z-index:3;transform:translateY(-3px) scale(1.035);border-color:#ffe07d!important;box-shadow:6px 7px 0 #030812,0 0 0 2px #ffd56d61,inset 2px 2px 0 #ffffff22!important;outline:none}#view-digidex .digi-card:hover .digi-art img,#view-digidex .digi-card:focus-visible .digi-art img,#view-digidex .digi-card.is-selected .digi-art img{animation:dexSpriteNudge .42s steps(2) infinite alternate;image-rendering:pixelated}@keyframes dexSpriteNudge{from{translate:0 0;scale:1}to{translate:0 -4px;scale:1.06}}
+.dex-filtered{display:none!important}.dex-empty{max-width:1050px;padding:18px;border:2px dashed #6c84a2;color:#d9e8ff;background:#101a2bdc;font:8px "Press Start 2P","Lucida Console",monospace;line-height:1.8}.dex-details{max-width:1050px;margin:18px 0 0;padding:16px;border:2px solid #718cae;background:linear-gradient(135deg,#101a2be8,#17233bdf);box-shadow:4px 4px 0 #030812,inset 2px 2px 0 #ffffff12}.dex-details header small{color:#f1d38b;font:7px "Press Start 2P","Lucida Console",monospace}.dex-details h2{margin:9px 0 4px;color:#ffe07d;font:16px "Press Start 2P","Lucida Console",monospace}.dex-details header p{margin:0;color:#dce7f5;font-size:10px;letter-spacing:.08em}.evolution-strip{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:16px}.route-node{display:grid;gap:6px;min-width:130px;padding:10px;border:2px solid #6a829f;background:#0b1320;text-align:center;color:#e8efff;font:8px "Press Start 2P","Lucida Console",monospace;box-shadow:3px 3px 0 #030812}.route-node small{color:#9fb8d5;font:7px "Press Start 2P","Lucida Console",monospace}.route-node.current{border-color:#ffd776;color:#ffe49b}.route-node.locked{color:#8c96a4;background:#0a0e16}
+:where(button,a[href],input,select,[role="button"]):focus-visible{outline:2px solid #ffe07d;outline-offset:3px}@media(max-width:560px){.dex-controls{align-items:stretch;flex-direction:column}.dex-filter,.dex-stage,.dex-element{width:100%}.evolution-strip{gap:5px}.route-node{min-width:0;flex:1;padding:8px 4px;font-size:6px}.route-node small{font-size:6px}.evolution-strip>i{font-size:9px}#view-digidex .digi-card:hover,#view-digidex .digi-card:focus-visible,#view-digidex .digi-card.is-selected{transform:translateY(-2px) scale(1.015)}}@media(prefers-reduced-motion:reduce){#view-digidex .digi-card,#view-digidex .digi-card:hover .digi-art img,#view-digidex .digi-card:focus-visible .digi-art img,#view-digidex .digi-card.is-selected .digi-art img{animation:none!important;transition:none!important;translate:0 0!important;scale:1!important}}
 </style>
 </head>
 <body>
@@ -1045,7 +1054,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     <aside class="ranking-panel"><div class="panel-heading"><div><small>AHORA EN EL MUNDO DIGITAL</small><h2>Temporada <span>01</span></h2></div><span class="live-dot">● ACTIVA</span></div><div class="season-art"><span>✧</span><b>BOSQUE<br>DEL COMIENZO</b><small>Una nueva historia despierta</small><div class="season-mons"><img src="assets/launcher/digimon/agumon.png" alt="Agumon"><img class="locked-mon" src="assets/launcher/digimon/patamon.png" alt="Digimon aún no descubierto"></div></div><div class="board-heading"><b>◆ DIGIMON DESTACADOS</b><button data-nav="digidex">VER DEX <span>→</span></button></div><div class="rank-row"><span class="place gold">01</span><span class="mini-mon orange"><img src="assets/launcher/digimon/agumon.png" alt=""></span><span class="rank-name"><b>Agumon</b><small>ROOKIE · FUEGO</small></span><strong>ROOKIE</strong></div><div class="rank-row"><span class="place silver">02</span><span class="mini-mon blue is-locked"><img src="assets/launcher/digimon/gabumon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="rank-row"><span class="place bronze">03</span><span class="mini-mon pink is-locked"><img src="assets/launcher/digimon/patamon.png" alt=""></span><span class="rank-name"><b>??????</b><small>REGISTRO SIN DESCUBRIR</small></span><strong>🔒</strong></div><div class="panel-foot"><span>Compañeros del Mundo Digital</span><span>✦ &nbsp; 01 / 08</span></div></aside>
     <div id="roamingLayer" class="roaming-layer" aria-hidden="true"><div class="sway-branch sway-left"><svg viewBox="0 0 220 120"><path d="M-8 8C44 9 87 25 121 49S175 82 226 92" fill="none" stroke="#203a30" stroke-width="12"/><path d="M48 14Q43 -1 31 -9M83 29Q89 8 103 1M124 50Q119 30 126 19M160 70Q176 52 193 51" fill="none" stroke="#203a30" stroke-width="7"/><path d="M17 1h21v11H17zM38-8h19v12H38zM88 4h22v12H88zM104-3h19v12H104zM117 13h19v12H117zM113 22h22v12H113zM175 44h24v13h-24zM193 39h20v13h-20zM188 55h22v12h-22z" fill="#527a45" stroke="#203a30" stroke-width="3"/></svg></div><div class="sway-branch sway-right"><svg viewBox="0 0 220 120"><path d="M-8 8C44 9 87 25 121 49S175 82 226 92" fill="none" stroke="#203a30" stroke-width="12"/><path d="M48 14Q43 -1 31 -9M83 29Q89 8 103 1M124 50Q119 30 126 19M160 70Q176 52 193 51" fill="none" stroke="#203a30" stroke-width="7"/><path d="M17 1h21v11H17zM38-8h19v12H38zM88 4h22v12H88zM104-3h19v12H104zM117 13h19v12H117zM113 22h22v12H113zM175 44h24v13h-24zM193 39h20v13h-20zM188 55h22v12h-22z" fill="#527a45" stroke="#203a30" stroke-width="3"/></svg></div><div id="roamingAgumon" class="roaming-mon"><span class="roaming-shadow"></span><span id="spriteAgumon" class="walk-sprite agumon-sprite" role="img" aria-label="Agumon caminando"></span></div><div id="roamingGabumon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteGabumon" class="walk-sprite gabumon-sprite" role="img" aria-label="Gabumon caminando"></span></div><div id="roamingPatamon" class="roaming-mon buddy patamon-roamer"><span class="roaming-shadow"></span><span id="spritePatamon" class="walk-sprite patamon-sprite" role="img" aria-label="Patamon volando en ocho direcciones"></span></div><div id="roamingKoromon" class="roaming-mon buddy"><span class="roaming-shadow"></span><span id="spriteKoromon" class="walk-sprite koromon-sprite" role="img" aria-label="Koromon saltando"></span></div></div>
   </section>  <section id="view-temporada" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> MUNDO DIGITAL · TEMPORADA 01</div><h1>Bosque del <em>comienzo</em></h1><p>El portal ha despertado. Algo antiguo se mueve entre los árboles.</p></div><div class="season-layout"><div class="season-hero"><div class="season-symbol">✧</div><small>CAPÍTULO 01</small><h2>Una luz<br>entre los árboles</h2><p>Descubre qué se esconde al otro lado del portal.</p><button class="primary-btn" data-info="La historia del Bosque del Comienzo está preparándose. Vuelve pronto para descubrir el primer capítulo.">DESCUBRIR HISTORIA <b>→</b></button></div><div class="info-card"><span class="feature-icon gold">✦</span><h3>Un nuevo comienzo</h3><p>Este rincón del Mundo Digital aguarda a su próximo equipo.</p><div class="progress"><i></i></div><small>PREPARATIVOS DE TEMPORADA</small></div></div></section>
-  <section id="view-digidex" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> ARCHIVO DEL MUNDO DIGITAL</div><h1>Tu <em>Digidex</em></h1><p>Descubre a tus compañeros y completa sus registros.</p></div><div class="digimon-grid"><article class="digi-card"><div class="digi-art orange"><img src="assets/launcher/digimon/agumon.png" alt="Agumon saludando"></div><div><small>ROOKIE · FUEGO · DESBLOQUEADO</small><h3>Agumon</h3><p>Tu primer compañero. Valiente y siempre dispuesto a proteger al equipo.</p></div><b class="digi-number">#001</b></article><article class="digi-card is-locked"><div class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked"><div class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked"><div class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article></div></section>  <section id="view-equipo" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> COMPAÑEROS DIGITALES</div><h1>Tu <em>equipo</em></h1><p>Cada aventura es mejor cuando la compartes.</p></div><div class="team-layout"><div class="team-lead"><img src="assets/launcher/sprites/agumon_4.png" alt="Agumon mirando al frente"><div><small>COMPAÑERO DESTACADO</small><h2>Agumon</h2><p>Rookie · Fuego</p></div><span class="bond">✦ VÍNCULO 01</span></div><div class="team-side"><div class="team-mini is-locked"><span class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div></div></div></section>
+  <section id="view-digidex" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> ARCHIVO DEL MUNDO DIGITAL</div><h1>Tu <em>Digidex</em></h1><p>Descubre a tus compañeros y completa sus registros.</p></div><div class="dex-controls" aria-label="Filtros de la Digidex"><label class="dex-search"><span>BUSCAR DIGIMON</span><input id="dexSearch" type="search" placeholder="Agumon, fuego…" autocomplete="off" aria-label="Buscar Digimon descubierto"></label><label class="dex-filter"><span>REGISTROS</span><select id="dexFilter" aria-label="Filtrar registros"><option value="all">Todos</option><option value="unlocked">Descubiertos</option><option value="locked">Por descubrir</option></select></label><label class="dex-stage"><span>ETAPA</span><select id="dexStage" aria-label="Filtrar por etapa"><option value="all">Todas</option><option value="rookie">Rookie</option></select></label><label class="dex-element"><span>ELEMENTO</span><select id="dexElement" aria-label="Filtrar por elemento"><option value="all">Todos</option><option value="fuego">Fuego</option></select></label></div><div class="digimon-grid"><article class="digi-card" data-unlocked="true" data-search="agumon rookie fuego" data-stage="rookie" data-element="fuego" role="button" tabindex="0" aria-label="Seleccionar Agumon, Rookie de fuego"><div class="digi-art orange"><img src="assets/launcher/digimon/agumon.png" alt="Agumon saludando"></div><div><small>ROOKIE · FUEGO · DESBLOQUEADO</small><h3>Agumon</h3><p>Tu primer compañero. Valiente y siempre dispuesto a proteger al equipo.</p></div><b class="digi-number">#001</b></article><article class="digi-card is-locked" data-unlocked="false" data-search="" data-stage="" data-element="" role="button" tabindex="0" aria-label="Registro de Digimon bloqueado"><div class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked" data-unlocked="false" data-search="" data-stage="" data-element="" role="button" tabindex="0" aria-label="Registro de Digimon bloqueado"><div class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article><article class="digi-card is-locked" data-unlocked="false" data-search="" data-stage="" data-element="" role="button" tabindex="0" aria-label="Registro de Digimon bloqueado"><div class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta de un Digimon bloqueado"><span class="lock-badge">🔒</span></div><div><small>DATOS BLOQUEADOS</small><h3>??????</h3><p>Aún no has descubierto este compañero.</p></div><b class="digi-number">????</b></article></div><div id="dexEmpty" class="dex-empty hidden" role="status">NO HAY REGISTROS QUE COINCIDAN CON LA BÚSQUEDA.</div><div id="dexDetails" class="dex-details hidden" aria-live="polite"><header><small>REGISTRO SELECCIONADO</small><h2>AGUMON</h2><p>ROOKIE · FUEGO · COMPAÑERO INICIAL</p></header><div class="evolution-strip" aria-label="Etapas de evolución"><span class="route-node current">AGUMON<small>ROOKIE</small></span><i>▶</i><span class="route-node locked">??????<small>CAMPEÓN</small></span><i>▶</i><span class="route-node locked">??????<small>ULTIMATE</small></span></div></div></section>  <section id="view-equipo" class="view subview hidden"><div class="subhead"><div class="kicker"><i></i> COMPAÑEROS DIGITALES</div><h1>Tu <em>equipo</em></h1><p>Cada aventura es mejor cuando la compartes.</p></div><div class="team-layout"><div class="team-lead"><img src="assets/launcher/sprites/agumon_4.png" alt="Agumon mirando al frente"><div><small>COMPAÑERO DESTACADO</small><h2>Agumon</h2><p>Rookie · Fuego</p></div><span class="bond">✦ VÍNCULO 01</span></div><div class="team-side"><div class="team-mini is-locked"><span class="digi-art blue"><img src="assets/launcher/digimon/gabumon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art peach"><img src="assets/launcher/digimon/patamon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div><div class="team-mini is-locked"><span class="digi-art pink"><img src="assets/launcher/digimon/koromon.png" alt="Silueta bloqueada"><i>🔒</i></span><div><small>POR DESCUBRIR</small><b>??????</b></div></div></div></div></section>
   <section id="view-incubadora" class="view subview hidden">
     <div class="subhead"><div class="kicker"><i></i> CUIDA A TU PRÓXIMO COMPAÑERO</div><h1>Incubadora <em>digital</em></h1><p>Los huevos que rescates en la partida te esperan aquí. Acarícialos y descubre quién viene dentro.</p></div>
     <div class="incubator-layout">
@@ -1077,7 +1086,7 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
       <div><small>DATOS DEL TAMER · COPIA LOCAL</small><h2>Respaldo de progreso</h2><p>Guarda o recupera huevos, Digimon, ajustes e historial en un archivo.</p></div>
       <div class="backup-actions"><button type="button" class="backup-btn" id="backupExportBtn">↓ EXPORTAR PROGRESO</button><button type="button" class="backup-btn secondary" id="backupImportBtn">↑ IMPORTAR COPIA</button><input id="backupFileInput" type="file" accept="application/json,.json" class="hidden"><small id="backupStatus" role="status">El archivo se queda en tu dispositivo.</small></div>
     </section>
-    <div class="settings-card"><div><b>Música de fondo</b><small>Melodía retro para el menú</small></div><button id="musicSwitch" class="switch" aria-label="Activar o silenciar la música"></button></div><div class="settings-card volume-card"><div class="volume-head"><span><b>Volumen de la música</b><small>Volumen inicial moderado; ajústalo a tu gusto.</small></span><strong id="volumeValue">20 %</strong></div><input id="volumeRange" type="range" min="0" max="100" value="20" aria-label="Volumen de la música"></div><div class="settings-card"><div><b>Movimiento ambiental</b><small>Animación suave del mundo y los Digimon</small></div><button id="motionSwitch" class="switch on" aria-label="Activar o desactivar el movimiento"></button></div><div class="settings-card"><div><b>Idioma</b><small>Idioma de la página</small></div><span class="language">ESPAÑOL⌄</span></div></section>
+    <div class="settings-card"><div><b>Música de fondo</b><small>Melodía retro para el menú</small></div><button id="musicSwitch" class="switch" aria-label="Activar o silenciar la música"></button></div><div class="settings-card volume-card"><div class="volume-head"><span><b>Volumen de la música</b><small>Volumen inicial moderado; ajústalo a tu gusto.</small></span><strong id="volumeValue">20 %</strong></div><input id="volumeRange" type="range" min="0" max="100" value="20" aria-label="Volumen de la música"></div><div class="settings-card volume-card"><div class="volume-head"><span><b>Efectos de interfaz</b><small>Bip de selección y navegación, independiente de la música.</small></span><strong id="sfxVolumeValue">65 %</strong></div><input id="sfxVolumeRange" type="range" min="0" max="100" value="65" aria-label="Volumen de los efectos de interfaz"></div><div class="settings-card"><div><b>Movimiento ambiental</b><small>Animación suave del mundo y los Digimon</small></div><button id="motionSwitch" class="switch on" aria-label="Activar o desactivar el movimiento"></button></div><div class="settings-card"><div><b>Idioma</b><small>Idioma de la página</small></div><span class="language">ESPAÑOL⌄</span></div></section>
   <nav class="bottom-nav" aria-label="Navegación"><button class="bottom-link active" data-nav="inicio"><span>⌂</span> INICIO</button><button class="bottom-link" data-nav="temporada"><span>✧</span> TEMPORADA</button><button class="bottom-link" data-nav="digidex"><span>◈</span> DIGIDEX</button><button class="bottom-link" data-nav="equipo"><span>✦</span> EQUIPO</button><button class="bottom-link" data-nav="ajustes"><span>⚙</span> AJUSTES</button><button class="bottom-link" data-nav="incubadora"><span>🥚</span> INCUBA</button><span class="bottom-caption">UN NUEVO MUNDO · UN EQUIPO · UNA AVENTURA</span></nav>
   <audio id="menuMusic" src="assets/launcher/DigiRogue_MENU_8BIT.mp3" loop preload="none"></audio><div id="toast" class="toast" role="status"></div>
 </main><script>
@@ -1098,6 +1107,18 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     volumeValue.textContent = `${volumeRange.value} %`;
     try { localStorage.setItem("digirogue-volume", String(audio.volume)); } catch (_) {}
   });
+  const sfxVolumeRange = document.getElementById("sfxVolumeRange");
+  const sfxVolumeValue = document.getElementById("sfxVolumeValue");
+  let sfxVolume = 0.65;
+  try { const savedSfxVolume = Number(localStorage.getItem("digirogue-sfx-volume")); if (Number.isFinite(savedSfxVolume) && savedSfxVolume >= 0 && savedSfxVolume <= 1) sfxVolume = savedSfxVolume; } catch (_) {}
+  sfxVolumeRange.value = String(Math.round(sfxVolume * 100));
+  sfxVolumeValue.textContent = `${sfxVolumeRange.value} %`;
+  sfxVolumeRange.addEventListener("input", () => {
+    sfxVolume = Number(sfxVolumeRange.value) / 100;
+    sfxVolumeValue.textContent = `${sfxVolumeRange.value} %`;
+    try { localStorage.setItem("digirogue-sfx-volume", String(sfxVolume)); } catch (_) {}
+  });
+
   const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
   let motion = !motionPreference.matches;
   document.body.classList.toggle("motion-off", !motion);
@@ -1122,6 +1143,47 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   }
   document.querySelectorAll("[data-nav]").forEach((button) => button.addEventListener("click", () => navigate(button.dataset.nav)));
   document.querySelectorAll("[data-info]").forEach((button) => button.addEventListener("click", () => notify(button.dataset.info)));
+  const dexCards = [...document.querySelectorAll("#view-digidex .digi-card")];
+  const dexSearch = document.getElementById("dexSearch");
+  const dexFilter = document.getElementById("dexFilter");
+  const dexStage = document.getElementById("dexStage");
+  const dexElement = document.getElementById("dexElement");
+  const dexEmpty = document.getElementById("dexEmpty");
+  const dexDetails = document.getElementById("dexDetails");
+  function filterDex() {
+    const query = (dexSearch.value || "").trim().toLocaleLowerCase("es");
+    const status = dexFilter.value, stage = dexStage.value, element = dexElement.value;
+    let visibleCount = 0;
+    dexCards.forEach((card) => {
+      const unlocked = card.dataset.unlocked === "true";
+      const matchesStatus = status === "all" || (status === "unlocked" && unlocked) || (status === "locked" && !unlocked);
+      const matchesSearch = !query || (unlocked && card.dataset.search.includes(query));
+      const matchesStage = stage === "all" || (unlocked && card.dataset.stage === stage);
+      const matchesElement = element === "all" || (unlocked && card.dataset.element === element);
+      const visible = matchesStatus && matchesSearch && matchesStage && matchesElement;
+      card.classList.toggle("dex-filtered", !visible);
+      card.setAttribute("aria-hidden", String(!visible));
+      card.tabIndex = visible ? 0 : -1;
+      if (!visible) card.classList.remove("is-selected");
+      if (visible) visibleCount++;
+    });
+    dexEmpty.classList.toggle("hidden", visibleCount > 0);
+    if (!dexCards.some((card) => card.classList.contains("is-selected"))) dexDetails.classList.add("hidden");
+  }
+  dexSearch.addEventListener("input", filterDex);
+  dexFilter.addEventListener("change", filterDex);
+  dexStage.addEventListener("change", filterDex);
+  dexElement.addEventListener("change", filterDex);
+  dexCards.forEach((card) => {
+    card.addEventListener("click", () => {
+      dexCards.forEach((other) => other.classList.remove("is-selected"));
+      card.classList.add("is-selected");
+      const unlocked = card.dataset.unlocked === "true";
+      dexDetails.classList.toggle("hidden", !unlocked);
+      notify(unlocked ? "Ficha de Agumon abierta." : "Este registro sigue bloqueado.");
+    });
+  });
+  filterDex();
   function setAudio(on) {
     if (on) audio.play().then(() => {
       soundBtn.textContent = "♫";
@@ -1134,6 +1196,116 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
     }
   }
   soundBtn.addEventListener("click", () => setAudio(audio.paused));
+  let uiAudio;
+  let lastUiBeep = 0;
+  function unlockUiAudio() {
+    if (!uiAudio) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return;
+      uiAudio = new AudioContextClass();
+    }
+    if (uiAudio.state === "suspended") uiAudio.resume().catch(() => {});
+  }
+  function playUiBeep() {
+    const now = performance.now();
+    if (now - lastUiBeep < 55) return;
+    lastUiBeep = now;
+    unlockUiAudio();
+    if (!uiAudio || uiAudio.state !== "running") return;
+    const oscillator = uiAudio.createOscillator();
+    const gain = uiAudio.createGain();
+    const t = uiAudio.currentTime;
+    oscillator.type = "triangle";
+    oscillator.frequency.setValueAtTime(660, t);
+    oscillator.frequency.exponentialRampToValueAtTime(880, t + 0.065);
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.exponentialRampToValueAtTime(Math.max(0.0001, 0.055 * sfxVolume), t + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.105);
+    oscillator.connect(gain).connect(uiAudio.destination);
+    oscillator.start(t);
+    oscillator.stop(t + 0.11);
+  }
+  addEventListener("pointerdown", unlockUiAudio, { passive: true });
+  addEventListener("keydown", unlockUiAudio);
+  const interactiveSelector = "button:not([disabled]), a[href], input:not([type='hidden']), select, [role='button']";
+  document.addEventListener("pointerover", (event) => {
+    const target = event.target.closest?.(interactiveSelector);
+    if (target && !target.contains(event.relatedTarget)) playUiBeep();
+  });
+  document.addEventListener("focusin", (event) => {
+    if (event.target.matches?.(interactiveSelector)) playUiBeep();
+  });
+  const focusSelector = interactiveSelector;
+  function focusableItems() {
+    return [...document.querySelectorAll(focusSelector)].filter((element) =>
+      element.getClientRects().length && !element.closest(".hidden") && element.getAttribute("aria-hidden") !== "true" && !element.disabled
+    );
+  }
+  function moveFocus(direction) {
+    const items = focusableItems();
+    if (!items.length) return;
+    const current = document.activeElement;
+    if (!items.includes(current)) { items[0].focus({ preventScroll: true }); return; }
+    const origin = current.getBoundingClientRect();
+    const ox = origin.left + origin.width / 2, oy = origin.top + origin.height / 2;
+    const candidates = items.filter((item) => item !== current).map((item) => {
+      const rect = item.getBoundingClientRect();
+      const dx = rect.left + rect.width / 2 - ox, dy = rect.top + rect.height / 2 - oy;
+      const primary = direction === "left" ? -dx : direction === "right" ? dx : direction === "up" ? -dy : dy;
+      const secondary = direction === "left" || direction === "right" ? Math.abs(dy) : Math.abs(dx);
+      return { item, primary, score: primary + secondary * 1.4 };
+    }).filter((candidate) => candidate.primary > 2).sort((a, b) => a.score - b.score);
+    const next = candidates[0]?.item || items[(items.indexOf(current) + (direction === "left" || direction === "up" ? -1 : 1) + items.length) % items.length];
+    next.focus({ preventScroll: true });
+    next.scrollIntoView({ block: "nearest", inline: "nearest" });
+  }
+  document.addEventListener("keydown", (event) => {
+    if (![ "ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown" ].includes(event.key)) return;
+    if (event.target.matches?.("input, select, textarea, [contenteditable='true']")) return;
+    event.preventDefault();
+    moveFocus(event.key.slice(5).toLowerCase());
+  });
+  document.addEventListener("keydown", (event) => {
+    if ((event.key === "Enter" || event.key === " ") && event.target.matches?.(".digi-card[role='button']")) {
+      event.preventDefault(); event.target.click();
+    }
+  });
+  let gamepadTimer = 0, padDirection = "", padDirectionAt = 0;
+  const previousPadButtons = new Map();
+  function pollGamepad() {
+    const pad = [...(navigator.getGamepads?.() || [])].find((item) => item?.connected);
+    if (!pad) { clearInterval(gamepadTimer); gamepadTimer = 0; padDirection = ""; return; }
+    const pressed = (index) => !!pad.buttons[index]?.pressed;
+    const wasPressed = (index) => previousPadButtons.get(index) || false;
+    if (pressed(0) && !wasPressed(0)) document.activeElement?.click?.();
+    if (pressed(1) && !wasPressed(1)) {
+      const activeView = views.find((name) => !document.getElementById("view-" + name).classList.contains("hidden"));
+      if (activeView !== "inicio") {
+        navigate("inicio");
+        document.querySelector("[data-nav='inicio']")?.focus({ preventScroll: true });
+      }
+    }
+    for (let index = 0; index <= 1; index++) previousPadButtons.set(index, pressed(index));
+    let direction = "";
+    if (pressed(12)) direction = "up";
+    else if (pressed(13)) direction = "down";
+    else if (pressed(14)) direction = "left";
+    else if (pressed(15)) direction = "right";
+    const x = pad.axes?.[0] || 0, y = pad.axes?.[1] || 0;
+    if (!direction && Math.abs(x) > 0.62) direction = x < 0 ? "left" : "right";
+    if (!direction && Math.abs(y) > 0.62) direction = y < 0 ? "up" : "down";
+    const now = performance.now();
+    if (direction && (direction !== padDirection || now - padDirectionAt > 260)) {
+      moveFocus(direction); padDirectionAt = now;
+    }
+    padDirection = direction;
+  }
+  addEventListener("gamepadconnected", () => { if (!gamepadTimer) gamepadTimer = setInterval(pollGamepad, 75); });
+  addEventListener("gamepaddisconnected", () => {
+    if (![...(navigator.getGamepads?.() || [])].some((pad) => pad?.connected)) { clearInterval(gamepadTimer); gamepadTimer = 0; }
+  });
+  if ([...(navigator.getGamepads?.() || [])].some((pad) => pad?.connected)) gamepadTimer = setInterval(pollGamepad, 75);
+
   document.getElementById("settingsBtn").addEventListener("click", () => navigate("ajustes"));
   document.getElementById("musicSwitch").addEventListener("click", (event) => setAudio(!event.currentTarget.classList.contains("on")));
   document.getElementById("motionSwitch").addEventListener("click", (event) => {
