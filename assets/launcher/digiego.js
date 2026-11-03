@@ -105,7 +105,7 @@
     const l=lang(),partner=byId(data.selected),saved=partnerState(partner.id),unlocked=discovered();
     renderTamer();
     if(!unlocked.some(item=>item.id===partner.id)){data.selected='agumon';return render();}
-    section.querySelectorAll('[data-dg]').forEach(node=>{const key=node.dataset.dg;if(key==='title')node.textContent=t('title');else if(key==='subtitle')node.textContent=t('subtitle');else if(key==='badge')node.textContent=t('badge');else if(copy[l][key])node.textContent=t(key);});
+    document.querySelectorAll('[data-dg]').forEach(node=>{const key=node.dataset.dg;if(key==='title')node.textContent=t('title');else if(key==='subtitle')node.textContent=t('subtitle');else if(key==='badge')node.textContent=t('badge');else if(copy[l][key])node.textContent=t(key);});
     const select=el('dgPartner');
     if(select){
       select.innerHTML=unlocked.map(item=>'<option value="'+item.id+'">'+item.name+' · '+item.stage+'</option>').join('');
@@ -129,7 +129,7 @@
     }
     setText('dgStatus',!data.tamer?t('createTamerFirst'):data.enabled?t('enabled'):t('disabled'));
     section.classList.toggle('dg-ego-off',!data.enabled);
-    section.querySelectorAll('[data-dg-action]').forEach(button=>button.disabled=!data.enabled||!data.tamer);
+    document.querySelectorAll('[data-dg-action]').forEach(button=>button.disabled=!data.enabled||!data.tamer);
     const partnerSelect=el('dgPartner');if(partnerSelect)partnerSelect.disabled=!data.tamer;
     const languageButtons=section.querySelectorAll('[data-dg-language]');
     languageButtons.forEach(button=>button.classList.toggle('active',button.dataset.dgLanguage===data.language));
