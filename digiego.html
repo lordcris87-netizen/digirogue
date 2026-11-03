@@ -323,7 +323,7 @@ weatherButton.onclick=()=>{
 };
 
 const enhanceStyle=document.createElement('style');
-enhanceStyle.textContent=\`
+enhanceStyle.textContent=`
 .world-controls{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 10px}
 .world-controls button,.dg-mobile button,.dg-toolrow button{font:8px "Press Start 2P";color:#fff0c5;background:#143861;border:2px solid #67cce5;box-shadow:3px 3px #061020;padding:9px 10px;cursor:pointer;transition:transform .12s,background .12s}
 .world-controls button:hover,.dg-mobile button:hover,.dg-toolrow button:hover{background:#ffcf68;color:#17233b;transform:translateY(-2px)}
@@ -349,7 +349,7 @@ enhanceStyle.textContent=\`
 .dg-toast{position:absolute;z-index:8;left:50%;bottom:18px;transform:translateX(-50%);padding:9px 12px;border:2px solid #ffdc79;background:#10223c;color:#fff4cb;font:8px "Press Start 2P";box-shadow:4px 4px #030912;max-width:90%;text-align:center;pointer-events:none}
 @media(max-width:520px){.dg-life{grid-template-columns:1fr}.dg-life-card{padding:10px}.dg-bars{gap:5px}.dg-meter label{font-size:6px}.dg-quests{grid-template-columns:1fr}.dg-mobile{grid-template-columns:repeat(3,46px) 1fr}}
 @media(prefers-reduced-motion:reduce){.dg-life-fill,.dg-xp i,*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
-\`;
+`;
 document.head.append(enhanceStyle);
 const hud=document.createElement('section');hud.className='dg-life';hud.setAttribute('aria-label','Estado del compañero');
 hud.innerHTML='<article class="dg-life-card"><div class="dg-life-head"><span id="dgMoodTitle">ESTADO</span><strong id="dgMood">😊 CONTENTO</strong></div><p class="dg-life-meta" id="dgWorldClock"></p><div class="dg-bars">'+[['food','COMIDA'],['clean','HIGIENE'],['joy','ALEGRÍA'],['energy','ENERGÍA']].map(([id,label])=>'<div class="dg-meter"><label>'+label+'</label><div class="dg-meter-track"><div class="dg-meter-fill" id="dgNeed-'+id+'"></div></div></div>').join('')+'</div><div class="dg-life-head" style="margin-top:12px"><span id="dgLevelText">NIVEL 1</span><strong id="dgXpText">0 / 100 XP</strong></div><div class="dg-xp"><i id="dgXpFill"></i></div></article><article class="dg-life-card"><div class="dg-life-head"><span id="dgQuestTitle">RUTINA DIARIA</span><strong id="dgQuestCount">0/3</strong></div><p class="dg-life-meta" id="dgQuestIntro">Pequeños cuidados, grandes recuerdos.</p><div class="dg-quests" id="dgQuestList"></div></article></section>';
