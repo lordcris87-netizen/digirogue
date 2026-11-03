@@ -700,6 +700,66 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
 @keyframes digimonCardScan{0%,10%{transform:translateX(-120%)}45%,100%{transform:translateX(120%)}}
 @media(prefers-reduced-motion:reduce){.launch-card:before{animation:none!important}}
 @media(max-width:680px){.launch-card{min-height:118px!important;padding:12px 10px!important}.launch-copy small{font-size:7px!important}.launch-copy b{font-size:14px!important}}
+
+/* Fichas Digidex inspiradas en la pantalla de estado de Digimon World (PS1). */
+#view-digidex .digimon-grid{gap:18px}
+#view-digidex .digi-card{
+  position:relative;isolation:isolate;overflow:hidden;align-items:center;gap:17px;
+  min-height:190px;padding:38px 17px 16px;
+  border:2px solid #73d5ff!important;border-radius:0!important;
+  background:linear-gradient(135deg,#10264cF2 0%,#0b1732F2 60%,#10213cF2 100%)!important;
+  box-shadow:4px 4px 0 #030812,inset 2px 2px 0 #d5f5ff30,inset -2px -2px 0 #061128!important;
+}
+#view-digidex .digi-card::before{
+  content:"DIGIMON STATUS";
+  position:absolute;z-index:2;left:14px;top:10px;
+  color:#b9eaff;font:700 8px "Silkscreen","Courier New",monospace;
+  letter-spacing:1.4px;text-shadow:0 0 8px #57c9ff88;
+}
+#view-digidex .digi-card::after{
+  content:"";position:absolute;z-index:0;inset:27px 10px 10px;pointer-events:none;opacity:.16;
+  background:repeating-linear-gradient(0deg,transparent 0 5px,#69caff 6px,#69caff 7px);
+}
+#view-digidex .digi-number{z-index:2;right:14px;top:10px;color:#ffda7c;font:700 8px "Silkscreen","Courier New",monospace;letter-spacing:1px}
+#view-digidex .digi-art{
+  position:relative;z-index:1;width:112px;height:118px;border:2px solid #80dcff;border-radius:0!important;
+  background:linear-gradient(145deg,#274e83,#132443 72%)!important;
+  box-shadow:inset 2px 2px 0 #d9f6ff35,inset -3px -3px 0 #07142c,0 0 0 3px #09152c,0 6px 14px #0009!important;
+  filter:none!important;overflow:hidden
+}
+#view-digidex .digi-art::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.13;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,#b8edff 4px,#b8edff 5px)
+}
+#view-digidex .digi-art img{position:relative;z-index:1;width:94%;height:94%;object-fit:contain;filter:drop-shadow(0 5px 4px #0009)!important}
+#view-digidex .digi-card>div:nth-child(2){position:relative;z-index:1;flex:1;min-width:0;padding-right:26px}
+#view-digidex .digi-card small{display:inline-block;color:#ffe18e;font:700 7px "Silkscreen","Courier New",monospace;letter-spacing:.65px;line-height:1.7}
+#view-digidex .digi-card h3{margin:8px 0 6px;color:#f5fbff;font-size:clamp(17px,2vw,22px);letter-spacing:.8px;text-shadow:0 2px 0 #07142a,0 0 12px #70d8ff45}
+#view-digidex .digi-card p{max-width:290px;color:#d7e9f7;font-size:10px;line-height:1.55}
+#view-digidex .digi-card.is-locked{border-color:#567c9b!important}
+#view-digidex .digi-card.is-locked .digi-art{border-color:#66829b;background:linear-gradient(145deg,#26364a,#111a2b 72%)!important;box-shadow:inset 2px 2px 0 #b9d6e525,inset -3px -3px 0 #080f1c,0 0 0 3px #091321!important}
+#view-digidex .digi-card.is-locked::before{color:#a9c5d7}
+#view-digidex .digi-card.is-locked .digi-card small{color:#f2d483}
+#view-digidex .digi-card.is-locked h3{color:#c5d3df}
+#view-digidex .digi-card.is-locked p{color:#afc0cf}
+@media(max-width:700px){
+  #view-digidex .digi-card{min-height:158px;padding:35px 13px 13px;gap:14px}
+  #view-digidex .digi-art{width:91px;height:96px}
+}
+@media(max-width:430px){
+  #view-digidex .digi-card{min-height:144px;padding:34px 11px 12px;gap:12px}
+  #view-digidex .digi-art{width:72px;height:78px}
+  #view-digidex .digi-card>div:nth-child(2){padding-right:14px}
+  #view-digidex .digi-card small{font-size:6px}
+  #view-digidex .digi-card h3{font-size:17px}
+  #view-digidex .digi-card p{font-size:9px}
+}
+/* Fichas compactas y biseladas para los compañeros destacados del inicio. */
+.ranking-panel .rank-row{position:relative;margin-top:5px;padding:8px 7px;border:1px solid #5e9dc7;background:linear-gradient(100deg,#14274b,#0d1931 70%);box-shadow:inset 1px 1px 0 #d2efff17}
+.ranking-panel .mini-mon{border:1px solid #87dfff;border-radius:0!important;background:linear-gradient(145deg,#244675,#101d37);box-shadow:inset 1px 1px 0 #e3f7ff25}
+.ranking-panel .rank-name b{color:#f4f8ff}
+.ranking-panel .rank-name small{color:#c4e6f6}
+
 </style>
 </head>
 <body>
