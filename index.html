@@ -878,6 +878,19 @@ body,button,input,select,textarea{font-family:"Silkscreen","Lucida Console",mono
   #view-inicio .brand-title{font-size:clamp(47px,13.5vw,59px)!important;letter-spacing:-.07em!important}
 }
 
+
+/* Ensure the title's yellow fill stays bright above the deep-blue dimensional outline. */
+#view-inicio .brand-title,#view-inicio .brand-title span,#view-inicio .brand-title em{
+  color:#ffd83c!important;background:none!important;background-clip:border-box!important;
+  -webkit-background-clip:border-box!important;-webkit-text-fill-color:#ffd83c!important;
+  -webkit-text-stroke:3px #072554!important;paint-order:stroke fill;
+  text-shadow:1px 1px 0 #fff09a,0 2px 0 #ef9917,2px 4px 0 #15539a,4px 6px 0 #06132e!important;
+  filter:none!important
+}
+@media(max-width:700px){
+  #view-inicio .brand-title,#view-inicio .brand-title span,#view-inicio .brand-title em{-webkit-text-stroke:2px #072554!important}
+}
+
 </style>
 </head>
 <body>
