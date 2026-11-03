@@ -23,7 +23,34 @@ canvas.setAttribute('aria-label','Hábitat de tu Digimon');
 screen.insertBefore(canvas,screen.firstChild);
 canvas.style.cssText='position:absolute;inset:0;width:100%;height:100%;touch-action:manipulation';
 island.style.display='none';
-const ctx=canvas.getContext('2d');
+const ctx=canvas.getContext('2d');const objTextures={body:new Image(),mouth:new Image(),claw:new Image()};
+const texFiles={body:'agumon-body.svg',mouth:'agumon-mouth.svg',claw:'agumon-claw.svg'};
+for(const key of Object.keys(objTextures)){objTextures[key].src='assets/launcher/digiego/'+texFiles[key];objTextures[key].onload=()=>paint()}
+let objTriangles=[];
+fetch('assets/launcher/digiego/agumon-world-ps1.obj').then(r=>r.text()).then(source=>{
+ const vertices=[],uvs=[];let material='body';
+ for(const line of source.split(String.fromCharCode(10))){
+  const q=line.trim().split(/\s+/);
+  if(q[0]==='v')vertices.push(q.slice(1,4).map(Number));
+  else if(q[0]==='vt')uvs.push(q.slice(1,3).map(Number));
+  else if(q[0]==='usemtl')material=q[1].includes('Mouth')?'mouth':q[1].includes('Claw')?'claw':'body';
+  else if(q[0]==='f'){
+   const corners=q.slice(1).map(v=>v.split('/').map(Number));
+   for(let i=1;i<corners.length-1;i++){const tri=[corners[0],corners[i],corners[i+1]];objTriangles.push({p:tri.map(v=>vertices[v[0]-1]),uv:tri.map(v=>uvs[v[1]-1]),m:material})}
+  }
+ }
+ paint();
+}).catch(()=>{});
+function texturedTriangle(points,uv,image){
+ if(!image.complete||!image.naturalWidth)return;
+ const source=uv.map(v=>[v[0]*image.naturalWidth,(1-v[1])*image.naturalHeight]),d=points;
+ const [a,b,c]=source,[p,q,r]=d,det=(b[0]-a[0])*(c[1]-a[1])-(c[0]-a[0])*(b[1]-a[1]);if(Math.abs(det)<.001)return;
+ const dx1=q[0]-p[0],dx2=r[0]-p[0],dy1=q[1]-p[1],dy2=r[1]-p[1];
+ const A=(dx1*(c[1]-a[1])-dx2*(b[1]-a[1]))/det,C=((b[0]-a[0])*dx2-(c[0]-a[0])*dx1)/det;
+ const B=(dy1*(c[1]-a[1])-dy2*(b[1]-a[1]))/det,D=((b[0]-a[0])*dy2-(c[0]-a[0])*dy1)/det;
+ const E=p[0]-A*a[0]-C*a[1],F=p[1]-B*a[0]-D*a[1];
+ ctx.save();ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0],q[1]);ctx.lineTo(r[0],r[1]);ctx.closePath();ctx.clip();ctx.imageSmoothingEnabled=false;ctx.transform(A,B,C,D,E,F);ctx.drawImage(image,0,0);ctx.restore();
+}
 const spots=[];
 let heading=0;let yaw=-.32,tilt=.63;
 const camera=document.createElement('div');
@@ -71,6 +98,14 @@ function paint(){
  if(state.dirt)box(...state.dirt,2.4,2,1.7,['#8b6243','#65402c','#553725']);
  function figure(x,z,isPet){
  const id=document.querySelector('#dgPartner').value||'agumon';
+ if(isPet&&id==='agumon'&&objTriangles.length){
+  const turn=heading,scale=3.8;
+  for(const tri of objTriangles){
+   const points=tri.p.map(([a,h,b])=>project(x+a*scale*Math.cos(turn)+b*scale*Math.sin(turn),h*scale+lift,z+b*scale*Math.cos(turn)-a*scale*Math.sin(turn)));
+   faces.push({depth:points.reduce((n,p)=>n+p[2],0)/3,render:()=>texturedTriangle(points,tri.uv,objTextures[tri.m])});
+  }
+  return;
+ }
  const angle=isPet?Math.atan2(state.x-x,state.y-z):heading;
  const lift=isPet&&busy?Math.abs(Math.sin(performance.now()/170))*2:0;
  function world([a,h,b]){const size=isPet?1.72:1.52;a*=size;h*=size;b*=size;return [x+a*Math.cos(angle)+b*Math.sin(angle),h+lift,z+b*Math.cos(angle)-a*Math.sin(angle)]}
