@@ -128,6 +128,7 @@
       memories.innerHTML=(items.length?items.map(item=>'<article class="dg-memory"><small>'+safeDate(item.when)+' · '+(item.label||'DigiEgo')+'</small><p>'+escapeHtml(item.text)+'</p></article>').join(''):'<p class="dg-empty">'+t('empty')+'</p>');
     }
     setText('dgStatus',!data.tamer?t('createTamerFirst'):data.enabled?t('enabled'):t('disabled'));
+    const opening=el('dgDialogue');if(opening&&!opening.textContent)opening.textContent=partner.quip?.[lang()]||t('greet');
     section.classList.toggle('dg-ego-off',!data.enabled);
     document.querySelectorAll('[data-dg-action]').forEach(button=>button.disabled=!data.enabled||!data.tamer);
     const partnerSelect=el('dgPartner');if(partnerSelect)partnerSelect.disabled=!data.tamer;
