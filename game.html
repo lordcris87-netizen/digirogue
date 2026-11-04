@@ -177,6 +177,15 @@ const LOOT=[
   {id:'legend_speed',icon:'⚡',name:'Motor infinito',detail:'+45% de velocidad de ataque',stat:'aspeed',value:.45}]
 ];
 player.perks={magnet:0,burn:0,lifesteal:0,revive:0,echo:0};
+const PERMANENT_KEY='digirogue-permanent-upgrades';
+function permanentSave(){try{const data=JSON.parse(localStorage.getItem(PERMANENT_KEY)||'{}');return data&&typeof data==='object'?data:{}}catch(_){return {}}}
+function permanentOwned(id){return Array.isArray(permanentSave().owned)&&permanentSave().owned.includes(id)}
+function grantPermanentPoints(amount){const data=permanentSave(),n=Math.max(0,Math.floor(Number(amount)||0));data.points=Math.max(0,Number(data.points)||0)+n;data.totalEarned=Math.max(0,Number(data.totalEarned)||0)+n;data.owned=Array.isArray(data.owned)?data.owned:[];data.updatedAt=Date.now();localStorage.setItem(PERMANENT_KEY,JSON.stringify(data));return n}
+
+if(permanentOwned('vitalidad')){player.maxHp=Math.round(player.maxHp*1.2);player.hp=player.maxHp}
+if(permanentOwned('poder'))player.attack*=1.1;
+if(permanentOwned('velocidad'))player.move*=1.1;
+if(permanentOwned('iman'))player.perks.magnet+=2;
 // Cada santuario ofrece tres objetos únicos de SU rareza. Solo se adquiere el elegido.
 function shrineOptions(tier){
  const pool=[...LOOT[tier]];
@@ -1049,15 +1058,18 @@ function recordRunProgress(){
   stats.gamesPlayed++;stats.bestLevel=Math.max(stats.bestLevel,player.level);stats.bestKills=Math.max(stats.bestKills,world.kill);
   if(world.bossDead)stats.bossWins++;
   Object.assign(stats,{lastLevel:player.level,lastKills:world.kill,lastSeconds:Math.floor(world.elapsed),updatedAt:endedAt});
+  const bits=Math.min(90,Math.max(2,Math.floor(world.kill/3)+Math.max(0,player.level-1)*2+(world.bossDead?15:0)));
+  stats.lastBitsEarned=bits;grantPermanentPoints(bits);
   localStorage.setItem(key,JSON.stringify(stats));
- }catch(_){}
+  return bits;
+ }catch(_){return 0}
 }
 function takeDamage(d){if(player.shield>0||player.invulnerable>0)return;
  player.invulnerable=.58;registerImpact(1.1);
  anim.hit=.32;anim.kind='hurt';anim.time=.32;anim.duration=.32;anim.buffer=0;world.pendingMelee=null;world.pendingFire=null;
  player.hp=Math.max(0,player.hp-d);
  burst(player.x,player.z,'#fa7477',8);if(player.hp<=0&&player.perks.revive>0){player.perks.revive--;player.hp=Math.round(player.maxHp*.5);player.shield=4;toast('✚ Reinicio ancestral: segunda oportunidad');burst(player.x,player.z,'#ffe483',30)}
- if(player.hp<=0&&!over){over=true;recordRunProgress();const eggNote=player.eggFound?' También rescataste un huevo de '+({agumon:'Agumon',gabumon:'Gabumon',patamon:'Patamon',koromon:'Koromon'}[player.eggFound])+'.':'';openPanel('FIN DE LA PARTIDA','Llegaste al nivel '+player.level+' y derrotaste '+world.kill+' enemigos.'+eggNote,[],[{name:'Volver al launcher',action:()=>location.href='index.html#incubadora'},{name:'Volver a jugar',action:()=>location.reload()}])}
+ if(player.hp<=0&&!over){over=true;const earnedBits=recordRunProgress();const eggNote=player.eggFound?' También rescataste un huevo de '+({agumon:'Agumon',gabumon:'Gabumon',patamon:'Patamon',koromon:'Koromon'}[player.eggFound])+'.':'';openPanel('FIN DE LA PARTIDA','Llegaste al nivel '+player.level+' y derrotaste '+world.kill+' enemigos. Ganaste '+earnedBits+' Bits permanentes.'+eggNote,[],[{name:'Volver al launcher',action:()=>location.href='index.html#incubadora'},{name:'Volver a jugar',action:()=>location.reload()}])}
 }
 function shootAtPlayer(e){e.attackTimer=.52;e.attackDuration=.52;let a=Math.atan2(player.x-e.x,player.z-e.z),v=7.1;world.enemyShots.push({x:e.x,z:e.z,vx:Math.sin(a)*v,vz:Math.cos(a)*v,life:3,kind:'toxin',damage:5+Math.floor(world.elapsed/220)});burst(e.x,e.z,'#aa76eb',4)}
 function bossAI(e,dt,dx,dz,dist){
