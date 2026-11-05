@@ -377,7 +377,7 @@ def create_app():
     app.router.add_get('/',lambda request:web.FileResponse(BASE/'index.html'))
     app.router.add_get('/game.html',lambda request:web.FileResponse(BASE/'game.html'))
     app.router.add_get('/loading.html',lambda request:web.FileResponse(BASE/'loading.html'))
-    app.router.add_get('/digiego.html',lambda request:web.HTTPFound('/index.html#inicio'))
+    app.router.add_get('/digiego.html',lambda request:web.HTTPFound('/#inicio'))
     app.router.add_get('/ws',socket)
     app.router.add_get('/api/leaderboard',lambda request:web.json_response({'ranking':top_scores()}))
     app.router.add_get('/api/health',lambda request:web.json_response({'ok':True,'rooms':len(ROOMS),'players':sum(len(r.players) for r in ROOMS.values())}))
